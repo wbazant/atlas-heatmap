@@ -37,7 +37,10 @@ module.exports = React.createClass({
             {
                 keepSeries: (series) => this._getFilterSelection(this._expressionLevelInSelectedBucketFilter().name).includes(series.info.name),
                 keepRow: (row) => !row.info.index || row.info.index <= this.state.coexpressionsShown,
-                keepColumn: (columnHeader) => this._columnHeadersThatColumnGroupingFiltersSayWeCanInclude().includes(columnHeader.label),
+                keepColumn: (columnHeader) => (
+                  this._columnHeadersThatColumnGroupingFiltersSayWeCanInclude().length == 0 ||
+                  this._columnHeadersThatColumnGroupingFiltersSayWeCanInclude().includes(columnHeader.label)
+                ),
                 ordering: this.props.loadResult.orderings[this.state.ordering],
                 allowEmptyColumns:
                     this.props.loadResult.heatmapConfig.isExperimentPage &&
@@ -163,7 +166,7 @@ module.exports = React.createClass({
                 key: e.info.name,
                 name: e.info.name,
                 colour: e.info.colour,
-                on: this.state.filtersSelection[0].values.includes(e.info.name)
+                on: this._getFilterSelection(this._expressionLevelInSelectedBucketFilter().name).includes(e.info.name)
               })
             )
       );
