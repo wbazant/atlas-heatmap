@@ -3814,7 +3814,7 @@ webpackJsonp_name_([1],[
 	                return !row.info.index || row.info.index <= _this.state.coexpressionsShown;
 	            },
 	            keepColumn: function keepColumn(columnHeader) {
-	                return _this._columnHeadersThatColumnGroupingFiltersSayWeCanInclude().includes(columnHeader.label);
+	                return _this._columnHeadersThatColumnGroupingFiltersSayWeCanInclude().length == 0 || _this._columnHeadersThatColumnGroupingFiltersSayWeCanInclude().includes(columnHeader.label);
 	            },
 	            ordering: this.props.loadResult.orderings[this.state.ordering],
 	            allowEmptyColumns: this.props.loadResult.heatmapConfig.isExperimentPage && _.isEqual(this._filtersInitially(), this._filtersCurrently())
@@ -3930,7 +3930,7 @@ webpackJsonp_name_([1],[
 	                key: e.info.name,
 	                name: e.info.name,
 	                colour: e.info.colour,
-	                on: _this5.state.filtersSelection[0].values.includes(e.info.name)
+	                on: _this5._getFilterSelection(_this5._expressionLevelInSelectedBucketFilter().name).includes(e.info.name)
 	            };
 	        });
 	    },
