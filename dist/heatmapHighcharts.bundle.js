@@ -3908,7 +3908,7 @@ webpackJsonp_name_([1],[
 	                values: columnLabels,
 	                valueGroupings: _.uniq(groupingTriplets.map(function (groupingTriplet) {
 	                    return groupingTriplet.groupingLabel;
-	                })).map(function (groupingLabel) {
+	                })).sort().map(function (groupingLabel) {
 	                    return [groupingLabel, _.sortedUniq(groupingTriplets.filter(function (groupingTriplet) {
 	                        return groupingTriplet.name === groupingName && groupingTriplet.groupingLabel === groupingLabel;
 	                    }).map(function (groupingTriplet) {
