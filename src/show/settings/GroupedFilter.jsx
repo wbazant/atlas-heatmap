@@ -1,4 +1,5 @@
 const React = require(`react`);
+const Button = require(`react-bootstrap/lib/Button`);
 const Glyphicon = require(`react-bootstrap/lib/Glyphicon`);
 const PropTypes = require(`../../PropTypes.js`);
 const xor = require(`lodash/xor`);
@@ -52,14 +53,14 @@ const FilterOption = React.createClass({
         {this.props.isOpen &&
           <div className="options">
           {this.props.values.map((value) => (
-            <span className="option" key={value}>
+            <div className="option" key={value}>
               <input type="checkbox"
                 value={value}
                 onChange={(evt)=>this.toggleOne(value, evt)}
                 disabled={this.props.selectDisabled}
                 checked={this.props.selected.indexOf(value)>-1}/>
                 <span> {value}</span>
-            </span>
+            </div>
           ))}
           </div>
         }
@@ -108,6 +109,18 @@ const GroupedFilter = React.createClass({
     return (
       <div className="gxaFilter">
         <h4>{this.props.name}</h4>
+        <Button bsSize="xsmall" onClick={() => {
+            this.props.propagateFilterSelection(this.props.values)
+          }}>
+          <Glyphicon glyph="plus"/>
+          <span style={{verticalAlign: `middle`}}> Choose all</span>
+        </Button>
+        <Button bsSize="xsmall" onClick={() => {
+          this.props.propagateFilterSelection([])
+          }}>
+          <Glyphicon glyph="minus"/>
+          <span style={{verticalAlign: `middle`}}> Remove all</span>
+        </Button>
         {
           this.props.valueGroupings.map((a)=>this.renderValueGrouping(a[0], a[1]))
         }

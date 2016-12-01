@@ -94,37 +94,11 @@ const SettingsModal = React.createClass({
                     <span style={{verticalAlign: `middle`}}> Filters</span>
                 </Button>
 
-                <Modal show={this.state.showModal} onHide={this._close}>
+                <Modal show={this.state.showModal} onHide={this._close} bsSize="large">
                     <Modal.Header closeButton>
                         <Modal.Title>Filters</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      <Button bsSize="xsmall" onClick={() => {
-                          this.setState({
-                            filtersSelection:this.props.filters.map((_filter)=>(
-                              {
-                                name:_filter.name,
-                                selected:_filter.values
-                              }
-                            ))
-                          })
-                        }}>
-                        <Glyphicon glyph="plus"/>
-                        <span style={{verticalAlign: `middle`}}> Choose all</span>
-                      </Button>
-                      <Button bsSize="xsmall" onClick={() => {
-                          this.setState({
-                            filtersSelection:this.props.filters.map((_filter)=>(
-                              {
-                                name:_filter.name,
-                                selected: []
-                              }
-                            ))
-                          })
-                        }}>
-                        <Glyphicon glyph="minus"/>
-                        <span style={{verticalAlign: `middle`}}> Remove all</span>
-                      </Button>
                       {
                         this._filtersCorrespondingToCurrentSelection()
                         .map(this._renderFilter)
