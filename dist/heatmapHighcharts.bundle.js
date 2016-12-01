@@ -5892,158 +5892,118 @@ webpackJsonp_name_([1],[
 	var deepEquals = __webpack_require__(729);
 
 	var SettingsModal = React.createClass({
-	  displayName: "SettingsModal",
+	    displayName: "SettingsModal",
 
-	  propTypes: {
-	    filters: React.PropTypes.arrayOf(PropTypes.Filter).isRequired,
-	    disabled: React.PropTypes.bool.isRequired,
-	    propagateChosenFilterSelection: React.PropTypes.func.isRequired
-	  },
+	    propTypes: {
+	        filters: React.PropTypes.arrayOf(PropTypes.Filter).isRequired,
+	        disabled: React.PropTypes.bool.isRequired,
+	        propagateChosenFilterSelection: React.PropTypes.func.isRequired
+	    },
 
-	  _filtersSelectionBeforeModalOpen: function _filtersSelectionBeforeModalOpen() {
-	    return this.props.filters.map(function (_filter) {
-	      return {
-	        name: _filter.name,
-	        selected: _filter.selected
-	      };
-	    });
-	  },
-	  getInitialState: function getInitialState() {
-	    return {
-	      filtersSelection: this._filtersSelectionBeforeModalOpen(),
-	      showModal: false
-	    };
-	  },
-	  _close: function _close() {
-	    this.setState({
-	      showModal: false
-	    });
-	  },
-	  _apply: function _apply() {
-	    this.props.propagateChosenFilterSelection(this.state.filtersSelection);
-	    this.setState({ showModal: false });
-	  },
-	  _open: function _open() {
-	    this.setState({ showModal: true,
-	      filtersSelection: this._filtersSelectionBeforeModalOpen() });
-	  },
-	  _renderFilter: function _renderFilter(_filter) {
-	    var _this = this;
-
-	    var FilterComponent = _filter.valueGroupings ? GroupedFilter : FlatFilter;
-
-	    return React.createElement(FilterComponent, _extends({
-	      key: _filter.name,
-	      propagateFilterSelection: function propagateFilterSelection(selected) {
-	        _this.setState(function (previousState) {
-	          return {
-	            filtersSelection: previousState.filtersSelection.map(function (filterSelection) {
-	              return filterSelection.name == _filter.name ? Object.assign({}, filterSelection, { selected: selected }) : filterSelection;
-	            })
-	          };
+	    _filtersSelectionBeforeModalOpen: function _filtersSelectionBeforeModalOpen() {
+	        return this.props.filters.map(function (_filter) {
+	            return {
+	                name: _filter.name,
+	                selected: _filter.selected
+	            };
 	        });
-	      },
-	      disabled: this.props.disabled
-	    }, _filter));
-	  },
-	  _filtersCorrespondingToCurrentSelection: function _filtersCorrespondingToCurrentSelection() {
-	    var _this2 = this;
+	    },
+	    getInitialState: function getInitialState() {
+	        return {
+	            filtersSelection: this._filtersSelectionBeforeModalOpen(),
+	            showModal: false
+	        };
+	    },
+	    _close: function _close() {
+	        this.setState({
+	            showModal: false
+	        });
+	    },
+	    _apply: function _apply() {
+	        this.props.propagateChosenFilterSelection(this.state.filtersSelection);
+	        this.setState({ showModal: false });
+	    },
+	    _open: function _open() {
+	        this.setState({ showModal: true,
+	            filtersSelection: this._filtersSelectionBeforeModalOpen() });
+	    },
+	    _renderFilter: function _renderFilter(_filter) {
+	        var _this = this;
 
-	    return this.props.filters.map(function (_filter) {
-	      return Object.assign({}, _filter, { selected: _this2.state.filtersSelection.find(function (f) {
-	          return f.name == _filter.name;
-	        }).selected
-	      });
-	    });
-	  },
-	  render: function render() {
-	    var _this3 = this;
+	        var FilterComponent = _filter.valueGroupings ? GroupedFilter : FlatFilter;
 
-	    return React.createElement(
-	      "div",
-	      null,
-	      React.createElement(
-	        Button,
-	        { bsSize: "small", onClick: this._open, disabled: this.props.disabled, title: this.props.disabled ? "Reset zoom to enable filters" : "" },
-	        React.createElement(Glyphicon, { glyph: "equalizer" }),
-	        React.createElement(
-	          "span",
-	          { style: { verticalAlign: "middle" } },
-	          " Filters"
-	        )
-	      ),
-	      React.createElement(
-	        Modal,
-	        { show: this.state.showModal, onHide: this._close },
-	        React.createElement(
-	          Modal.Header,
-	          { closeButton: true },
-	          React.createElement(
-	            Modal.Title,
+	        return React.createElement(FilterComponent, _extends({
+	            key: _filter.name,
+	            propagateFilterSelection: function propagateFilterSelection(selected) {
+	                _this.setState(function (previousState) {
+	                    return {
+	                        filtersSelection: previousState.filtersSelection.map(function (filterSelection) {
+	                            return filterSelection.name == _filter.name ? Object.assign({}, filterSelection, { selected: selected }) : filterSelection;
+	                        })
+	                    };
+	                });
+	            },
+	            disabled: this.props.disabled
+	        }, _filter));
+	    },
+	    _filtersCorrespondingToCurrentSelection: function _filtersCorrespondingToCurrentSelection() {
+	        var _this2 = this;
+
+	        return this.props.filters.map(function (_filter) {
+	            return Object.assign({}, _filter, { selected: _this2.state.filtersSelection.find(function (f) {
+	                    return f.name == _filter.name;
+	                }).selected
+	            });
+	        });
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            "div",
 	            null,
-	            "Filters"
-	          )
-	        ),
-	        React.createElement(
-	          Modal.Body,
-	          null,
-	          React.createElement(
-	            Button,
-	            { bsSize: "xsmall", onClick: function onClick() {
-	                _this3.setState({
-	                  filtersSelection: _this3.props.filters.map(function (_filter) {
-	                    return {
-	                      name: _filter.name,
-	                      selected: _filter.values
-	                    };
-	                  })
-	                });
-	              } },
-	            React.createElement(Glyphicon, { glyph: "plus" }),
 	            React.createElement(
-	              "span",
-	              { style: { verticalAlign: "middle" } },
-	              " Choose all"
-	            )
-	          ),
-	          React.createElement(
-	            Button,
-	            { bsSize: "xsmall", onClick: function onClick() {
-	                _this3.setState({
-	                  filtersSelection: _this3.props.filters.map(function (_filter) {
-	                    return {
-	                      name: _filter.name,
-	                      selected: []
-	                    };
-	                  })
-	                });
-	              } },
-	            React.createElement(Glyphicon, { glyph: "minus" }),
+	                Button,
+	                { bsSize: "small", onClick: this._open, disabled: this.props.disabled, title: this.props.disabled ? "Reset zoom to enable filters" : "" },
+	                React.createElement(Glyphicon, { glyph: "equalizer" }),
+	                React.createElement(
+	                    "span",
+	                    { style: { verticalAlign: "middle" } },
+	                    " Filters"
+	                )
+	            ),
 	            React.createElement(
-	              "span",
-	              { style: { verticalAlign: "middle" } },
-	              " Remove all"
+	                Modal,
+	                { show: this.state.showModal, onHide: this._close, bsSize: "large" },
+	                React.createElement(
+	                    Modal.Header,
+	                    { closeButton: true },
+	                    React.createElement(
+	                        Modal.Title,
+	                        null,
+	                        "Filters"
+	                    )
+	                ),
+	                React.createElement(
+	                    Modal.Body,
+	                    null,
+	                    this._filtersCorrespondingToCurrentSelection().map(this._renderFilter)
+	                ),
+	                React.createElement(
+	                    Modal.Footer,
+	                    null,
+	                    React.createElement(
+	                        Button,
+	                        { bsStyle: "primary", onClick: this._apply },
+	                        "Apply"
+	                    ),
+	                    React.createElement(
+	                        Button,
+	                        { onClick: this._close },
+	                        "Close"
+	                    )
+	                )
 	            )
-	          ),
-	          this._filtersCorrespondingToCurrentSelection().map(this._renderFilter)
-	        ),
-	        React.createElement(
-	          Modal.Footer,
-	          null,
-	          React.createElement(
-	            Button,
-	            { bsStyle: "primary", onClick: this._apply },
-	            "Apply"
-	          ),
-	          React.createElement(
-	            Button,
-	            { onClick: this._close },
-	            "Close"
-	          )
-	        )
-	      )
-	    );
-	  }
+	        );
+	    }
 	});
 
 	module.exports = SettingsModal;
@@ -8444,7 +8404,7 @@ webpackJsonp_name_([1],[
 
 
 	// module
-	exports.push([module.id, ".gxaFilter .filterBody .groupName {\n  display: inline-block;\n  cursor: pointer;\n}\n.gxaFilter .filterBody .groupName:hover {\n  text-decoration: underline;\n}\n.gxaFilter .filterBody .options {\n  padding-left: 10px;\n  font-size: small;\n}\n.gxaFilter .filterBody .options .option {\n  margin: 5px;\n}\n", ""]);
+	exports.push([module.id, ".gxaFilter .filterBody .groupName {\n  display: inline-block;\n  cursor: pointer;\n}\n.gxaFilter .filterBody .groupName:hover {\n  text-decoration: underline;\n}\n.gxaFilter .filterBody .options {\n  padding-left: 15px;\n  font-size: 85%;\n  -webkit-column-width: 180px;\n  -moz-column-width: 180px;\n  column-width: 180px;\n}\n", ""]);
 
 	// exports
 
@@ -8456,6 +8416,7 @@ webpackJsonp_name_([1],[
 	"use strict";
 
 	var React = __webpack_require__(138);
+	var Button = __webpack_require__(389);
 	var Glyphicon = __webpack_require__(395);
 	var PropTypes = __webpack_require__(615);
 	var xor = __webpack_require__(648);
@@ -8510,7 +8471,7 @@ webpackJsonp_name_([1],[
 	        { className: "options" },
 	        this.props.values.map(function (value) {
 	          return React.createElement(
-	            "span",
+	            "div",
 	            { className: "option", key: value },
 	            React.createElement("input", { type: "checkbox",
 	              value: value,
@@ -8584,6 +8545,30 @@ webpackJsonp_name_([1],[
 	        "h4",
 	        null,
 	        this.props.name
+	      ),
+	      React.createElement(
+	        Button,
+	        { bsSize: "xsmall", onClick: function onClick() {
+	            _this3.props.propagateFilterSelection(_this3.props.values);
+	          } },
+	        React.createElement(Glyphicon, { glyph: "plus" }),
+	        React.createElement(
+	          "span",
+	          { style: { verticalAlign: "middle" } },
+	          " Choose all"
+	        )
+	      ),
+	      React.createElement(
+	        Button,
+	        { bsSize: "xsmall", onClick: function onClick() {
+	            _this3.props.propagateFilterSelection([]);
+	          } },
+	        React.createElement(Glyphicon, { glyph: "minus" }),
+	        React.createElement(
+	          "span",
+	          { style: { verticalAlign: "middle" } },
+	          " Remove all"
+	        )
 	      ),
 	      this.props.valueGroupings.map(function (a) {
 	        return _this3.renderValueGrouping(a[0], a[1]);
