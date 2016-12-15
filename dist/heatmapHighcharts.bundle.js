@@ -617,18 +617,13 @@ webpackJsonp_name_([1],[
 /* 607 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var React = __webpack_require__(138);
 	var ReactDOM = __webpack_require__(299);
 
-	//*------------------------------------------------------------------*
-
 	var EventEmitter = __webpack_require__(608);
-
 	var HighchartsHeatmapContainer = __webpack_require__(609);
-
-	//*------------------------------------------------------------------*
 
 	/**
 	 * @param {Object}      options
@@ -994,309 +989,278 @@ webpackJsonp_name_([1],[
 
 	"use strict";
 
-	//*------------------------------------------------------------------*
-
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = __webpack_require__(138);
 	var $ = __webpack_require__(17);
 
-	//*------------------------------------------------------------------*
+	var Anatomogram = __webpack_require__(610);
 
-	var Load = __webpack_require__(610);
-	var HighchartsHeatmap = __webpack_require__(628);
-	__webpack_require__(792);
-	var Anatomogram = __webpack_require__(794);
-
-	//*------------------------------------------------------------------*
+	var Load = __webpack_require__(674);
+	var HighchartsHeatmap = __webpack_require__(686);
+	__webpack_require__(848);
 
 	var ExperimentDescription = React.createClass({
-	  displayName: 'ExperimentDescription',
+	    displayName: "ExperimentDescription",
 
-	  propTypes: {
-	    linksAtlasBaseURL: React.PropTypes.string.isRequired,
-	    experiment: React.PropTypes.shape({
-	      URL: React.PropTypes.string.isRequired,
-	      description: React.PropTypes.string.isRequired,
-	      species: React.PropTypes.string.isRequired
-	    }).isRequired
-	  },
+	    propTypes: {
+	        linksAtlasBaseURL: React.PropTypes.string.isRequired,
+	        experiment: React.PropTypes.shape({
+	            URL: React.PropTypes.string.isRequired,
+	            description: React.PropTypes.string.isRequired,
+	            species: React.PropTypes.string.isRequired
+	        }).isRequired
+	    },
 
-	  render: function render() {
+	    render: function render() {
+	        var experimentURL = this.props.linksAtlasBaseURL + this.props.experiment.URL;
 
-	    var experimentURL = this.props.linksAtlasBaseURL + this.props.experiment.URL;
-
-	    return React.createElement(
-	      'div',
-	      { style: { width: "100%", paddingBottom: "20px" } },
-	      React.createElement(
-	        'div',
-	        { id: 'experimentDescription' },
-	        React.createElement(
-	          'a',
-	          { id: 'goto-experiment', className: 'gxaThickLink', title: 'Experiment Page', href: experimentURL },
-	          this.props.experiment.description
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { id: 'experimentOrganisms' },
-	        'Organism: ',
-	        React.createElement(
-	          'span',
-	          { style: { "fontStyle": "italic" } },
-	          this.props.experiment.species
-	        )
-	      )
-	    );
-	  }
-
+	        return React.createElement(
+	            "div",
+	            { style: { width: "100%", paddingBottom: "20px" } },
+	            React.createElement(
+	                "div",
+	                { id: "experimentDescription" },
+	                React.createElement(
+	                    "a",
+	                    { id: "goto-experiment", className: "gxaThickLink", title: "Experiment Page", href: experimentURL },
+	                    this.props.experiment.description
+	                )
+	            ),
+	            React.createElement(
+	                "div",
+	                { id: "experimentOrganisms" },
+	                "Organism: ",
+	                React.createElement(
+	                    "span",
+	                    { style: { fontStyle: "italic" } },
+	                    this.props.experiment.species
+	                )
+	            )
+	        );
+	    }
 	});
 
 	var Container = React.createClass({
-	  displayName: 'Container',
+	    displayName: "Container",
+	    getDefaultProps: function getDefaultProps() {
+	        return {
+	            referenceToAnatomogramContainer: "anatomogramContainer"
+	        };
+	    },
+	    render: function render() {
+	        var heatmapProps = {
+	            loadResult: this.props.loadResult,
+	            googleAnalyticsCallback: this.props.googleAnalyticsCallback
+	        }; // Overridden: ontologyIdsToHighlight, onOntologyIdIsUnderFocus
 
+	        var anatomogramConfig = {
+	            pathToFolderWithBundledResources: this.props.pathToFolderWithBundledResources,
+	            anatomogramData: this.props.anatomogramData,
+	            expressedTissueColour: this.props.loadResult.heatmapConfig.isExperimentPage ? "gray" : "red",
+	            hoveredTissueColour: this.props.loadResult.heatmapConfig.isExperimentPage ? "red" : "purple",
+	            atlasBaseURL: this.props.atlasBaseURL,
+	            idsExpressedInExperiment: this._ontologyIdsForTissuesExpressedInAllRows()
+	        };
 
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      referenceToAnatomogramContainer: "anatomogramContainer"
-	    };
-	  },
-	  render: function render() {
-	    var heatmapProps = {
-	      loadResult: this.props.loadResult,
-	      googleAnalyticsCallback: this.props.googleAnalyticsCallback
-	    }; //overriden: ontologyIdsToHighlight, onOntologyIdIsUnderFocus
-	    var anatomogramConfig = {
-	      pathToFolderWithBundledResources: this.props.pathToFolderWithBundledResources,
-	      anatomogramData: this.props.anatomogramData,
-	      expressedTissueColour: this.props.loadResult.heatmapConfig.isExperimentPage ? "gray" : "red",
-	      hoveredTissueColour: this.props.loadResult.heatmapConfig.isExperimentPage ? "red" : "purple",
-	      atlasBaseURL: this.props.atlasBaseURL,
-	      idsExpressedInExperiment: this._ontologyIdsForTissuesExpressedInAllRows()
-	    };
-	    var Wrapped = Anatomogram.wrapComponent(anatomogramConfig, HighchartsHeatmap, heatmapProps);
-	    return this._showAnatomogram() ? React.createElement(Wrapped, { ref: this.props.referenceToAnatomogramContainer }) : React.createElement(HighchartsHeatmap, _extends({}, heatmapProps, { ontologyIdsToHighlight: [], onOntologyIdIsUnderFocus: function onOntologyIdIsUnderFocus() {} }));
-	  },
-	  _showAnatomogram: function _showAnatomogram() {
-	    return this.props.showAnatomogram && this.props.anatomogramData && Object.keys(this.props.anatomogramData).length;
-	  },
+	        var Wrapped = Anatomogram.wrapComponent(anatomogramConfig, HighchartsHeatmap, heatmapProps);
+	        return this._showAnatomogram() ? React.createElement(Wrapped, { ref: this.props.referenceToAnatomogramContainer }) : React.createElement(HighchartsHeatmap, _extends({}, heatmapProps, { ontologyIdsToHighlight: [], onOntologyIdIsUnderFocus: function onOntologyIdIsUnderFocus() {} }));
+	    },
+	    _showAnatomogram: function _showAnatomogram() {
+	        return this.props.showAnatomogram && this.props.anatomogramData && Object.keys(this.props.anatomogramData).length;
+	    },
+	    _ontologyIdsForTissuesExpressedInAllRows: function _ontologyIdsForTissuesExpressedInAllRows() {
+	        //TODO be less copypastey
+	        var _expressedFactors = function _expressedFactors(expressedFactorsPerRow) {
+	            var o = expressedFactorsPerRow;
+	            var vs = Object.keys(o).map(function (e) {
+	                return o[e];
+	            });
+	            return [].concat.apply([], vs).filter(function (e, ix, self) {
+	                return self.indexOf(e) === ix;
+	            });
+	        };
 
-	  _ontologyIdsForTissuesExpressedInAllRows: function _ontologyIdsForTissuesExpressedInAllRows() {
-	    //TODO be less copypastey
-	    var _expressedFactors = function _expressedFactors(expressedFactorsPerRow) {
-	      var o = expressedFactorsPerRow;
-	      var vs = Object.keys(o).map(function (e) {
-	        return o[e];
-	      });
-	      return [].concat.apply([], vs).filter(function uniq(e, ix, self) {
-	        return self.indexOf(e) === ix;
-	      });
-	    };
-	    var _expressedFactorsPerRow = function _expressedFactorsPerRow(profileRows) {
-	      return profileRows.reduce(function (result, row) {
-	        result[row.name] = row.expressions.filter(function (expression) {
-	          return expression.value;
-	        }).map(function (expression) {
-	          return expression.svgPathId;
-	        });
-	        return result;
-	      }, {});
-	    };
-	    return _expressedFactors(_expressedFactorsPerRow(this.props.profiles.rows));
-	  },
+	        var _expressedFactorsPerRow = function _expressedFactorsPerRow(profileRows) {
+	            return profileRows.reduce(function (result, row) {
+	                result[row.name] = row.expressions.filter(function (expression) {
+	                    return expression.value;
+	                }).map(function (expression) {
+	                    return expression.svgPathId;
+	                });
+	                return result;
+	            }, {});
+	        };
 
-	  _ontologyIdsForTissuesExpressedInRow: function _ontologyIdsForTissuesExpressedInRow(rowTitle) {
-	    //TODO be more sane
-	    var _expressedFactorsPerRow = function _expressedFactorsPerRow(profileRows) {
-	      return profileRows.reduce(function (result, row) {
-	        result[row.name] = row.expressions.filter(function (expression) {
-	          return expression.value;
-	        }).map(function (expression) {
-	          return expression.svgPathId;
-	        });
-	        return result;
-	      }, {});
-	    };
-	    return _expressedFactorsPerRow(this.props.profiles.rows)[rowTitle];
-	  }
-
+	        return _expressedFactors(_expressedFactorsPerRow(this.props.profiles.rows));
+	    }
 	});
 
 	var ContainerLoader = React.createClass({
-	  displayName: 'ContainerLoader',
+	    displayName: "ContainerLoader",
 
-	  propTypes: {
-	    pathToFolderWithBundledResources: React.PropTypes.string.isRequired,
-	    sourceURL: React.PropTypes.string.isRequired,
-	    atlasBaseURL: React.PropTypes.string.isRequired,
-	    linksAtlasBaseURL: React.PropTypes.string.isRequired,
-	    showAnatomogram: React.PropTypes.bool.isRequired,
-	    isDifferential: React.PropTypes.bool.isRequired,
-	    isMultiExperiment: React.PropTypes.bool.isRequired,
-	    isWidget: React.PropTypes.bool.isRequired,
-	    disableGoogleAnalytics: React.PropTypes.bool.isRequired,
-	    fail: React.PropTypes.func,
-	    googleAnalyticsCallback: React.PropTypes.func,
-	    anatomogramDataEventEmitter: React.PropTypes.object
-	  },
 
-	  render: function render() {
+	    propTypes: {
+	        pathToFolderWithBundledResources: React.PropTypes.string.isRequired,
+	        sourceURL: React.PropTypes.string.isRequired,
+	        atlasBaseURL: React.PropTypes.string.isRequired,
+	        linksAtlasBaseURL: React.PropTypes.string.isRequired,
+	        showAnatomogram: React.PropTypes.bool.isRequired,
+	        isDifferential: React.PropTypes.bool.isRequired,
+	        isMultiExperiment: React.PropTypes.bool.isRequired,
+	        isWidget: React.PropTypes.bool.isRequired,
+	        disableGoogleAnalytics: React.PropTypes.bool.isRequired,
+	        fail: React.PropTypes.func,
+	        googleAnalyticsCallback: React.PropTypes.func,
+	        anatomogramDataEventEmitter: React.PropTypes.object
+	    },
 
-	    var geneURL = this.props.linksAtlasBaseURL + (this.state.loadResult.heatmapConfig.geneURL || "");
+	    render: function render() {
 
-	    return React.createElement(
-	      'div',
-	      { ref: 'this' },
-	      this._isReferenceExperiment() && this.state.experimentData ? React.createElement(ExperimentDescription, { experiment: this.state.experimentData, linksAtlasBaseURL: this.props.linksAtlasBaseURL }) : null,
-	      this.state.ajaxCompleted ? this.state.error ? React.createElement(
-	        'div',
-	        { ref: 'gxaError' },
-	        this.state.error
-	      ) : React.createElement(Container, _extends({}, this.props, this.state)) : React.createElement(
-	        'div',
-	        { ref: 'loadingImagePlaceholder' },
-	        React.createElement('img', { src: this.props.atlasBaseURL + "/resources/images/loading.gif" })
-	      ),
-	      this.props.isWidget ? React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'p',
-	          null,
-	          React.createElement(
-	            'a',
-	            { href: geneURL },
-	            'See more expression data at Expression Atlas.'
-	          ),
-	          React.createElement('br', null),
-	          'This expression view is provided by ',
-	          React.createElement(
-	            'a',
-	            { href: this.props.linksAtlasBaseURL },
-	            'Expression Atlas'
-	          ),
-	          '.',
-	          React.createElement('br', null),
-	          'Please direct any queries or feedback to ',
-	          React.createElement(
-	            'a',
-	            { href: 'mailto:arrayexpress-atlas@ebi.ac.uk' },
-	            'arrayexpress-atlas@ebi.ac.uk'
-	          )
-	        )
-	      ) : null
-	    );
-	  },
+	        var geneURL = this.props.linksAtlasBaseURL + (this.state.loadResult.heatmapConfig.geneURL || "");
 
-	  componentDidUpdate: function componentDidUpdate() {
-	    if (this.props.anatomogramDataEventEmitter) {
-	      if (this.state.anatomogramData && Object.keys(this.state.anatomogramData).length !== 0) {
-	        this.props.anatomogramDataEventEmitter.emit('existAnatomogramData', true);
-	      } else {
-	        this.props.anatomogramDataEventEmitter.emit('existAnatomogramData', false);
-	      }
-	    }
-	  },
-
-	  getInitialState: function getInitialState() {
-	    return {
-	      ajaxCompleted: false,
-	      error: false,
-	      profiles: {
-	        rows: [],
-	        minExpressionLevel: 0,
-	        maxExpressionLevel: 0
-	      },
-	      geneSetProfiles: {},
-	      anatomogramData: {},
-	      googleAnalyticsCallback: function googleAnalyticsCallback() {},
-	      loadResult: {
-	        heatmapConfig: {},
-	        orderings: {
-	          "Default": {
-	            columns: [],
-	            rows: []
-	          }
+	        return React.createElement(
+	            "div",
+	            null,
+	            this._isReferenceExperiment() && this.state.experimentData ? React.createElement(ExperimentDescription, { experiment: this.state.experimentData, linksAtlasBaseURL: this.props.linksAtlasBaseURL }) : null,
+	            this.state.ajaxCompleted ? this.state.error ? React.createElement(
+	                "div",
+	                { ref: "gxaError" },
+	                this.state.error
+	            ) : React.createElement(Container, _extends({}, this.props, this.state)) : React.createElement(
+	                "div",
+	                null,
+	                React.createElement("img", { src: this.props.atlasBaseURL + "/resources/images/loading.gif" })
+	            ),
+	            this.props.isWidget ? React.createElement(
+	                "div",
+	                null,
+	                React.createElement(
+	                    "p",
+	                    null,
+	                    React.createElement(
+	                        "a",
+	                        { href: geneURL },
+	                        "See more expression data at Expression Atlas."
+	                    ),
+	                    React.createElement("br", null),
+	                    "This expression view is provided by ",
+	                    React.createElement(
+	                        "a",
+	                        { href: this.props.linksAtlasBaseURL },
+	                        "Expression Atlas"
+	                    ),
+	                    ".",
+	                    React.createElement("br", null),
+	                    "Please direct any queries or feedback to ",
+	                    React.createElement(
+	                        "a",
+	                        { href: "mailto:arrayexpress-atlas@ebi.ac.uk" },
+	                        "arrayexpress-atlas@ebi.ac.uk"
+	                    )
+	                )
+	            ) : null
+	        );
+	    },
+	    componentDidUpdate: function componentDidUpdate() {
+	        if (this.props.anatomogramDataEventEmitter) {
+	            if (this.state.anatomogramData && Object.keys(this.state.anatomogramData).length !== 0) {
+	                this.props.anatomogramDataEventEmitter.emit("existAnatomogramData", true);
+	            } else {
+	                this.props.anatomogramDataEventEmitter.emit("existAnatomogramData", false);
+	            }
 	        }
-	      }
-	    };
-	  },
+	    },
+	    getInitialState: function getInitialState() {
+	        return {
+	            ajaxCompleted: false,
+	            error: false,
+	            profiles: {
+	                rows: [],
+	                minExpressionLevel: 0,
+	                maxExpressionLevel: 0
+	            },
+	            geneSetProfiles: {},
+	            anatomogramData: {},
+	            googleAnalyticsCallback: function googleAnalyticsCallback() {},
+	            loadResult: {
+	                heatmapConfig: {},
+	                orderings: {
+	                    "Default": {
+	                        columns: [],
+	                        rows: []
+	                    }
+	                }
+	            }
+	        };
+	    },
+	    _handleAjaxFailure: function _handleAjaxFailure(jqXHR, textStatus, errorThrown) {
+	        if (this.props.fail) {
+	            this.props.fail(jqXHR, textStatus, errorThrown);
+	        } else {
+	            this.setState({
+	                ajaxCompleted: true,
+	                error: textStatus === "parsererror" ? "Could not parse JSON response" : errorThrown
+	            });
+	        }
+	    },
+	    _onAjaxDone: function _onAjaxDone(data, textStatus, jqXHR) {
+	        if (!this.isMounted()) {
+	            this._handleAjaxFailure(jqXHR, textStatus, "DOM element not mounted!");
+	        } else if (data.hasOwnProperty("error")) {
+	            this._handleAjaxFailure(jqXHR, textStatus, data.error);
+	        } else {
+	            this.onAjaxSuccessful(data);
+	        }
+	    },
+	    _isExperimentPage: function _isExperimentPage() {
+	        return this.props.sourceURL.indexOf("/json/experiments/") > -1;
+	    },
+	    _isReferenceExperiment: function _isReferenceExperiment() {
+	        return !this.props.isMultiExperiment && !this._isExperimentPage();
+	    },
+	    onAjaxSuccessful: function onAjaxSuccessful(data) {
 
-	  _handleAjaxFailure: function _handleAjaxFailure(jqXHR, textStatus, errorThrown) {
-	    if (this.props.fail) {
-	      this.props.fail(jqXHR, textStatus, errorThrown);
-	    } else {
-	      this.setState({
-	        ajaxCompleted: true,
-	        error: textStatus === "parsererror" ? "Could not parse JSON response" : errorThrown
-	      });
+	        var setupConfig = {
+	            isExperimentPage: this._isExperimentPage(),
+	            isMultiExperiment: this.props.isMultiExperiment,
+	            isReferenceExperiment: this._isReferenceExperiment(),
+	            isDifferential: this.props.isDifferential,
+	            atlasBaseURL: this.props.atlasBaseURL,
+	            pathToFolderWithBundledResources: this.props.pathToFolderWithBundledResources
+	        };
+
+	        this.setState({
+	            ajaxCompleted: true,
+	            columnHeaders: data.columnHeaders,
+	            profiles: data.profiles,
+	            anatomogramData: data.anatomogram,
+	            experimentData: data.experiment,
+	            loadResult: Load(setupConfig, data)
+	        });
+	    },
+	    componentDidMount: function componentDidMount() {
+	        var httpRequest = {
+	            url: this.props.sourceURL,
+	            dataType: "json",
+	            method: "GET"
+	        };
+
+	        $.ajax(httpRequest).done(this._onAjaxDone).fail(this._handleAjaxFailure);
+
+	        if (!this.props.disableGoogleAnalytics) {
+	            (function (i, s, o, g, r, a, m) {
+	                i['GoogleAnalyticsObject'] = r;i[r] = i[r] || function () {
+	                    (i[r].q = i[r].q || []).push(arguments);
+	                }, i[r].l = 1 * new Date();a = s.createElement(o), m = s.getElementsByTagName(o)[0];a.async = 1;a.src = g;m.parentNode.insertBefore(a, m);
+	            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+	            ga('create', 'UA-37676851-1', 'auto');
+	            ga('send', 'pageview');
+	            this.setState({ googleAnalyticsCallback: ga });
+	        }
 	    }
-	  },
-
-	  _onAjaxDone: function _onAjaxDone(data, textStatus, jqXHR) {
-	    if (!this.isMounted()) {
-	      this._handleAjaxFailure(jqXHR, textStatus, "DOM element not mounted!");
-	    } else if (data.hasOwnProperty('error')) {
-	      this._handleAjaxFailure(jqXHR, textStatus, data.error);
-	    } else {
-	      this.onAjaxSuccessful(data);
-	    }
-	  },
-
-	  _isExperimentPage: function _isExperimentPage() {
-	    return this.props.sourceURL.indexOf("/json/experiments/") > -1;
-	  },
-
-	  _isReferenceExperiment: function _isReferenceExperiment() {
-	    return !this.props.isMultiExperiment && !this._isExperimentPage();
-	  },
-
-	  onAjaxSuccessful: function onAjaxSuccessful(data) {
-
-	    var setupConfig = {
-	      isExperimentPage: this._isExperimentPage(),
-	      isMultiExperiment: this.props.isMultiExperiment,
-	      isReferenceExperiment: this._isReferenceExperiment(),
-	      isDifferential: this.props.isDifferential,
-	      atlasBaseURL: this.props.atlasBaseURL,
-	      pathToFolderWithBundledResources: this.props.pathToFolderWithBundledResources
-	    };
-
-	    this.setState({
-	      ajaxCompleted: true,
-	      columnHeaders: data.columnHeaders,
-	      profiles: data.profiles,
-	      anatomogramData: data.anatomogram,
-	      experimentData: data.experiment,
-	      loadResult: Load(setupConfig, data)
-	    });
-	  },
-
-	  componentDidMount: function componentDidMount() {
-	    var httpRequest = {
-	      url: this.props.sourceURL,
-	      dataType: "json",
-	      method: "GET"
-	    };
-
-	    $.ajax(httpRequest).done(this._onAjaxDone).fail(this._handleAjaxFailure);
-
-	    if (!this.props.disableGoogleAnalytics) {
-	      (function (i, s, o, g, r, a, m) {
-	        i['GoogleAnalyticsObject'] = r;i[r] = i[r] || function () {
-	          (i[r].q = i[r].q || []).push(arguments);
-	        }, i[r].l = 1 * new Date();a = s.createElement(o), m = s.getElementsByTagName(o)[0];a.async = 1;a.src = g;m.parentNode.insertBefore(a, m);
-	      })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-	      ga('create', 'UA-37676851-1', 'auto');
-	      ga('send', 'pageview');
-	      this.setState({ googleAnalyticsCallback: ga });
-	    }
-	  }
 	});
-
-	//*------------------------------------------------------------------*
 
 	module.exports = ContainerLoader;
 
@@ -1306,10998 +1270,22 @@ webpackJsonp_name_([1],[
 
 	"use strict";
 
-	//*------------------------------------------------------------------*
-
-	var Config = __webpack_require__(611);
-	var Orderings = __webpack_require__(613);
-	var ColorAxis = __webpack_require__(614);
-	var Data = __webpack_require__(616);
-	//*------------------------------------------------------------------*
-
-	var _allRows = function _allRows(data) {
-	  return [].concat.apply(data.profiles.rows, (data.jsonCoexpressions || []).map(function (coex) {
-	    return (coex.jsonProfiles && coex.jsonProfiles.rows ? coex.jsonProfiles.rows : []).map(function (row, ix) {
-	      return Object.assign(row, {
-	        coexpressionOfGene: {
-	          id: coex.geneId,
-	          name: coex.geneName,
-	          index: ix
-	        }
-	      });
-	    });
-	  }));
-	};
-	var get = function get(setupConfig, payload) {
-	  var config = Config(setupConfig, payload);
-	  var rows = _allRows(payload);
-	  var columnHeaders = payload.columnHeaders;
-
-	  var data = Data(config, rows, columnHeaders, payload.columnGroupings);
-
-	  return {
-	    heatmapConfig: config,
-	    colorAxis: ColorAxis(config, data.dataSeries),
-	    orderings: Orderings(config, rows, columnHeaders),
-	    heatmapData: data
-	  };
-	};
-
-	module.exports = get;
+	module.exports = __webpack_require__(611);
 
 /***/ },
 /* 611 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	var genomeBrowserTemplate = __webpack_require__(612);
-	var capitalizeFirstLetter = function capitalizeFirstLetter(str) {
-	  return !str ? str : str.charAt(0).toUpperCase() + str.substr(1);
-	};
-
-	var _introductoryMessage = function _introductoryMessage(isMultiExperiment, profiles) {
-	  var shownRows = profiles.rows.length,
-	      totalRows = profiles.searchResultTotal;
-
-	  var what = (isMultiExperiment ? 'experiment' : 'gene') + (totalRows > 1 ? 's' : '');
-
-	  return 'Showing ' + shownRows + ' ' + (totalRows === shownRows ? what + ':' : 'of ' + totalRows + ' ' + what + ' found:');
-	};
-
-	var geneURL = function geneURL(config) {
-	  return "/query" + "?geneQuery=" + config.geneQuery + "&conditionQuery=" + config.conditionQuery + "&organism=" + config.species;
-	};
-
-	var _coexpressions = function _coexpressions(jsonCoexpressions) {
-	  /*
-	  The backend code and the feature in the old heatmap were written to support coexpressions of multiple genes.
-	  It doesn't seem necessary, so this assumes zero or one coexpressions.
-	  */
-	  return jsonCoexpressions[0] ? {
-	    coexpressedGene: jsonCoexpressions[0].geneName,
-	    numCoexpressionsAvailable: jsonCoexpressions[0].jsonProfiles ? jsonCoexpressions[0].jsonProfiles.rows.length : 0
-	  } : "";
-	};
-	var coexpressions = function coexpressions(setupConfig, data) {
-	  return setupConfig.isExperimentPage && data.jsonCoexpressions && Array.isArray(data.jsonCoexpressions) ? _coexpressions(data.jsonCoexpressions) : "";
-	};
-
-	var getConfig = function getConfig(setupConfig, data) {
-	  var config = {
-	    geneQuery: data.config.geneQuery,
-	    atlasBaseURL: setupConfig.atlasBaseURL,
-	    pathToFolderWithBundledResources: setupConfig.pathToFolderWithBundledResources,
-	    isExperimentPage: setupConfig.isExperimentPage,
-	    isMultiExperiment: setupConfig.isMultiExperiment,
-	    isReferenceExperiment: setupConfig.isReferenceExperiment,
-	    isDifferential: setupConfig.isDifferential,
-	    introductoryMessage: _introductoryMessage(setupConfig.isMultiExperiment, data.profiles),
-	    description: setupConfig.isExperimentPage && data.experiment && data.experiment.description ? data.experiment.description : "",
-	    xAxisLegendName: capitalizeFirstLetter(data.config.columnType) || "Experimental condition",
-	    yAxisLegendName: setupConfig.isExperimentPage ? "Gene name" : "Experiment",
-	    coexpressions: coexpressions(setupConfig, data)
-	  };
-	  //See in heatmap-data.jsp which thirteen properties this config is populated with.
-	  Object.assign(config, data.config);
-	  Object.assign(config, {
-	    geneURL: geneURL(config)
-	  });
-	  Object.assign(config, {
-	    genomeBrowserTemplate: setupConfig.isExperimentPage ? genomeBrowserTemplate(config) : ""
-	  });
-	  Object.assign(config, {
-	    description: data.jsonExperiment ? setupConfig.isExperimentPage && data.jsonExperiment.description ? data.jsonExperiment.description : setupConfig.isReferenceExperiment && data.jsonExperiment.URL ? "Reference experiment: " + setupConfig.atlasBaseURL + data.jsonExperiment.URL : "" : setupConfig.isMultiExperiment ? "Query results: " + decodeURI(config.geneQuery) + (config.conditionQuery ? ", in conditions: " + decodeURI(config.conditionQuery) : "") + ", in species: " + config.species : ""
-	  });
-	  Object.assign(config, {
-	    shortDescription: config.experimentAccession ? (setupConfig.isReferenceExperiment ? "ReferenceExp" : "") + config.experimentAccession : "expression-atlas-" + config.species.replace(/ +/, "-")
-	  });
-
-	  return Object.freeze(config);
-	};
-
-	module.exports = getConfig;
-
-/***/ },
-/* 612 */
-/***/ function(module, exports) {
-
-	"use strict";
-	//Taken from ensemblUtils.js and EnsemblLauncher.jsx in the old heatmap
-	//*------------------------------------------------------------------*
-
-	// ensemblSpecies is the first two words only, with underscores instead of spaces, and all lower case except for the first character
-	// used to launch the ensembl genome browser for tracks
-	/**
-	 * @param {string} species
-	 */
-
-	var toEnsemblSpecies = function toEnsemblSpecies(species) {
-	    /**
-	     * @param {string} str
-	     */
-	    function capitaliseFirstLetter(str) {
-	        return str.charAt(0).toUpperCase() + str.slice(1);
-	    }
-
-	    /**
-	     * @param {string} str
-	     */
-	    function firstTwoWords(str) {
-	        var words = str.split(" ");
-	        return words.length <= 2 ? str : words[0] + " " + words[1];
-	    }
-
-	    return capitaliseFirstLetter(firstTwoWords(species).replace(" ", "_").toLowerCase());
-	};
-
-	var _ensemblTrackURL = function _ensemblTrackURL(isBaseline, experimentAccession, atlasBaseUrl, species, baseURL, selectedColumnId, selectedGeneId) {
-	    var ensemblSpecies = toEnsemblSpecies(species);
-	    var atlasTrackBaseURLWithTrackFileHeader = atlasBaseUrl + "/experiments/" + experimentAccession + "/tracks/" + experimentAccession + "." + selectedColumnId;
-	    var contigViewBottom = "contigviewbottom=url:" + atlasTrackBaseURLWithTrackFileHeader + (isBaseline ? ".genes.expressions.bedGraph" : ".genes.log2foldchange.bedGraph");
-	    var tiling = isBaseline ? "" : "=tiling,url:" + atlasTrackBaseURLWithTrackFileHeader + ".genes.pval.bedGraph=pvalue;";
-	    return baseURL + ensemblSpecies + "/Location/View?g=" + selectedGeneId + ";db=core;" + contigViewBottom + tiling + ";format=BEDGRAPH";
-	};
-
-	var getHost = function getHost(ensemblDB) {
-	    var ensemblHost = "";
-	    if (ensemblDB === "plants") {
-	        ensemblHost = "https://ensembl.gramene.org/";
-	    } else if (ensemblDB === "fungi") {
-	        ensemblHost = "https://fungi.ensembl.org/";
-	    } else if (ensemblDB === "metazoa") {
-	        ensemblHost = "https://metazoa.ensembl.org/";
-	    } else if (ensemblDB === "ensembl") {
-	        ensemblHost = "https://www.ensembl.org/";
-	    }
-	    return ensemblHost;
-	};
-
-	module.exports = function (config) {
-	    return _ensemblTrackURL(!config.isDifferential, config.experimentAccession, config.atlasBaseURL, config.species, getHost(config.ensemblDB), "__x__", "__y__");
-	};
-
-/***/ },
-/* 613 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	//*------------------------------------------------------------------*
-
-	var _ = __webpack_require__(18);
-
-	//*------------------------------------------------------------------*
-
-	//apply rank first,use comparator to resolve ties
-	var createOrdering = function createOrdering(rank, comparator, arr) {
-	  return arr.map(function (e, ix) {
-	    return [e, ix];
-	  }).sort(function (e_ixLeft, e_ixRight) {
-	    return (//lower ranks go to the beginning of series
-	      rank[e_ixLeft[1]] - rank[e_ixRight[1]] || comparator(e_ixLeft[0], e_ixRight[0])
-	    );
-	  }).map(function (e_ix) {
-	    return e_ix[1];
-	  });
-	};
-
-	var createAlphabeticalOrdering = function createAlphabeticalOrdering(property, arr) {
-	  return createOrdering(arr.map(_.constant(0)), comparatorByProperty(property), arr);
-	};
-
-	var comparatorByProperty = _.curry(function (property, e1, e2) {
-	  return e1[property].localeCompare(e2[property]);
-	});
-
-	var rankColumnsByWhereTheyAppearFirst = function rankColumnsByWhereTheyAppearFirst(expressions) {
-	  return _.chain(expressions).map(function (row) {
-	    return row.map(function (e) {
-	      return +e.hasOwnProperty("value");
-	    });
-	  }).thru(_.spread(_.zip)).map(function (column) {
-	    return column.map(function (e, ix) {
-	      return e * (ix + 1);
-	    }).filter(_.identity);
-	  }).map(_.min).value();
-	};
-
-	var highestColumnRankPossible = function highestColumnRankPossible(expressions) {
-	  return expressions.length ? expressions[0].length : Number.MAX_VALUE;
-	};
-
-	var thresholdColumnsByExpressionAboveCutoff = function thresholdColumnsByExpressionAboveCutoff(expressions) {
-	  return rankColumnsByExpression(expressions, 0).map(function (e) {
-	    //check if the function assigned the rank value corresponding to everything filtered off
-	    return e === highestColumnRankPossible(expressions) ? 1 : 0;
-	  });
-	};
-
-	var rankColumnsByExpression = function rankColumnsByExpression(expressions, minimalExpression) {
-	  var includeInRanking = typeof minimalExpression === 'number' ? function (e) {
-	    return e.hasOwnProperty("value") && !isNaN(e.value) && Math.abs(e.value) > minimalExpression;
-	  } : function (e) {
-	    return e.hasOwnProperty("value") && !isNaN(e.value);
-	  };
-	  return _.chain(expressions).map(function (row) {
-	    var valuesInRow = row.filter(includeInRanking).map(function (e) {
-	      return e.value;
-	    }).sort(function (l, r) {
-	      return r - l;
-	    }).filter(function (e, ix, self) {
-	      return self.indexOf(e) === ix;
-	    });
-	    return row.map(function (e) {
-	      return includeInRanking(e) ? valuesInRow.indexOf(e.value) : "missing";
-	    });
-	  }).thru(_.spread(_.zip)).map(function (ranks) {
-	    return ranks.filter(_.negate(isNaN));
-	  }).map(function (ranks) {
-	    return ranks.length ? _.sum(ranks) / ranks.length : highestColumnRankPossible(expressions);
-	  }).value();
-	};
-
-	var rankColumnsByThreshold = function rankColumnsByThreshold(threshold, expressions) {
-	  return expressions.map(function (row) {
-	    return row.map(function (point) {
-	      return +(point.hasOwnProperty("value") && point.value !== 0);
-	    });
-	  }).reduce(function (r1, r2) {
-	    return r1.map(function (el, ix) {
-	      return el + r2[ix];
-	    }, _.fill(Array(expressions.length ? expressions[0].length : 0), 0));
-	  }).map(function (countOfExperimentsWhereTissueExpressedAboveCutoff) {
-	    return countOfExperimentsWhereTissueExpressedAboveCutoff > expressions.length * threshold ? 0 : 1;
-	  });
-	};
-
-	var noOrdering = function noOrdering(arr) {
-	  return arr.map(function (el, ix) {
-	    return ix;
-	  });
-	};
-
-	var combineRanks = function combineRanks(ranksAndTheirWeighings) {
-	  return _.chain(ranksAndTheirWeighings).map(_.spread(function (ranks, weighing) {
-	    return ranks.map(_.curry(_.multiply, 2)(weighing));
-	  })).thru(_.spread(_.zip)).map(_.sum).value();
-	};
-
-	var createOrderings = function createOrderings(expressions, columnHeaders, rows, config) {
-	  var transposed = _.zip.apply(_, expressions);
-	  return config.isMultiExperiment || config.isReferenceExperiment ? {
-	    "Default": {
-	      columns: createAlphabeticalOrdering("factorValue", columnHeaders),
-	      rows: noOrdering(rows)
-	    },
-	    "Alphabetical order": {
-	      columns: createAlphabeticalOrdering("factorValue", columnHeaders),
-	      rows: createAlphabeticalOrdering("name", rows)
-	    },
-	    "Gene expression rank": {
-	      columns: createOrdering(combineRanks([[rankColumnsByWhereTheyAppearFirst(expressions), 1], [rankColumnsByExpression(expressions), 1e3], [rankColumnsByThreshold(0.05 + 0.4 / Math.pow(1 + transposed.length / 8, 0.4), expressions), 1e6], [thresholdColumnsByExpressionAboveCutoff(expressions), 1e7]]), comparatorByProperty("factorValue"), columnHeaders),
-	      rows: createOrdering(combineRanks([[rankColumnsByExpression(transposed), 1e3], [rankColumnsByThreshold(0.05 + 0.4 / (1 + expressions.length / 5), transposed), 1e6]]), comparatorByProperty("name"), rows)
-	    }
-	  } : {
-	    "Default": {
-	      columns: noOrdering(columnHeaders),
-	      rows: noOrdering(rows)
-	    }
-	  };
-	};
-
-	var extractExpressionValues = function extractExpressionValues(rows, isDifferential) {
-	  var _valueFieldExtractor = function _valueFieldExtractor(valueField) {
-	    return function (expression) {
-	      return expression.hasOwnProperty(valueField) ? { value: +expression[valueField] } : {};
-	    };
-	  };
-	  return rows.map(function (row) {
-	    return row.expressions.map(_valueFieldExtractor(isDifferential ? "foldChange" : "value"));
-	  });
-	};
-
-	var createOrderingsForData = function createOrderingsForData(config, rows, columnHeaders) {
-	  return createOrderings(extractExpressionValues(rows, config.isDifferential), columnHeaders, rows, config);
-	};
-
-	//*------------------------------------------------------------------*
-
-	module.exports = createOrderingsForData;
-
-/***/ },
-/* 614 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	//*------------------------------------------------------------------*
-
-	var React = __webpack_require__(138);
-	var validateDataSeries = __webpack_require__(615).validateDataSeries;
-	var Colour = __webpack_require__(1);
-
-	//*------------------------------------------------------------------*
-
-	//*------------------------------------------------------------------*
-
-	var highlightColour = function highlightColour(c) {
-	  return c.light() ? c.clone().lighten(0.5) : c.clone().saturate(0.3).darken(0.5);
-	};
-
-	var dataClassesFromSeries = function dataClassesFromSeries(dataSeries) {
-	  validateDataSeries(dataSeries);
-	  var xs = dataSeries.map(function (series) {
-	    return series.data.length === 0 && series.info.name === "Below cutoff" ? {
-	      data: [{ value: 0.0 }],
-	      colour: series.info.colour
-	    } : {
-	      data: series.data,
-	      colour: series.info.colour
-	    };
-	  }).filter(function (series) {
-	    return series.data.length > 0;
-	  }).map(function (series, ix, self) {
-	    var theseSeriesValuesSorted = series.data.map(function (point) {
-	      return point.value;
-	    });
-	    theseSeriesValuesSorted.sort(function (l, r) {
-	      return l - r;
-	    });
-	    return {
-	      min: theseSeriesValuesSorted[0],
-	      minColour: ix == 0 ? highlightColour(Colour(self[ix].colour)) : Colour(self[ix].colour).mix(Colour(self[ix - 1].colour)),
-	      max: theseSeriesValuesSorted[theseSeriesValuesSorted.length - 1],
-	      maxColour: ix == self.length - 1 ? highlightColour(Colour(self[ix].colour)) : Colour(self[ix].colour).mix(Colour(self[ix + 1].colour)),
-	      median: theseSeriesValuesSorted[Math.floor(series.data.length / 2)],
-	      medianColour: Colour(self[ix].colour),
-	      sortedValues: theseSeriesValuesSorted
-	    };
-	  });
-	  var needToSplit = function needToSplit(x) {
-	    return x.sortedValues.length > 3 && x.sortedValues[0] != x.sortedValues[x.sortedValues.length - 1] && x.minColour.rgbString() !== x.maxColour.rgbString();
-	  };
-
-	  var splitInHalf = function splitInHalf(x) {
-	    return [{
-	      min: x.min,
-	      minColour: x.minColour,
-	      max: x.median,
-	      maxColour: x.medianColour,
-	      median: x.sortedValues[Math.floor(x.sortedValues.length / 4)],
-	      medianColour: x.minColour.clone().mix(x.medianColour),
-	      sortedValues: x.sortedValues.slice(0, Math.floor(x.sortedValues.length / 2))
-	    }, {
-	      min: x.median,
-	      minColour: x.medianColour,
-	      max: x.max,
-	      maxColour: x.maxColour,
-	      median: x.sortedValues[Math.floor(3 * x.sortedValues.length / 4)],
-	      medianColour: x.medianColour.clone().mix(x.maxColour),
-	      sortedValues: x.sortedValues.slice(Math.floor(x.sortedValues.length / 2))
-	    }];
-	  };
-	  var l = Number.MIN_VALUE;
-	  var L = xs.length;
-	  while (l < L) {
-	    xs = [].concat.apply([], xs.map(function (x) {
-	      if (needToSplit(x)) {
-	        return splitInHalf(x);
-	      } else {
-	        return [x];
-	      }
-	    }));
-	    l = L;
-	    L = xs.length;
-	  }
-
-	  return xs.map(function (x) {
-	    return {
-	      from: x.min,
-	      to: x.max,
-	      color: x.medianColour.hexString()
-	    };
-	  });
-	};
-
-	var getColorAxisFromDataSeries = function getColorAxisFromDataSeries(config, dataSeries) {
-	  return config.isExperimentPage ? {
-	    dataClasses: dataClassesFromSeries(dataSeries)
-	  } : null;
-	};
-
-	module.exports = getColorAxisFromDataSeries;
-
-/***/ },
-/* 615 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(138);
-	var validate = __webpack_require__(606);
-
-	var PointPropType = React.PropTypes.shape({
-	    x: React.PropTypes.number.isRequired,
-	    y: React.PropTypes.number.isRequired,
-	    value: React.PropTypes.number.isRequired,
-	    info: React.PropTypes.object.isRequired
-	});
-
-	var PointsInDataSeriesPropType = React.PropTypes.arrayOf(React.PropTypes.arrayOf(PointPropType));
-
-	var DataSeriesProps = {
-	    info: React.PropTypes.shape({
-	        colour: React.PropTypes.string.isRequired,
-	        name: React.PropTypes.string.isRequired
-	    }),
-	    data: React.PropTypes.arrayOf(PointPropType).isRequired
-	};
-
-	var ValidateDataSeries = function ValidateDataSeries(dataSeries) {
-	    dataSeries.forEach(function (series) {
-	        validate(series, DataSeriesProps);
-	    });
-	};
-
-	var AxisCategoriesPropType = React.PropTypes.arrayOf(React.PropTypes.shape({
-	    id: React.PropTypes.string, // ontology ID can be missing for x axis
-	    label: React.PropTypes.string.isRequired,
-	    info: React.PropTypes.shape({
-	        trackId: React.PropTypes.string,
-	        tooltip: React.PropTypes.object
-	    }).isRequired
-	})).isRequired;
-
-	var OrderingsPropType = function OrderingsPropType(props, propName) {
-	    var orderings = props[propName];
-
-	    var isPermutation = function isPermutation(arr) {
-	        return [].concat(arr).sort(function (a, b) {
-	            return a - b;
-	        }).map(function (el, ix) {
-	            return el === ix;
-	        }).reduce(function (l, r) {
-	            return l && r;
-	        });
-	    };
-
-	    if (!orderings.hasOwnProperty("Default")) {
-	        return new Error("Default ordering missing");
-	    }
-
-	    Object.keys(orderings).forEach(function (orderingName) {
-	        var ordering = orderings[orderingName];
-
-	        if (!isPermutation(ordering.columns)) {
-	            return new Error("Column ordering invalid in " + orderingName);
-	        }
-	        if (!isPermutation(ordering.rows)) {
-	            return new Error("Row ordering invalid in " + orderingName);
-	        }
-	    });
-	};
-
-	var HeatmapDataPropType = function HeatmapDataPropType(props, propName) {
-	    var heatmapData = props[propName];
-	    var possiblyError = ValidateDataSeries(heatmapData.dataSeries);
-	    if (possiblyError !== undefined) {
-	        return possiblyError;
-	    }
-
-	    var width = heatmapData.xAxisCategories.length;
-	    var height = heatmapData.yAxisCategories.length;
-
-	    for (var i = 0; i < heatmapData.dataSeries.length; i++) {
-	        for (var j = 0; j < heatmapData.dataSeries[i].data.length; j++) {
-	            var point = heatmapData.dataSeries[i].data[j];
-	            var x = point.x;
-	            var y = point.y;
-	            if (x < 0 || y < 0 || x >= width || y >= height) {
-	                return new Error("Point with coordinates outside range: " + x + ", " + y);
-	            }
-	        }
-	    }
-	};
-
-	var LoadResultPropType = React.PropTypes.shape({
-	    heatmapConfig: React.PropTypes.object.isRequired,
-	    colorAxis: React.PropTypes.object,
-	    orderings: OrderingsPropType,
-	    heatmapData: HeatmapDataPropType
-	});
-
-	var FormatterPropType = function FormatterPropType(props, propName) {
-	    var f = props[propName];
-	    if (f === undefined) {
-	        return new Error(propName + " formatter missing");
-	    } else if (typeof f !== "function" || f.name !== "Formatter") {
-	        return new Error(propName + " formatter not correctly created. See the main method of TooltipFormatter.jsx.");
-	    }
-	};
-
-	var OrderingsPropTypes = React.PropTypes.shape({
-	    available: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    selected: React.PropTypes.string.isRequired,
-	    onSelect: React.PropTypes.func.isRequired
-	}).isRequired;
-
-	/*
-	selected should be a subset of values
-	valueGroupings should be two element arrays, one the name of the grouping and the second a subset of values
-	*/
-	var FilterProps = {
-	    name: React.PropTypes.string.isRequired,
-	    values: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    selected: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    valueGroupings: React.PropTypes.arrayOf(function (props, propName) {
-	        var prop = props[propName];
-	        if (prop === undefined) {
-	            return new Error(propName + " missing in " + props);
-	        } else if (!Array.isArray(prop) || prop.length !== 2) {
-	            return new Error(prop + " invalid: expected array of length two");
-	        } else if (typeof prop[0] !== "string") {
-	            return new Error(prop[0] + " should be a string representing name of the grouping");
-	        } else if (!Array.isArray(prop[1])) {
-	            return new Error(prop[1] + " should be an array with members of the grouping ");
-	        }
-	    })
-	};
-
-	module.exports = {
-	    validateDataSeries: ValidateDataSeries,
-	    PointsInDataSeries: PointsInDataSeriesPropType,
-	    Point: PointPropType,
-	    HeatmapData: HeatmapDataPropType,
-	    LoadResult: LoadResultPropType,
-	    AxisCategories: AxisCategoriesPropType,
-	    Formatter: FormatterPropType,
-	    Orderings: OrderingsPropTypes,
-	    Filter: React.PropTypes.shape(FilterProps).isRequired,
-	    FilterProps: FilterProps
-	};
-
-/***/ },
-/* 616 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	//*------------------------------------------------------------------*
-
-	var _ = __webpack_require__(18);
-	var Url = __webpack_require__(617);
-	var Path = __webpack_require__(622);
-
-	//*------------------------------------------------------------------*
-
-	var _columnGroupings = function _columnGroupings(columnGroupings, id) {
-	  return columnGroupings.map(function (grouping) {
-	    var values = grouping.groups.filter(function (group) {
-	      return group.values.indexOf(id) > -1;
-	    }).map(function (group) {
-	      return {
-	        label: group.name,
-	        id: group.id
-	      };
-	    });
-	    return {
-	      name: grouping.name,
-	      memberName: grouping.memberName,
-	      values: values.length ? values : [{
-	        label: "Unmapped",
-	        id: ""
-	      }]
-	    };
-	  });
-	};
-
-	var getXAxisCategories = function getXAxisCategories(columnHeaders, columnGroupings, config) {
-	  return columnHeaders.map(config.isExperimentPage ? config.isDifferential ? function (columnHeader) {
-	    return { "label": columnHeader.displayName,
-	      "id": columnHeader.id,
-	      "info": {
-	        trackId: columnHeader.id,
-	        tooltip: Object.assign({ resources: (columnHeader.resources || []).map(function (resource) {
-	            return {
-	              type: resource.type,
-	              uri: config.atlasBaseURL + resource.uri,
-	              icon: Url.resolve(config.pathToFolderWithBundledResources, Path.basename(__webpack_require__(623)("./" + resource.type + "-icon.png")))
-	            };
-	          })
-	        }, columnHeader.contrastSummary),
-	        groupings: []
-	      } };
-	  } : function (columnHeader) {
-	    return { "label": columnHeader.factorValue,
-	      "id": columnHeader.factorValueOntologyTermId || "",
-	      "info": {
-	        trackId: columnHeader.assayGroupId,
-	        tooltip: columnHeader.assayGroupSummary,
-	        groupings: _columnGroupings(columnGroupings, columnHeader.factorValueOntologyTermId || "")
-	      } };
-	  } : function (columnHeader) {
-	    return { "label": columnHeader.factorValue,
-	      "id": columnHeader.factorValueOntologyTermId || "",
-	      "info": {
-	        trackId: "",
-	        tooltip: {},
-	        groupings: _columnGroupings(columnGroupings, columnHeader.factorValueOntologyTermId || "")
-	      } };
-	  });
-	};
-
-	var getYAxisCategories = function getYAxisCategories(rows, config) {
-	  return rows.map(config.isExperimentPage ? function (profile) {
-	    return { "label": profile.name,
-	      "id": profile.id,
-	      "info": {
-	        trackId: profile.id,
-	        designElement: profile.designElement || ""
-	      } };
-	  } : function (profile) {
-	    return { "label": profile.name,
-	      "id": profile.id + "?geneQuery=" + config.geneQuery + (profile.serializedFilterFactors ? "&serializedFilterFactors=" + encodeURIComponent(profile.serializedFilterFactors) : ""),
-	      "info": {
-	        trackId: "",
-	        designElement: ""
-	      } };
-	  });
-	};
-
-	var __dataPointFromExpression = function __dataPointFromExpression(infoCommonForTheRow, columnNumber, expression, rowNumber) {
-	  //TODO make this function more complicated and determine the info to pass about each point here.
-	  return expression.hasOwnProperty("value") ? { x: rowNumber, y: columnNumber, value: expression.value, info: infoCommonForTheRow } : expression.hasOwnProperty("foldChange") ? {
-	    x: rowNumber,
-	    y: columnNumber,
-	    value: +expression.foldChange,
-	    info: Object.assign({
-	      pValue: expression.pValue,
-	      foldChange: expression.foldChange,
-	      tStat: expression.tStat || "" }, infoCommonForTheRow)
-	  } : null;
-	};
-
-	var _commonPropertiesForRow = function _commonPropertiesForRow(row, config) {
-	  return Object.assign({}, { unit: unitForThisRowOfData(row, config) }, { index: row.coexpressionOfGene ? row.coexpressionOfGene.index + 1 : 0 });
-	};
-
-	var _dataPointsFromRow = _.curry(function (config, row, columnNumber) {
-	  return row.expressions.map(_.curry(__dataPointFromExpression, 4)(_commonPropertiesForRow(row, config), columnNumber)).filter(function (el) {
-	    return el;
-	  });
-	}, 3);
-
-	var unitForThisRowOfData = function unitForThisRowOfData(row, config) {
-	  return config.isDifferential ? "Log2Fold change" //this is what we use for point.value, but we don't actually use this unit for display. See Formatters.jsx.
-	  : config.isMultiExperiment ? row.experimentType === "RNASEQ_MRNA_BASELINE" ? row.name.indexOf("FANTOM") > -1 ? "TPM" : "FPKM" : "" : config.experimentAccession.indexOf("PROT") > -1 ? "" : config.description.toUpperCase().indexOf("FANTOM") > -1 ? "TPM" : "FPKM";
-	};
-
-	var _groupByExperimentType = function _groupByExperimentType(chain, config) {
-	  return chain.map(function (row, columnNumber) {
-	    return [row.experimentType, _dataPointsFromRow(config, row, columnNumber)];
-	  }).groupBy(function (experimentTypeAndRow) {
-	    return experimentTypeAndRow[0];
-	  }).mapValues(function (rows) {
-	    return rows.map(function (experimentTypeAndRow) {
-	      return experimentTypeAndRow[1];
-	    });
-	  }).mapValues(_.flatten).toPairs();
-	};
-
-	var _experimentsIntoDataSeriesByThresholds = function _experimentsIntoDataSeriesByThresholds(thresholds) {
-	  return function (experimentType, dataPoints) {
-	    return dataPoints.map(function (dataPoint) {
-	      return [_.sortedIndex(thresholds[experimentType] || thresholds.DEFAULT, dataPoint.value), dataPoint];
-	    }.bind(this));
-	  };
-	};
-
-	var getDataSeries = function getDataSeries(profilesRows, config) {
-	  var _fns = [_.lt, _.eq, _.gt].map(function (f) {
-	    return function (point) {
-	      return f(point.value, 0);
-	    };
-	  });
-	  var _belowCutoff = _fns[1];
-	  return config.isMultiExperiment ? _dataSplitByThresholds({
-	    RNASEQ_MRNA_BASELINE: [0, 10, 1000],
-	    PROTEOMICS_BASELINE: [0, 0.001, 8],
-	    DEFAULT: [0, 10, 1000]
-	  }, ["Below cutoff", "Low", "Medium", "High"], ["#eaeaea", "#45affd", "#1E74CA", "#024990"], profilesRows, config) : config.isDifferential ? _dataProportionallyInEachSeries(profilesRows, config, _fns, [["High down", "Down"], ["Below cutoff"], ["Up", "High up"]], [["#0000ff", "#8cc6ff"], ["gainsboro"], ["#e9967a", "#b22222"]]) : _dataProportionallyInEachSeries(profilesRows, config, [_belowCutoff, _.negate(_belowCutoff)], [["Below cutoff"], ["Low", "Medium", "High"]], [["gainsboro"], ["#8cc6ff", "#0000ff", "#0000b3"]]);
-	};
-	var _splitDataSetByProportion = function _splitDataSetByProportion(data, names, colours) {
-	  var sortedValues = data.map(function (point) {
-	    return point.value;
-	  }).sort(function (l, r) {
-	    return l - r;
-	  });
-	  var howManyPointsInTotal = data.length;
-	  var howManyDataSetsToSplitIn = names.length;
-	  return _bucketsIntoSeries(names, colours)(_.chain(data).map(function (point) {
-	    return [Math.floor(_.sortedIndex(sortedValues, point.value) / howManyPointsInTotal * howManyDataSetsToSplitIn), point];
-	  })).value();
-	};
-
-	var _dataProportionallyInEachSeries = function _dataProportionallyInEachSeries(profilesRows, config, filters, names, colors) {
-	  var points = _.flatten(profilesRows.map(_dataPointsFromRow(config)));
-	  return _.flatten(_.range(filters.length).map(function (i) {
-	    return _splitDataSetByProportion(points.filter(filters[i]), names[i], colors[i]);
-	  }));
-	};
-
-	var _bucketsIntoSeries = _.curry(function (names, colours, chain) {
-	  return chain.groupBy(_.spread(function (dataSeriesAssigned, point) {
-	    return dataSeriesAssigned;
-	  })).mapValues(function (bucket) {
-	    return bucket.map(_.spread(function (dataSeriesAssigned, point) {
-	      return point;
-	    }));
-	  }).transform(function (result, bucket, bucketNumber) {
-	    result[bucketNumber].data = bucket;
-	  }, _.range(names.length).map(function (i) {
-	    return {
-	      info: {
-	        name: names[i],
-	        colour: colours[i]
-	      },
-	      data: []
-	    };
-	  }));
-	}, 3);
-
-	var _dataSplitByThresholds = function _dataSplitByThresholds(thresholds, names, colours, profilesRows, config) {
-	  return _bucketsIntoSeries(names, colours)(_groupByExperimentType(_.chain(profilesRows), config).map(_.spread(_experimentsIntoDataSeriesByThresholds(thresholds))).flatten()).value();
-	};
-
-	var getTheWholeDataObject = function getTheWholeDataObject(config, rows, columnHeaders, columnGroupings) {
-	  return {
-	    xAxisCategories: getXAxisCategories(columnHeaders, columnGroupings || [], config),
-	    yAxisCategories: getYAxisCategories(rows, config),
-	    dataSeries: getDataSeries(rows, config)
-	  };
-	};
-
-	//*------------------------------------------------------------------*
-	module.exports = getTheWholeDataObject;
-
-/***/ },
-/* 617 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// Copyright Joyent, Inc. and other Node contributors.
-	//
-	// Permission is hereby granted, free of charge, to any person obtaining a
-	// copy of this software and associated documentation files (the
-	// "Software"), to deal in the Software without restriction, including
-	// without limitation the rights to use, copy, modify, merge, publish,
-	// distribute, sublicense, and/or sell copies of the Software, and to permit
-	// persons to whom the Software is furnished to do so, subject to the
-	// following conditions:
-	//
-	// The above copyright notice and this permission notice shall be included
-	// in all copies or substantial portions of the Software.
-	//
-	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-	// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-	var punycode = __webpack_require__(618);
-
-	exports.parse = urlParse;
-	exports.resolve = urlResolve;
-	exports.resolveObject = urlResolveObject;
-	exports.format = urlFormat;
-
-	exports.Url = Url;
-
-	function Url() {
-	  this.protocol = null;
-	  this.slashes = null;
-	  this.auth = null;
-	  this.host = null;
-	  this.port = null;
-	  this.hostname = null;
-	  this.hash = null;
-	  this.search = null;
-	  this.query = null;
-	  this.pathname = null;
-	  this.path = null;
-	  this.href = null;
-	}
-
-	// Reference: RFC 3986, RFC 1808, RFC 2396
-
-	// define these here so at least they only have to be
-	// compiled once on the first module load.
-	var protocolPattern = /^([a-z0-9.+-]+:)/i,
-	    portPattern = /:[0-9]*$/,
-
-	    // RFC 2396: characters reserved for delimiting URLs.
-	    // We actually just auto-escape these.
-	    delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
-
-	    // RFC 2396: characters not allowed for various reasons.
-	    unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
-
-	    // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
-	    autoEscape = ['\''].concat(unwise),
-	    // Characters that are never ever allowed in a hostname.
-	    // Note that any invalid chars are also handled, but these
-	    // are the ones that are *expected* to be seen, so we fast-path
-	    // them.
-	    nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
-	    hostEndingChars = ['/', '?', '#'],
-	    hostnameMaxLen = 255,
-	    hostnamePartPattern = /^[a-z0-9A-Z_-]{0,63}$/,
-	    hostnamePartStart = /^([a-z0-9A-Z_-]{0,63})(.*)$/,
-	    // protocols that can allow "unsafe" and "unwise" chars.
-	    unsafeProtocol = {
-	      'javascript': true,
-	      'javascript:': true
-	    },
-	    // protocols that never have a hostname.
-	    hostlessProtocol = {
-	      'javascript': true,
-	      'javascript:': true
-	    },
-	    // protocols that always contain a // bit.
-	    slashedProtocol = {
-	      'http': true,
-	      'https': true,
-	      'ftp': true,
-	      'gopher': true,
-	      'file': true,
-	      'http:': true,
-	      'https:': true,
-	      'ftp:': true,
-	      'gopher:': true,
-	      'file:': true
-	    },
-	    querystring = __webpack_require__(619);
-
-	function urlParse(url, parseQueryString, slashesDenoteHost) {
-	  if (url && isObject(url) && url instanceof Url) return url;
-
-	  var u = new Url;
-	  u.parse(url, parseQueryString, slashesDenoteHost);
-	  return u;
-	}
-
-	Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
-	  if (!isString(url)) {
-	    throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
-	  }
-
-	  var rest = url;
-
-	  // trim before proceeding.
-	  // This is to support parse stuff like "  http://foo.com  \n"
-	  rest = rest.trim();
-
-	  var proto = protocolPattern.exec(rest);
-	  if (proto) {
-	    proto = proto[0];
-	    var lowerProto = proto.toLowerCase();
-	    this.protocol = lowerProto;
-	    rest = rest.substr(proto.length);
-	  }
-
-	  // figure out if it's got a host
-	  // user@server is *always* interpreted as a hostname, and url
-	  // resolution will treat //foo/bar as host=foo,path=bar because that's
-	  // how the browser resolves relative URLs.
-	  if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
-	    var slashes = rest.substr(0, 2) === '//';
-	    if (slashes && !(proto && hostlessProtocol[proto])) {
-	      rest = rest.substr(2);
-	      this.slashes = true;
-	    }
-	  }
-
-	  if (!hostlessProtocol[proto] &&
-	      (slashes || (proto && !slashedProtocol[proto]))) {
-
-	    // there's a hostname.
-	    // the first instance of /, ?, ;, or # ends the host.
-	    //
-	    // If there is an @ in the hostname, then non-host chars *are* allowed
-	    // to the left of the last @ sign, unless some host-ending character
-	    // comes *before* the @-sign.
-	    // URLs are obnoxious.
-	    //
-	    // ex:
-	    // http://a@b@c/ => user:a@b host:c
-	    // http://a@b?@c => user:a host:c path:/?@c
-
-	    // v0.12 TODO(isaacs): This is not quite how Chrome does things.
-	    // Review our test case against browsers more comprehensively.
-
-	    // find the first instance of any hostEndingChars
-	    var hostEnd = -1;
-	    for (var i = 0; i < hostEndingChars.length; i++) {
-	      var hec = rest.indexOf(hostEndingChars[i]);
-	      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
-	        hostEnd = hec;
-	    }
-
-	    // at this point, either we have an explicit point where the
-	    // auth portion cannot go past, or the last @ char is the decider.
-	    var auth, atSign;
-	    if (hostEnd === -1) {
-	      // atSign can be anywhere.
-	      atSign = rest.lastIndexOf('@');
-	    } else {
-	      // atSign must be in auth portion.
-	      // http://a@b/c@d => host:b auth:a path:/c@d
-	      atSign = rest.lastIndexOf('@', hostEnd);
-	    }
-
-	    // Now we have a portion which is definitely the auth.
-	    // Pull that off.
-	    if (atSign !== -1) {
-	      auth = rest.slice(0, atSign);
-	      rest = rest.slice(atSign + 1);
-	      this.auth = decodeURIComponent(auth);
-	    }
-
-	    // the host is the remaining to the left of the first non-host char
-	    hostEnd = -1;
-	    for (var i = 0; i < nonHostChars.length; i++) {
-	      var hec = rest.indexOf(nonHostChars[i]);
-	      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
-	        hostEnd = hec;
-	    }
-	    // if we still have not hit it, then the entire thing is a host.
-	    if (hostEnd === -1)
-	      hostEnd = rest.length;
-
-	    this.host = rest.slice(0, hostEnd);
-	    rest = rest.slice(hostEnd);
-
-	    // pull out port.
-	    this.parseHost();
-
-	    // we've indicated that there is a hostname,
-	    // so even if it's empty, it has to be present.
-	    this.hostname = this.hostname || '';
-
-	    // if hostname begins with [ and ends with ]
-	    // assume that it's an IPv6 address.
-	    var ipv6Hostname = this.hostname[0] === '[' &&
-	        this.hostname[this.hostname.length - 1] === ']';
-
-	    // validate a little.
-	    if (!ipv6Hostname) {
-	      var hostparts = this.hostname.split(/\./);
-	      for (var i = 0, l = hostparts.length; i < l; i++) {
-	        var part = hostparts[i];
-	        if (!part) continue;
-	        if (!part.match(hostnamePartPattern)) {
-	          var newpart = '';
-	          for (var j = 0, k = part.length; j < k; j++) {
-	            if (part.charCodeAt(j) > 127) {
-	              // we replace non-ASCII char with a temporary placeholder
-	              // we need this to make sure size of hostname is not
-	              // broken by replacing non-ASCII by nothing
-	              newpart += 'x';
-	            } else {
-	              newpart += part[j];
-	            }
-	          }
-	          // we test again with ASCII char only
-	          if (!newpart.match(hostnamePartPattern)) {
-	            var validParts = hostparts.slice(0, i);
-	            var notHost = hostparts.slice(i + 1);
-	            var bit = part.match(hostnamePartStart);
-	            if (bit) {
-	              validParts.push(bit[1]);
-	              notHost.unshift(bit[2]);
-	            }
-	            if (notHost.length) {
-	              rest = '/' + notHost.join('.') + rest;
-	            }
-	            this.hostname = validParts.join('.');
-	            break;
-	          }
-	        }
-	      }
-	    }
-
-	    if (this.hostname.length > hostnameMaxLen) {
-	      this.hostname = '';
-	    } else {
-	      // hostnames are always lower case.
-	      this.hostname = this.hostname.toLowerCase();
-	    }
-
-	    if (!ipv6Hostname) {
-	      // IDNA Support: Returns a puny coded representation of "domain".
-	      // It only converts the part of the domain name that
-	      // has non ASCII characters. I.e. it dosent matter if
-	      // you call it with a domain that already is in ASCII.
-	      var domainArray = this.hostname.split('.');
-	      var newOut = [];
-	      for (var i = 0; i < domainArray.length; ++i) {
-	        var s = domainArray[i];
-	        newOut.push(s.match(/[^A-Za-z0-9_-]/) ?
-	            'xn--' + punycode.encode(s) : s);
-	      }
-	      this.hostname = newOut.join('.');
-	    }
-
-	    var p = this.port ? ':' + this.port : '';
-	    var h = this.hostname || '';
-	    this.host = h + p;
-	    this.href += this.host;
-
-	    // strip [ and ] from the hostname
-	    // the host field still retains them, though
-	    if (ipv6Hostname) {
-	      this.hostname = this.hostname.substr(1, this.hostname.length - 2);
-	      if (rest[0] !== '/') {
-	        rest = '/' + rest;
-	      }
-	    }
-	  }
-
-	  // now rest is set to the post-host stuff.
-	  // chop off any delim chars.
-	  if (!unsafeProtocol[lowerProto]) {
-
-	    // First, make 100% sure that any "autoEscape" chars get
-	    // escaped, even if encodeURIComponent doesn't think they
-	    // need to be.
-	    for (var i = 0, l = autoEscape.length; i < l; i++) {
-	      var ae = autoEscape[i];
-	      var esc = encodeURIComponent(ae);
-	      if (esc === ae) {
-	        esc = escape(ae);
-	      }
-	      rest = rest.split(ae).join(esc);
-	    }
-	  }
-
-
-	  // chop off from the tail first.
-	  var hash = rest.indexOf('#');
-	  if (hash !== -1) {
-	    // got a fragment string.
-	    this.hash = rest.substr(hash);
-	    rest = rest.slice(0, hash);
-	  }
-	  var qm = rest.indexOf('?');
-	  if (qm !== -1) {
-	    this.search = rest.substr(qm);
-	    this.query = rest.substr(qm + 1);
-	    if (parseQueryString) {
-	      this.query = querystring.parse(this.query);
-	    }
-	    rest = rest.slice(0, qm);
-	  } else if (parseQueryString) {
-	    // no query string, but parseQueryString still requested
-	    this.search = '';
-	    this.query = {};
-	  }
-	  if (rest) this.pathname = rest;
-	  if (slashedProtocol[lowerProto] &&
-	      this.hostname && !this.pathname) {
-	    this.pathname = '/';
-	  }
-
-	  //to support http.request
-	  if (this.pathname || this.search) {
-	    var p = this.pathname || '';
-	    var s = this.search || '';
-	    this.path = p + s;
-	  }
-
-	  // finally, reconstruct the href based on what has been validated.
-	  this.href = this.format();
-	  return this;
-	};
-
-	// format a parsed object into a url string
-	function urlFormat(obj) {
-	  // ensure it's an object, and not a string url.
-	  // If it's an obj, this is a no-op.
-	  // this way, you can call url_format() on strings
-	  // to clean up potentially wonky urls.
-	  if (isString(obj)) obj = urlParse(obj);
-	  if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
-	  return obj.format();
-	}
-
-	Url.prototype.format = function() {
-	  var auth = this.auth || '';
-	  if (auth) {
-	    auth = encodeURIComponent(auth);
-	    auth = auth.replace(/%3A/i, ':');
-	    auth += '@';
-	  }
-
-	  var protocol = this.protocol || '',
-	      pathname = this.pathname || '',
-	      hash = this.hash || '',
-	      host = false,
-	      query = '';
-
-	  if (this.host) {
-	    host = auth + this.host;
-	  } else if (this.hostname) {
-	    host = auth + (this.hostname.indexOf(':') === -1 ?
-	        this.hostname :
-	        '[' + this.hostname + ']');
-	    if (this.port) {
-	      host += ':' + this.port;
-	    }
-	  }
-
-	  if (this.query &&
-	      isObject(this.query) &&
-	      Object.keys(this.query).length) {
-	    query = querystring.stringify(this.query);
-	  }
-
-	  var search = this.search || (query && ('?' + query)) || '';
-
-	  if (protocol && protocol.substr(-1) !== ':') protocol += ':';
-
-	  // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
-	  // unless they had them to begin with.
-	  if (this.slashes ||
-	      (!protocol || slashedProtocol[protocol]) && host !== false) {
-	    host = '//' + (host || '');
-	    if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
-	  } else if (!host) {
-	    host = '';
-	  }
-
-	  if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
-	  if (search && search.charAt(0) !== '?') search = '?' + search;
-
-	  pathname = pathname.replace(/[?#]/g, function(match) {
-	    return encodeURIComponent(match);
-	  });
-	  search = search.replace('#', '%23');
-
-	  return protocol + host + pathname + search + hash;
-	};
-
-	function urlResolve(source, relative) {
-	  return urlParse(source, false, true).resolve(relative);
-	}
-
-	Url.prototype.resolve = function(relative) {
-	  return this.resolveObject(urlParse(relative, false, true)).format();
-	};
-
-	function urlResolveObject(source, relative) {
-	  if (!source) return relative;
-	  return urlParse(source, false, true).resolveObject(relative);
-	}
-
-	Url.prototype.resolveObject = function(relative) {
-	  if (isString(relative)) {
-	    var rel = new Url();
-	    rel.parse(relative, false, true);
-	    relative = rel;
-	  }
-
-	  var result = new Url();
-	  Object.keys(this).forEach(function(k) {
-	    result[k] = this[k];
-	  }, this);
-
-	  // hash is always overridden, no matter what.
-	  // even href="" will remove it.
-	  result.hash = relative.hash;
-
-	  // if the relative url is empty, then there's nothing left to do here.
-	  if (relative.href === '') {
-	    result.href = result.format();
-	    return result;
-	  }
-
-	  // hrefs like //foo/bar always cut to the protocol.
-	  if (relative.slashes && !relative.protocol) {
-	    // take everything except the protocol from relative
-	    Object.keys(relative).forEach(function(k) {
-	      if (k !== 'protocol')
-	        result[k] = relative[k];
-	    });
-
-	    //urlParse appends trailing / to urls like http://www.example.com
-	    if (slashedProtocol[result.protocol] &&
-	        result.hostname && !result.pathname) {
-	      result.path = result.pathname = '/';
-	    }
-
-	    result.href = result.format();
-	    return result;
-	  }
-
-	  if (relative.protocol && relative.protocol !== result.protocol) {
-	    // if it's a known url protocol, then changing
-	    // the protocol does weird things
-	    // first, if it's not file:, then we MUST have a host,
-	    // and if there was a path
-	    // to begin with, then we MUST have a path.
-	    // if it is file:, then the host is dropped,
-	    // because that's known to be hostless.
-	    // anything else is assumed to be absolute.
-	    if (!slashedProtocol[relative.protocol]) {
-	      Object.keys(relative).forEach(function(k) {
-	        result[k] = relative[k];
-	      });
-	      result.href = result.format();
-	      return result;
-	    }
-
-	    result.protocol = relative.protocol;
-	    if (!relative.host && !hostlessProtocol[relative.protocol]) {
-	      var relPath = (relative.pathname || '').split('/');
-	      while (relPath.length && !(relative.host = relPath.shift()));
-	      if (!relative.host) relative.host = '';
-	      if (!relative.hostname) relative.hostname = '';
-	      if (relPath[0] !== '') relPath.unshift('');
-	      if (relPath.length < 2) relPath.unshift('');
-	      result.pathname = relPath.join('/');
-	    } else {
-	      result.pathname = relative.pathname;
-	    }
-	    result.search = relative.search;
-	    result.query = relative.query;
-	    result.host = relative.host || '';
-	    result.auth = relative.auth;
-	    result.hostname = relative.hostname || relative.host;
-	    result.port = relative.port;
-	    // to support http.request
-	    if (result.pathname || result.search) {
-	      var p = result.pathname || '';
-	      var s = result.search || '';
-	      result.path = p + s;
-	    }
-	    result.slashes = result.slashes || relative.slashes;
-	    result.href = result.format();
-	    return result;
-	  }
-
-	  var isSourceAbs = (result.pathname && result.pathname.charAt(0) === '/'),
-	      isRelAbs = (
-	          relative.host ||
-	          relative.pathname && relative.pathname.charAt(0) === '/'
-	      ),
-	      mustEndAbs = (isRelAbs || isSourceAbs ||
-	                    (result.host && relative.pathname)),
-	      removeAllDots = mustEndAbs,
-	      srcPath = result.pathname && result.pathname.split('/') || [],
-	      relPath = relative.pathname && relative.pathname.split('/') || [],
-	      psychotic = result.protocol && !slashedProtocol[result.protocol];
-
-	  // if the url is a non-slashed url, then relative
-	  // links like ../.. should be able
-	  // to crawl up to the hostname, as well.  This is strange.
-	  // result.protocol has already been set by now.
-	  // Later on, put the first path part into the host field.
-	  if (psychotic) {
-	    result.hostname = '';
-	    result.port = null;
-	    if (result.host) {
-	      if (srcPath[0] === '') srcPath[0] = result.host;
-	      else srcPath.unshift(result.host);
-	    }
-	    result.host = '';
-	    if (relative.protocol) {
-	      relative.hostname = null;
-	      relative.port = null;
-	      if (relative.host) {
-	        if (relPath[0] === '') relPath[0] = relative.host;
-	        else relPath.unshift(relative.host);
-	      }
-	      relative.host = null;
-	    }
-	    mustEndAbs = mustEndAbs && (relPath[0] === '' || srcPath[0] === '');
-	  }
-
-	  if (isRelAbs) {
-	    // it's absolute.
-	    result.host = (relative.host || relative.host === '') ?
-	                  relative.host : result.host;
-	    result.hostname = (relative.hostname || relative.hostname === '') ?
-	                      relative.hostname : result.hostname;
-	    result.search = relative.search;
-	    result.query = relative.query;
-	    srcPath = relPath;
-	    // fall through to the dot-handling below.
-	  } else if (relPath.length) {
-	    // it's relative
-	    // throw away the existing file, and take the new path instead.
-	    if (!srcPath) srcPath = [];
-	    srcPath.pop();
-	    srcPath = srcPath.concat(relPath);
-	    result.search = relative.search;
-	    result.query = relative.query;
-	  } else if (!isNullOrUndefined(relative.search)) {
-	    // just pull out the search.
-	    // like href='?foo'.
-	    // Put this after the other two cases because it simplifies the booleans
-	    if (psychotic) {
-	      result.hostname = result.host = srcPath.shift();
-	      //occationaly the auth can get stuck only in host
-	      //this especialy happens in cases like
-	      //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
-	      var authInHost = result.host && result.host.indexOf('@') > 0 ?
-	                       result.host.split('@') : false;
-	      if (authInHost) {
-	        result.auth = authInHost.shift();
-	        result.host = result.hostname = authInHost.shift();
-	      }
-	    }
-	    result.search = relative.search;
-	    result.query = relative.query;
-	    //to support http.request
-	    if (!isNull(result.pathname) || !isNull(result.search)) {
-	      result.path = (result.pathname ? result.pathname : '') +
-	                    (result.search ? result.search : '');
-	    }
-	    result.href = result.format();
-	    return result;
-	  }
-
-	  if (!srcPath.length) {
-	    // no path at all.  easy.
-	    // we've already handled the other stuff above.
-	    result.pathname = null;
-	    //to support http.request
-	    if (result.search) {
-	      result.path = '/' + result.search;
-	    } else {
-	      result.path = null;
-	    }
-	    result.href = result.format();
-	    return result;
-	  }
-
-	  // if a url ENDs in . or .., then it must get a trailing slash.
-	  // however, if it ends in anything else non-slashy,
-	  // then it must NOT get a trailing slash.
-	  var last = srcPath.slice(-1)[0];
-	  var hasTrailingSlash = (
-	      (result.host || relative.host) && (last === '.' || last === '..') ||
-	      last === '');
-
-	  // strip single dots, resolve double dots to parent dir
-	  // if the path tries to go above the root, `up` ends up > 0
-	  var up = 0;
-	  for (var i = srcPath.length; i >= 0; i--) {
-	    last = srcPath[i];
-	    if (last == '.') {
-	      srcPath.splice(i, 1);
-	    } else if (last === '..') {
-	      srcPath.splice(i, 1);
-	      up++;
-	    } else if (up) {
-	      srcPath.splice(i, 1);
-	      up--;
-	    }
-	  }
-
-	  // if the path is allowed to go above the root, restore leading ..s
-	  if (!mustEndAbs && !removeAllDots) {
-	    for (; up--; up) {
-	      srcPath.unshift('..');
-	    }
-	  }
-
-	  if (mustEndAbs && srcPath[0] !== '' &&
-	      (!srcPath[0] || srcPath[0].charAt(0) !== '/')) {
-	    srcPath.unshift('');
-	  }
-
-	  if (hasTrailingSlash && (srcPath.join('/').substr(-1) !== '/')) {
-	    srcPath.push('');
-	  }
-
-	  var isAbsolute = srcPath[0] === '' ||
-	      (srcPath[0] && srcPath[0].charAt(0) === '/');
-
-	  // put the host back
-	  if (psychotic) {
-	    result.hostname = result.host = isAbsolute ? '' :
-	                                    srcPath.length ? srcPath.shift() : '';
-	    //occationaly the auth can get stuck only in host
-	    //this especialy happens in cases like
-	    //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
-	    var authInHost = result.host && result.host.indexOf('@') > 0 ?
-	                     result.host.split('@') : false;
-	    if (authInHost) {
-	      result.auth = authInHost.shift();
-	      result.host = result.hostname = authInHost.shift();
-	    }
-	  }
-
-	  mustEndAbs = mustEndAbs || (result.host && srcPath.length);
-
-	  if (mustEndAbs && !isAbsolute) {
-	    srcPath.unshift('');
-	  }
-
-	  if (!srcPath.length) {
-	    result.pathname = null;
-	    result.path = null;
-	  } else {
-	    result.pathname = srcPath.join('/');
-	  }
-
-	  //to support request.http
-	  if (!isNull(result.pathname) || !isNull(result.search)) {
-	    result.path = (result.pathname ? result.pathname : '') +
-	                  (result.search ? result.search : '');
-	  }
-	  result.auth = relative.auth || result.auth;
-	  result.slashes = result.slashes || relative.slashes;
-	  result.href = result.format();
-	  return result;
-	};
-
-	Url.prototype.parseHost = function() {
-	  var host = this.host;
-	  var port = portPattern.exec(host);
-	  if (port) {
-	    port = port[0];
-	    if (port !== ':') {
-	      this.port = port.substr(1);
-	    }
-	    host = host.substr(0, host.length - port.length);
-	  }
-	  if (host) this.hostname = host;
-	};
-
-	function isString(arg) {
-	  return typeof arg === "string";
-	}
-
-	function isObject(arg) {
-	  return typeof arg === 'object' && arg !== null;
-	}
-
-	function isNull(arg) {
-	  return arg === null;
-	}
-	function isNullOrUndefined(arg) {
-	  return  arg == null;
-	}
-
-
-/***/ },
-/* 618 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! https://mths.be/punycode v1.3.2 by @mathias */
-	;(function(root) {
-
-		/** Detect free variables */
-		var freeExports = typeof exports == 'object' && exports &&
-			!exports.nodeType && exports;
-		var freeModule = typeof module == 'object' && module &&
-			!module.nodeType && module;
-		var freeGlobal = typeof global == 'object' && global;
-		if (
-			freeGlobal.global === freeGlobal ||
-			freeGlobal.window === freeGlobal ||
-			freeGlobal.self === freeGlobal
-		) {
-			root = freeGlobal;
-		}
-
-		/**
-		 * The `punycode` object.
-		 * @name punycode
-		 * @type Object
-		 */
-		var punycode,
-
-		/** Highest positive signed 32-bit float value */
-		maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
-
-		/** Bootstring parameters */
-		base = 36,
-		tMin = 1,
-		tMax = 26,
-		skew = 38,
-		damp = 700,
-		initialBias = 72,
-		initialN = 128, // 0x80
-		delimiter = '-', // '\x2D'
-
-		/** Regular expressions */
-		regexPunycode = /^xn--/,
-		regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
-		regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
-
-		/** Error messages */
-		errors = {
-			'overflow': 'Overflow: input needs wider integers to process',
-			'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
-			'invalid-input': 'Invalid input'
-		},
-
-		/** Convenience shortcuts */
-		baseMinusTMin = base - tMin,
-		floor = Math.floor,
-		stringFromCharCode = String.fromCharCode,
-
-		/** Temporary variable */
-		key;
-
-		/*--------------------------------------------------------------------------*/
-
-		/**
-		 * A generic error utility function.
-		 * @private
-		 * @param {String} type The error type.
-		 * @returns {Error} Throws a `RangeError` with the applicable error message.
-		 */
-		function error(type) {
-			throw RangeError(errors[type]);
-		}
-
-		/**
-		 * A generic `Array#map` utility function.
-		 * @private
-		 * @param {Array} array The array to iterate over.
-		 * @param {Function} callback The function that gets called for every array
-		 * item.
-		 * @returns {Array} A new array of values returned by the callback function.
-		 */
-		function map(array, fn) {
-			var length = array.length;
-			var result = [];
-			while (length--) {
-				result[length] = fn(array[length]);
-			}
-			return result;
-		}
-
-		/**
-		 * A simple `Array#map`-like wrapper to work with domain name strings or email
-		 * addresses.
-		 * @private
-		 * @param {String} domain The domain name or email address.
-		 * @param {Function} callback The function that gets called for every
-		 * character.
-		 * @returns {Array} A new string of characters returned by the callback
-		 * function.
-		 */
-		function mapDomain(string, fn) {
-			var parts = string.split('@');
-			var result = '';
-			if (parts.length > 1) {
-				// In email addresses, only the domain name should be punycoded. Leave
-				// the local part (i.e. everything up to `@`) intact.
-				result = parts[0] + '@';
-				string = parts[1];
-			}
-			// Avoid `split(regex)` for IE8 compatibility. See #17.
-			string = string.replace(regexSeparators, '\x2E');
-			var labels = string.split('.');
-			var encoded = map(labels, fn).join('.');
-			return result + encoded;
-		}
-
-		/**
-		 * Creates an array containing the numeric code points of each Unicode
-		 * character in the string. While JavaScript uses UCS-2 internally,
-		 * this function will convert a pair of surrogate halves (each of which
-		 * UCS-2 exposes as separate characters) into a single code point,
-		 * matching UTF-16.
-		 * @see `punycode.ucs2.encode`
-		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
-		 * @memberOf punycode.ucs2
-		 * @name decode
-		 * @param {String} string The Unicode input string (UCS-2).
-		 * @returns {Array} The new array of code points.
-		 */
-		function ucs2decode(string) {
-			var output = [],
-			    counter = 0,
-			    length = string.length,
-			    value,
-			    extra;
-			while (counter < length) {
-				value = string.charCodeAt(counter++);
-				if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-					// high surrogate, and there is a next character
-					extra = string.charCodeAt(counter++);
-					if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-						output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-					} else {
-						// unmatched surrogate; only append this code unit, in case the next
-						// code unit is the high surrogate of a surrogate pair
-						output.push(value);
-						counter--;
-					}
-				} else {
-					output.push(value);
-				}
-			}
-			return output;
-		}
-
-		/**
-		 * Creates a string based on an array of numeric code points.
-		 * @see `punycode.ucs2.decode`
-		 * @memberOf punycode.ucs2
-		 * @name encode
-		 * @param {Array} codePoints The array of numeric code points.
-		 * @returns {String} The new Unicode string (UCS-2).
-		 */
-		function ucs2encode(array) {
-			return map(array, function(value) {
-				var output = '';
-				if (value > 0xFFFF) {
-					value -= 0x10000;
-					output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
-					value = 0xDC00 | value & 0x3FF;
-				}
-				output += stringFromCharCode(value);
-				return output;
-			}).join('');
-		}
-
-		/**
-		 * Converts a basic code point into a digit/integer.
-		 * @see `digitToBasic()`
-		 * @private
-		 * @param {Number} codePoint The basic numeric code point value.
-		 * @returns {Number} The numeric value of a basic code point (for use in
-		 * representing integers) in the range `0` to `base - 1`, or `base` if
-		 * the code point does not represent a value.
-		 */
-		function basicToDigit(codePoint) {
-			if (codePoint - 48 < 10) {
-				return codePoint - 22;
-			}
-			if (codePoint - 65 < 26) {
-				return codePoint - 65;
-			}
-			if (codePoint - 97 < 26) {
-				return codePoint - 97;
-			}
-			return base;
-		}
-
-		/**
-		 * Converts a digit/integer into a basic code point.
-		 * @see `basicToDigit()`
-		 * @private
-		 * @param {Number} digit The numeric value of a basic code point.
-		 * @returns {Number} The basic code point whose value (when used for
-		 * representing integers) is `digit`, which needs to be in the range
-		 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
-		 * used; else, the lowercase form is used. The behavior is undefined
-		 * if `flag` is non-zero and `digit` has no uppercase form.
-		 */
-		function digitToBasic(digit, flag) {
-			//  0..25 map to ASCII a..z or A..Z
-			// 26..35 map to ASCII 0..9
-			return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
-		}
-
-		/**
-		 * Bias adaptation function as per section 3.4 of RFC 3492.
-		 * http://tools.ietf.org/html/rfc3492#section-3.4
-		 * @private
-		 */
-		function adapt(delta, numPoints, firstTime) {
-			var k = 0;
-			delta = firstTime ? floor(delta / damp) : delta >> 1;
-			delta += floor(delta / numPoints);
-			for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
-				delta = floor(delta / baseMinusTMin);
-			}
-			return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
-		}
-
-		/**
-		 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
-		 * symbols.
-		 * @memberOf punycode
-		 * @param {String} input The Punycode string of ASCII-only symbols.
-		 * @returns {String} The resulting string of Unicode symbols.
-		 */
-		function decode(input) {
-			// Don't use UCS-2
-			var output = [],
-			    inputLength = input.length,
-			    out,
-			    i = 0,
-			    n = initialN,
-			    bias = initialBias,
-			    basic,
-			    j,
-			    index,
-			    oldi,
-			    w,
-			    k,
-			    digit,
-			    t,
-			    /** Cached calculation results */
-			    baseMinusT;
-
-			// Handle the basic code points: let `basic` be the number of input code
-			// points before the last delimiter, or `0` if there is none, then copy
-			// the first basic code points to the output.
-
-			basic = input.lastIndexOf(delimiter);
-			if (basic < 0) {
-				basic = 0;
-			}
-
-			for (j = 0; j < basic; ++j) {
-				// if it's not a basic code point
-				if (input.charCodeAt(j) >= 0x80) {
-					error('not-basic');
-				}
-				output.push(input.charCodeAt(j));
-			}
-
-			// Main decoding loop: start just after the last delimiter if any basic code
-			// points were copied; start at the beginning otherwise.
-
-			for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
-
-				// `index` is the index of the next character to be consumed.
-				// Decode a generalized variable-length integer into `delta`,
-				// which gets added to `i`. The overflow checking is easier
-				// if we increase `i` as we go, then subtract off its starting
-				// value at the end to obtain `delta`.
-				for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
-
-					if (index >= inputLength) {
-						error('invalid-input');
-					}
-
-					digit = basicToDigit(input.charCodeAt(index++));
-
-					if (digit >= base || digit > floor((maxInt - i) / w)) {
-						error('overflow');
-					}
-
-					i += digit * w;
-					t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-
-					if (digit < t) {
-						break;
-					}
-
-					baseMinusT = base - t;
-					if (w > floor(maxInt / baseMinusT)) {
-						error('overflow');
-					}
-
-					w *= baseMinusT;
-
-				}
-
-				out = output.length + 1;
-				bias = adapt(i - oldi, out, oldi == 0);
-
-				// `i` was supposed to wrap around from `out` to `0`,
-				// incrementing `n` each time, so we'll fix that now:
-				if (floor(i / out) > maxInt - n) {
-					error('overflow');
-				}
-
-				n += floor(i / out);
-				i %= out;
-
-				// Insert `n` at position `i` of the output
-				output.splice(i++, 0, n);
-
-			}
-
-			return ucs2encode(output);
-		}
-
-		/**
-		 * Converts a string of Unicode symbols (e.g. a domain name label) to a
-		 * Punycode string of ASCII-only symbols.
-		 * @memberOf punycode
-		 * @param {String} input The string of Unicode symbols.
-		 * @returns {String} The resulting Punycode string of ASCII-only symbols.
-		 */
-		function encode(input) {
-			var n,
-			    delta,
-			    handledCPCount,
-			    basicLength,
-			    bias,
-			    j,
-			    m,
-			    q,
-			    k,
-			    t,
-			    currentValue,
-			    output = [],
-			    /** `inputLength` will hold the number of code points in `input`. */
-			    inputLength,
-			    /** Cached calculation results */
-			    handledCPCountPlusOne,
-			    baseMinusT,
-			    qMinusT;
-
-			// Convert the input in UCS-2 to Unicode
-			input = ucs2decode(input);
-
-			// Cache the length
-			inputLength = input.length;
-
-			// Initialize the state
-			n = initialN;
-			delta = 0;
-			bias = initialBias;
-
-			// Handle the basic code points
-			for (j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
-				if (currentValue < 0x80) {
-					output.push(stringFromCharCode(currentValue));
-				}
-			}
-
-			handledCPCount = basicLength = output.length;
-
-			// `handledCPCount` is the number of code points that have been handled;
-			// `basicLength` is the number of basic code points.
-
-			// Finish the basic string - if it is not empty - with a delimiter
-			if (basicLength) {
-				output.push(delimiter);
-			}
-
-			// Main encoding loop:
-			while (handledCPCount < inputLength) {
-
-				// All non-basic code points < n have been handled already. Find the next
-				// larger one:
-				for (m = maxInt, j = 0; j < inputLength; ++j) {
-					currentValue = input[j];
-					if (currentValue >= n && currentValue < m) {
-						m = currentValue;
-					}
-				}
-
-				// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
-				// but guard against overflow
-				handledCPCountPlusOne = handledCPCount + 1;
-				if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
-					error('overflow');
-				}
-
-				delta += (m - n) * handledCPCountPlusOne;
-				n = m;
-
-				for (j = 0; j < inputLength; ++j) {
-					currentValue = input[j];
-
-					if (currentValue < n && ++delta > maxInt) {
-						error('overflow');
-					}
-
-					if (currentValue == n) {
-						// Represent delta as a generalized variable-length integer
-						for (q = delta, k = base; /* no condition */; k += base) {
-							t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-							if (q < t) {
-								break;
-							}
-							qMinusT = q - t;
-							baseMinusT = base - t;
-							output.push(
-								stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
-							);
-							q = floor(qMinusT / baseMinusT);
-						}
-
-						output.push(stringFromCharCode(digitToBasic(q, 0)));
-						bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
-						delta = 0;
-						++handledCPCount;
-					}
-				}
-
-				++delta;
-				++n;
-
-			}
-			return output.join('');
-		}
-
-		/**
-		 * Converts a Punycode string representing a domain name or an email address
-		 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
-		 * it doesn't matter if you call it on a string that has already been
-		 * converted to Unicode.
-		 * @memberOf punycode
-		 * @param {String} input The Punycoded domain name or email address to
-		 * convert to Unicode.
-		 * @returns {String} The Unicode representation of the given Punycode
-		 * string.
-		 */
-		function toUnicode(input) {
-			return mapDomain(input, function(string) {
-				return regexPunycode.test(string)
-					? decode(string.slice(4).toLowerCase())
-					: string;
-			});
-		}
-
-		/**
-		 * Converts a Unicode string representing a domain name or an email address to
-		 * Punycode. Only the non-ASCII parts of the domain name will be converted,
-		 * i.e. it doesn't matter if you call it with a domain that's already in
-		 * ASCII.
-		 * @memberOf punycode
-		 * @param {String} input The domain name or email address to convert, as a
-		 * Unicode string.
-		 * @returns {String} The Punycode representation of the given domain name or
-		 * email address.
-		 */
-		function toASCII(input) {
-			return mapDomain(input, function(string) {
-				return regexNonASCII.test(string)
-					? 'xn--' + encode(string)
-					: string;
-			});
-		}
-
-		/*--------------------------------------------------------------------------*/
-
-		/** Define the public API */
-		punycode = {
-			/**
-			 * A string representing the current Punycode.js version number.
-			 * @memberOf punycode
-			 * @type String
-			 */
-			'version': '1.3.2',
-			/**
-			 * An object of methods to convert from JavaScript's internal character
-			 * representation (UCS-2) to Unicode code points, and back.
-			 * @see <https://mathiasbynens.be/notes/javascript-encoding>
-			 * @memberOf punycode
-			 * @type Object
-			 */
-			'ucs2': {
-				'decode': ucs2decode,
-				'encode': ucs2encode
-			},
-			'decode': decode,
-			'encode': encode,
-			'toASCII': toASCII,
-			'toUnicode': toUnicode
-		};
-
-		/** Expose `punycode` */
-		// Some AMD build optimizers, like r.js, check for specific condition patterns
-		// like the following:
-		if (
-			true
-		) {
-			!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
-				return punycode;
-			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else if (freeExports && freeModule) {
-			if (module.exports == freeExports) { // in Node.js or RingoJS v0.8.0+
-				freeModule.exports = punycode;
-			} else { // in Narwhal or RingoJS v0.7.0-
-				for (key in punycode) {
-					punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
-				}
-			}
-		} else { // in Rhino or a web browser
-			root.punycode = punycode;
-		}
-
-	}(this));
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module), (function() { return this; }())))
-
-/***/ },
-/* 619 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.decode = exports.parse = __webpack_require__(620);
-	exports.encode = exports.stringify = __webpack_require__(621);
-
-
-/***/ },
-/* 620 */
-/***/ function(module, exports) {
-
-	// Copyright Joyent, Inc. and other Node contributors.
-	//
-	// Permission is hereby granted, free of charge, to any person obtaining a
-	// copy of this software and associated documentation files (the
-	// "Software"), to deal in the Software without restriction, including
-	// without limitation the rights to use, copy, modify, merge, publish,
-	// distribute, sublicense, and/or sell copies of the Software, and to permit
-	// persons to whom the Software is furnished to do so, subject to the
-	// following conditions:
-	//
-	// The above copyright notice and this permission notice shall be included
-	// in all copies or substantial portions of the Software.
-	//
-	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-	// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-	'use strict';
-
-	// If obj.hasOwnProperty has been overridden, then calling
-	// obj.hasOwnProperty(prop) will break.
-	// See: https://github.com/joyent/node/issues/1707
-	function hasOwnProperty(obj, prop) {
-	  return Object.prototype.hasOwnProperty.call(obj, prop);
-	}
-
-	module.exports = function(qs, sep, eq, options) {
-	  sep = sep || '&';
-	  eq = eq || '=';
-	  var obj = {};
-
-	  if (typeof qs !== 'string' || qs.length === 0) {
-	    return obj;
-	  }
-
-	  var regexp = /\+/g;
-	  qs = qs.split(sep);
-
-	  var maxKeys = 1000;
-	  if (options && typeof options.maxKeys === 'number') {
-	    maxKeys = options.maxKeys;
-	  }
-
-	  var len = qs.length;
-	  // maxKeys <= 0 means that we should not limit keys count
-	  if (maxKeys > 0 && len > maxKeys) {
-	    len = maxKeys;
-	  }
-
-	  for (var i = 0; i < len; ++i) {
-	    var x = qs[i].replace(regexp, '%20'),
-	        idx = x.indexOf(eq),
-	        kstr, vstr, k, v;
-
-	    if (idx >= 0) {
-	      kstr = x.substr(0, idx);
-	      vstr = x.substr(idx + 1);
-	    } else {
-	      kstr = x;
-	      vstr = '';
-	    }
-
-	    k = decodeURIComponent(kstr);
-	    v = decodeURIComponent(vstr);
-
-	    if (!hasOwnProperty(obj, k)) {
-	      obj[k] = v;
-	    } else if (Array.isArray(obj[k])) {
-	      obj[k].push(v);
-	    } else {
-	      obj[k] = [obj[k], v];
-	    }
-	  }
-
-	  return obj;
-	};
-
-
-/***/ },
-/* 621 */
-/***/ function(module, exports) {
-
-	// Copyright Joyent, Inc. and other Node contributors.
-	//
-	// Permission is hereby granted, free of charge, to any person obtaining a
-	// copy of this software and associated documentation files (the
-	// "Software"), to deal in the Software without restriction, including
-	// without limitation the rights to use, copy, modify, merge, publish,
-	// distribute, sublicense, and/or sell copies of the Software, and to permit
-	// persons to whom the Software is furnished to do so, subject to the
-	// following conditions:
-	//
-	// The above copyright notice and this permission notice shall be included
-	// in all copies or substantial portions of the Software.
-	//
-	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-	// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-	'use strict';
-
-	var stringifyPrimitive = function(v) {
-	  switch (typeof v) {
-	    case 'string':
-	      return v;
-
-	    case 'boolean':
-	      return v ? 'true' : 'false';
-
-	    case 'number':
-	      return isFinite(v) ? v : '';
-
-	    default:
-	      return '';
-	  }
-	};
-
-	module.exports = function(obj, sep, eq, name) {
-	  sep = sep || '&';
-	  eq = eq || '=';
-	  if (obj === null) {
-	    obj = undefined;
-	  }
-
-	  if (typeof obj === 'object') {
-	    return Object.keys(obj).map(function(k) {
-	      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
-	      if (Array.isArray(obj[k])) {
-	        return obj[k].map(function(v) {
-	          return ks + encodeURIComponent(stringifyPrimitive(v));
-	        }).join(sep);
-	      } else {
-	        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
-	      }
-	    }).join(sep);
-
-	  }
-
-	  if (!name) return '';
-	  return encodeURIComponent(stringifyPrimitive(name)) + eq +
-	         encodeURIComponent(stringifyPrimitive(obj));
-	};
-
-
-/***/ },
-/* 622 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
-	//
-	// Permission is hereby granted, free of charge, to any person obtaining a
-	// copy of this software and associated documentation files (the
-	// "Software"), to deal in the Software without restriction, including
-	// without limitation the rights to use, copy, modify, merge, publish,
-	// distribute, sublicense, and/or sell copies of the Software, and to permit
-	// persons to whom the Software is furnished to do so, subject to the
-	// following conditions:
-	//
-	// The above copyright notice and this permission notice shall be included
-	// in all copies or substantial portions of the Software.
-	//
-	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-	// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-	// resolves . and .. elements in a path array with directory names there
-	// must be no slashes, empty elements, or device names (c:\) in the array
-	// (so also no leading and trailing slashes - it does not distinguish
-	// relative and absolute paths)
-	function normalizeArray(parts, allowAboveRoot) {
-	  // if the path tries to go above the root, `up` ends up > 0
-	  var up = 0;
-	  for (var i = parts.length - 1; i >= 0; i--) {
-	    var last = parts[i];
-	    if (last === '.') {
-	      parts.splice(i, 1);
-	    } else if (last === '..') {
-	      parts.splice(i, 1);
-	      up++;
-	    } else if (up) {
-	      parts.splice(i, 1);
-	      up--;
-	    }
-	  }
-
-	  // if the path is allowed to go above the root, restore leading ..s
-	  if (allowAboveRoot) {
-	    for (; up--; up) {
-	      parts.unshift('..');
-	    }
-	  }
-
-	  return parts;
-	}
-
-	// Split a filename into [root, dir, basename, ext], unix version
-	// 'root' is just a slash, or nothing.
-	var splitPathRe =
-	    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-	var splitPath = function(filename) {
-	  return splitPathRe.exec(filename).slice(1);
-	};
-
-	// path.resolve([from ...], to)
-	// posix version
-	exports.resolve = function() {
-	  var resolvedPath = '',
-	      resolvedAbsolute = false;
-
-	  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-	    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-	    // Skip empty and invalid entries
-	    if (typeof path !== 'string') {
-	      throw new TypeError('Arguments to path.resolve must be strings');
-	    } else if (!path) {
-	      continue;
-	    }
-
-	    resolvedPath = path + '/' + resolvedPath;
-	    resolvedAbsolute = path.charAt(0) === '/';
-	  }
-
-	  // At this point the path should be resolved to a full absolute path, but
-	  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-	  // Normalize the path
-	  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-	    return !!p;
-	  }), !resolvedAbsolute).join('/');
-
-	  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-	};
-
-	// path.normalize(path)
-	// posix version
-	exports.normalize = function(path) {
-	  var isAbsolute = exports.isAbsolute(path),
-	      trailingSlash = substr(path, -1) === '/';
-
-	  // Normalize the path
-	  path = normalizeArray(filter(path.split('/'), function(p) {
-	    return !!p;
-	  }), !isAbsolute).join('/');
-
-	  if (!path && !isAbsolute) {
-	    path = '.';
-	  }
-	  if (path && trailingSlash) {
-	    path += '/';
-	  }
-
-	  return (isAbsolute ? '/' : '') + path;
-	};
-
-	// posix version
-	exports.isAbsolute = function(path) {
-	  return path.charAt(0) === '/';
-	};
-
-	// posix version
-	exports.join = function() {
-	  var paths = Array.prototype.slice.call(arguments, 0);
-	  return exports.normalize(filter(paths, function(p, index) {
-	    if (typeof p !== 'string') {
-	      throw new TypeError('Arguments to path.join must be strings');
-	    }
-	    return p;
-	  }).join('/'));
-	};
-
-
-	// path.relative(from, to)
-	// posix version
-	exports.relative = function(from, to) {
-	  from = exports.resolve(from).substr(1);
-	  to = exports.resolve(to).substr(1);
-
-	  function trim(arr) {
-	    var start = 0;
-	    for (; start < arr.length; start++) {
-	      if (arr[start] !== '') break;
-	    }
-
-	    var end = arr.length - 1;
-	    for (; end >= 0; end--) {
-	      if (arr[end] !== '') break;
-	    }
-
-	    if (start > end) return [];
-	    return arr.slice(start, end - start + 1);
-	  }
-
-	  var fromParts = trim(from.split('/'));
-	  var toParts = trim(to.split('/'));
-
-	  var length = Math.min(fromParts.length, toParts.length);
-	  var samePartsLength = length;
-	  for (var i = 0; i < length; i++) {
-	    if (fromParts[i] !== toParts[i]) {
-	      samePartsLength = i;
-	      break;
-	    }
-	  }
-
-	  var outputParts = [];
-	  for (var i = samePartsLength; i < fromParts.length; i++) {
-	    outputParts.push('..');
-	  }
-
-	  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-	  return outputParts.join('/');
-	};
-
-	exports.sep = '/';
-	exports.delimiter = ':';
-
-	exports.dirname = function(path) {
-	  var result = splitPath(path),
-	      root = result[0],
-	      dir = result[1];
-
-	  if (!root && !dir) {
-	    // No dirname whatsoever
-	    return '.';
-	  }
-
-	  if (dir) {
-	    // It has a dirname, strip trailing slash
-	    dir = dir.substr(0, dir.length - 1);
-	  }
-
-	  return root + dir;
-	};
-
-
-	exports.basename = function(path, ext) {
-	  var f = splitPath(path)[2];
-	  // TODO: make this comparison case-insensitive on windows?
-	  if (ext && f.substr(-1 * ext.length) === ext) {
-	    f = f.substr(0, f.length - ext.length);
-	  }
-	  return f;
-	};
-
-
-	exports.extname = function(path) {
-	  return splitPath(path)[3];
-	};
-
-	function filter (xs, f) {
-	    if (xs.filter) return xs.filter(f);
-	    var res = [];
-	    for (var i = 0; i < xs.length; i++) {
-	        if (f(xs[i], i, xs)) res.push(xs[i]);
-	    }
-	    return res;
-	}
-
-	// String.prototype.substr - negative index don't work in IE8
-	var substr = 'ab'.substr(-1) === 'b'
-	    ? function (str, start, len) { return str.substr(start, len) }
-	    : function (str, start, len) {
-	        if (start < 0) start = str.length + start;
-	        return str.substr(start, len);
-	    }
-	;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(28)))
-
-/***/ },
-/* 623 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./gsea_go-icon.png": 624,
-		"./gsea_interpro-icon.png": 625,
-		"./gsea_reactome-icon.png": 626,
-		"./ma-plot-icon.png": 627
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 623;
-
-
-/***/ },
-/* 624 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "5faee84bd1cf86bc62432d4065523c39.png";
-
-/***/ },
-/* 625 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "e5bd8b95955895136e36bc4722d71cf0.png";
-
-/***/ },
-/* 626 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "4d9b25a425f08c8f240a14045f694819.png";
-
-/***/ },
-/* 627 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "6b3ed826d015fcfafd268718f1d4d39c.png";
-
-/***/ },
-/* 628 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(138);
-	var Button = __webpack_require__(389);
-	var FormattersFactory = __webpack_require__(629);
-	var TooltipsFactory = __webpack_require__(633);
-	var PropTypes = __webpack_require__(615);
-	var Show = __webpack_require__(641);
-	var _ = __webpack_require__(18);
-
-	module.exports = React.createClass({
-	    displayName: "Heatmap with settings",
-
-	    propTypes: {
-	        loadResult: PropTypes.LoadResult,
-	        googleAnalyticsCallback: React.PropTypes.func.isRequired,
-	        ontologyIdsToHighlight: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	        onOntologyIdIsUnderFocus: React.PropTypes.func.isRequired
-	    },
-
-	    getInitialState: function getInitialState() {
-	        return {
-	            ordering: "Default",
-	            filtersSelection: this._filtersInitially(),
-	            coexpressionsShown: 0,
-	            zoom: false
-	        };
-	    },
-	    _getFilterSelection: function _getFilterSelection(name) {
-	        return (this.state.filtersSelection.find(function (f) {
-	            return f.name == name;
-	        }) || { selected: [] }).selected;
-	    },
-	    _onUserZoom: function _onUserZoom(zoomedIn) {
-	        this.setState({ zoom: zoomedIn });
-	    },
-	    _heatmapDataToPresent: function _heatmapDataToPresent() {
-	        var _this = this;
-
-	        return __webpack_require__(791).manipulate({
-	            keepSeries: function keepSeries(series) {
-	                return _this._getFilterSelection(_this._expressionLevelInSelectedBucketFilter().name).includes(series.info.name);
-	            },
-	            keepRow: function keepRow(row) {
-	                return !row.info.index || row.info.index <= _this.state.coexpressionsShown;
-	            },
-	            keepColumn: function keepColumn(columnHeader) {
-	                return _this._columnHeadersThatColumnGroupingFiltersSayWeCanInclude().length == 0 || _this._columnHeadersThatColumnGroupingFiltersSayWeCanInclude().includes(columnHeader.label);
-	            },
-	            ordering: this.props.loadResult.orderings[this.state.ordering],
-	            allowEmptyColumns: this.props.loadResult.heatmapConfig.isExperimentPage && _.isEqual(this._filtersInitially(), this._filtersCurrently())
-	        }, this.props.loadResult.heatmapData);
-	    },
-	    _columnHeadersThatColumnGroupingFiltersSayWeCanInclude: function _columnHeadersThatColumnGroupingFiltersSayWeCanInclude() {
-	        var _this2 = this;
-
-	        return this._columnBelongsToGroupingFilterPerGrouping().map(function (groupingFilter) {
-	            return groupingFilter.name;
-	        }).map(function (name) {
-	            return _this2._getFilterSelection(name);
-	        }).reduce(function (l, r) {
-	            return l.concat(r);
-	        }, []);
-	    },
-	    _labels: function _labels() {
-	        return this.props.loadResult.heatmapData.dataSeries.map(function (e) {
-	            return {
-	                colour: e.info.colour,
-	                name: e.info.name
-	            };
-	        });
-	    },
-	    _orderings: function _orderings() {
-	        var _this3 = this;
-
-	        return {
-	            available: Object.keys(this.props.loadResult.orderings),
-	            selected: this.state.ordering,
-	            onSelect: function onSelect(orderingChosen) {
-	                _this3.setState({ ordering: orderingChosen });
-	            }
-	        };
-	    },
-	    __filters__: function __filters__() {
-	        return [this._expressionLevelInSelectedBucketFilter()].concat(this._columnBelongsToGroupingFilterPerGrouping());
-	    },
-	    _filtersInitially: function _filtersInitially() {
-	        return this.__filters__().map(function (filter) {
-	            return {
-	                name: filter.name,
-	                selected: filter.values
-	            };
-	        });
-	    },
-	    _filtersCurrently: function _filtersCurrently() {
-	        var _this4 = this;
-
-	        return this.__filters__().map(function (_filter) {
-	            return Object.assign({}, _filter, { selected: _this4._getFilterSelection(_filter.name) });
-	        });
-	    },
-	    _expressionLevelInSelectedBucketFilter: function _expressionLevelInSelectedBucketFilter() {
-	        return {
-	            name: "Expression Value" + (this.props.loadResult.heatmapConfig.isExperimentPage ? " \u2013 relative" : ""),
-	            values: this.props.loadResult.heatmapData.dataSeries.map(function (e) {
-	                return e.info.name;
-	            })
-	        };
-	    },
-	    _columnBelongsToGroupingFilterPerGrouping: function _columnBelongsToGroupingFilterPerGrouping() {
-	        var groupingTriplets = _.flattenDeep(this.props.loadResult.heatmapData.xAxisCategories.reduce(function (acc, columnHeader) {
-	            var groupingTriplets = columnHeader.info.groupings.map(function (grouping) {
-	                return grouping.values.map(function (groupingValue) {
-	                    return {
-	                        name: grouping.name,
-	                        groupingLabel: groupingValue.label,
-	                        columnLabel: columnHeader.label
-	                    };
-	                });
-	            });
-	            acc.push(groupingTriplets);
-
-	            return acc;
-	        }, []));
-
-	        var groupingNames = _.uniq(groupingTriplets.map(function (groupingTriplet) {
-	            return groupingTriplet.name;
-	        }));
-
-	        return groupingNames.map(function (groupingName) {
-	            var columnLabels = _.uniq(groupingTriplets.filter(function (groupingTriplet) {
-	                return groupingTriplet.name === groupingName;
-	            }).map(function (groupingTriplet) {
-	                return groupingTriplet.columnLabel;
-	            }));
-
-	            return {
-	                name: groupingName,
-	                values: columnLabels,
-	                valueGroupings: _.uniq(groupingTriplets.map(function (groupingTriplet) {
-	                    return groupingTriplet.groupingLabel;
-	                })).sort().map(function (groupingLabel) {
-	                    return [groupingLabel, _.sortedUniq(groupingTriplets.filter(function (groupingTriplet) {
-	                        return groupingTriplet.name === groupingName && groupingTriplet.groupingLabel === groupingLabel;
-	                    }).map(function (groupingTriplet) {
-	                        return groupingTriplet.columnLabel;
-	                    }))];
-	                })
-	            };
-	        });
-	    },
-	    _onFilterChange: function _onFilterChange(newFiltersSelection) {
-	        this.setState({ filtersSelection: newFiltersSelection });
-	    },
-	    _legend: function _legend() {
-	        var _this5 = this;
-
-	        //See properties required for HeatmapLegendBox
-	        return this.props.loadResult.heatmapConfig.isExperimentPage ? null : this.props.loadResult.heatmapData.dataSeries.map(function (e, ix) {
-	            return {
-	                key: e.info.name,
-	                name: e.info.name,
-	                colour: e.info.colour,
-	                on: _this5._getFilterSelection(_this5._expressionLevelInSelectedBucketFilter().name).includes(e.info.name)
-	            };
-	        });
-	    },
-	    _coexpressionOption: function _coexpressionOption() {
-	        var _this6 = this;
-
-	        return this.props.loadResult.heatmapConfig.coexpressions && {
-	            geneName: this.props.loadResult.heatmapConfig.coexpressions.coexpressedGene,
-	            numCoexpressionsVisible: this.state.coexpressionsShown,
-	            numCoexpressionsAvailable: this.props.loadResult.heatmapConfig.coexpressions.numCoexpressionsAvailable,
-	            showCoexpressionsCallback: function showCoexpressionsCallback(e) {
-	                _this6.setState({ coexpressionsShown: e });
-	            }
-	        };
-	    },
-	    render: function render() {
-	        var heatmapDataToPresent = this._heatmapDataToPresent();
-	        return Show(heatmapDataToPresent, this._orderings(), this._filtersCurrently(), this._onFilterChange, this.state.zoom, this._onUserZoom, this.props.loadResult.colorAxis || undefined, FormattersFactory(this.props.loadResult.heatmapConfig), TooltipsFactory(this.props.loadResult.heatmapConfig, heatmapDataToPresent.xAxisCategories, heatmapDataToPresent.yAxisCategories), this._legend(), this._coexpressionOption(), this.props);
-	    }
-	});
-
-/***/ },
-/* 629 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	//*------------------------------------------------------------------*
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var React = __webpack_require__(138);
-	var ReactDOMServer = __webpack_require__(630);
-	var PropTypes = __webpack_require__(615);
-	var scientificNotation = function scientificNotation(value) {
-	  return React.createElement(
-	    'b',
-	    null,
-	    __webpack_require__(631).scientificNotation(value)
-	  );
-	};
-	var escapedHtmlDecoder = __webpack_require__(13);
-
-	//*------------------------------------------------------------------*
-
-	var Tooltip = React.createClass({
-	  displayName: 'Tooltip',
-
-	  propTypes: {
-	    config: React.PropTypes.shape({
-	      isDifferential: React.PropTypes.bool.isRequired,
-	      xAxisLegendName: React.PropTypes.string.isRequired,
-	      yAxisLegendName: React.PropTypes.string.isRequired,
-	      genomeBrowserTemplate: React.PropTypes.string.isRequired
-	    }).isRequired,
-	    colour: React.PropTypes.string.isRequired,
-	    xLabel: React.PropTypes.string.isRequired,
-	    yLabel: React.PropTypes.string.isRequired,
-	    value: React.PropTypes.number.isRequired,
-	    unit: React.PropTypes.string,
-	    foldChange: React.PropTypes.number,
-	    pValue: React.PropTypes.string,
-	    tStat: React.PropTypes.string,
-	    xAxisLegendName: React.PropTypes.string
-	  }, //TODO extend this prop checker.Props for this component are created dynamically so it's important. If differential, expect p-values and fold changes, etc.
-
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      { style: { whiteSpace: "pre" } },
-	      this._div(this.props.config.yAxisLegendName, this.props.yLabel),
-	      this._div(this.props.xAxisLegendName || this.props.config.xAxisLegendName, this.props.xLabel),
-	      this.props.config.isDifferential ? [React.createElement(
-	        'div',
-	        { key: "" },
-	        this._tinySquare(),
-	        this._span("Fold change", this.props.foldChange)
-	      ), this._div("P-value", this.props.pValue, scientificNotation), this._div("T-statistic", this.props.tStat)] : React.createElement(
-	        'div',
-	        null,
-	        [this._tinySquare(), this._span("Expression level", this.props.value ? this.props.value + " " + (this.props.unit || "") : "Below cutoff")]
-	      ),
-	      !!this.props.config.genomeBrowserTemplate ? this._info("Click on the cell to show expression in the Genome Browser") : null
-	    );
-	  },
-	  _tinySquare: function _tinySquare() {
-	    return React.createElement('span', { key: "Tiny " + this.props.colour + " square",
-	      style: {
-	        border: "1px rgb(192, 192, 192) solid",
-	        marginRight: "2px",
-	        width: "6px",
-	        height: "6px",
-	        display: "inline-block",
-	        backgroundColor: this.props.colour
-	      } });
-	  },
-	  _info: function _info(text) {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'i',
-	        null,
-	        text
-	      )
-	    );
-	  },
-	  _div: function _div(name, value, format) {
-	    return name && value ? React.createElement(
-	      'div',
-	      { key: name + " " + value },
-	      name + ": ",
-	      value.length > 50 ? React.createElement('br', null) : null,
-	      (format || this._bold)(value)
-	    ) : null;
-	  },
-	  _span: function _span(name, value) {
-	    return React.createElement(
-	      'span',
-	      { key: name + " " + value },
-	      name + ": ",
-	      value.length > 50 ? React.createElement('br', null) : null,
-	      this._bold(value)
-	    );
-	  },
-	  _bold: function _bold(value) {
-	    return React.createElement(
-	      'b',
-	      null,
-	      value
-	    );
-	  }
-	});
-
-	var YAxisLabel = React.createClass({
-	  displayName: 'YAxisLabel',
-
-	  propTypes: {
-	    config: React.PropTypes.shape({
-	      atlasBaseURL: React.PropTypes.string.isRequired,
-	      isMultiExperiment: React.PropTypes.bool.isRequired
-	    }).isRequired,
-	    labelText: React.PropTypes.string.isRequired,
-	    resourceId: React.PropTypes.string.isRequired,
-	    extra: React.PropTypes.string
-	  },
-	  render: function render() {
-	    var geneNameWithLink = React.createElement(
-	      'a',
-	      { href: this.props.config.atlasBaseURL + (this.props.config.isMultiExperiment ? "/experiments/" : "/genes/") + this.props.resourceId },
-	      this.props.labelText
-	    );
-	    return this.props.extra ? React.createElement(
-	      'span',
-	      null,
-	      geneNameWithLink,
-	      React.createElement(
-	        'i',
-	        { style: { color: "black" } },
-	        "\t" + this.props.extra
-	      )
-	    ) : geneNameWithLink;
-	  }
-	});
-
-	var reactToHtml = function reactToHtml(component) {
-	  return escapedHtmlDecoder.decode(ReactDOMServer.renderToStaticMarkup(component));
-	};
-
-	var makeFormatter = function makeFormatter(config) {
-	  return {
-	    xAxis: function Formatter(value) {
-	      return value.label;
-	    },
-	    xAxisStyle: {
-	      fontSize: '9px',
-	      cursor: config.isExperimentPage && config.isDifferential ? 'pointer' : 'default',
-	      textOverflow: config.isExperimentPage ? 'none' : 'ellipsis'
-	    },
-	    yAxis: function Formatter(value) {
-	      return reactToHtml(React.createElement(YAxisLabel, {
-	        config: config,
-	        labelText: value.label,
-	        resourceId: value.id,
-	        extra: value.info.designElement || "" }));
-	    },
-	    yAxisStyle: {
-	      fontSize: '10px',
-	      color: '#148ff3'
-	    },
-	    tooltip: function Formatter(series, point) {
-	      var o = {
-	        colour: point.color,
-	        xLabel: point.options.info.xLabel || series.xAxis.categories[point.x].label,
-	        yLabel: series.yAxis.categories[point.y].label,
-	        value: point.value
-	      };
-	      for (var key in point.options.info) {
-	        if (point.options.info.hasOwnProperty(key)) {
-	          o[key] = point.options.info[key];
-	        }
-	      }
-	      return reactToHtml(React.createElement(Tooltip, _extends({}, o, { config: config })));
-	    }
-	  };
-	};
-	//*------------------------------------------------------------------*
-
-	module.exports = makeFormatter;
-
-/***/ },
-/* 630 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	module.exports = __webpack_require__(284);
-
-
-/***/ },
-/* 631 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	//*------------------------------------------------------------------*
-
-	module.exports = __webpack_require__(632);
-
-/***/ },
-/* 632 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(138); // React is called in the transpiled JS files in the return statements
-
-	//*------------------------------------------------------------------*
-
-	function formatBaselineExpression(expressionLevel) {
-	    var numberExpressionLevel = +expressionLevel;
-	    return numberExpressionLevel >= 100000 || numberExpressionLevel < 0.1 ? formatScientificNotation(expressionLevel, 1) : '' + numberExpressionLevel;
-	}
-
-	// expects number in the format #E# and displays exponent in superscript
-	function formatScientificNotation(value, accuracy) {
-	    var scientificNotationString = (+value).toExponential(accuracy || 4);
-
-	    var formatParts = scientificNotationString.split(/[Ee]/);
-
-	    if (formatParts.length == 1) {
-	        return React.createElement(
-	            'span',
-	            null,
-	            value
-	        );
-	    }
-
-	    var mantissa = formatParts[0].replace(/([^\.])0+$/, "$1");
-	    var exponent = formatParts[1].replace("+", "");
-
-	    if (+exponent == 0) {
-	        return React.createElement(
-	            'span',
-	            null,
-	            mantissa
-	        );
-	    }
-
-	    return React.createElement(
-	        'span',
-	        null,
-	        mantissa !== "1" ? mantissa + ' \xD7 ' : '',
-	        '10',
-	        React.createElement(
-	            'span',
-	            { style: { 'verticalAlign': 'super' } },
-	            exponent
-	        )
-	    );
-	}
-
-	//*------------------------------------------------------------------*
-
-	exports.baselineExpression = formatBaselineExpression;
-	exports.scientificNotation = formatScientificNotation;
-
-/***/ },
-/* 633 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	/*
-	This module returns functions that take in labels of rows/columns,
-	and return content as it should appear in tooltip.
-	*/
-	//*------------------------------------------------------------------*
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var React = __webpack_require__(138);
-
-	var GeneTooltip = __webpack_require__(634);
-	__webpack_require__(635);
-
-	//*------------------------------------------------------------------*
-
-	var createColumnLabelTooltipRenderer = function createColumnLabelTooltipRenderer(heatmapConfig, xAxisCategories) {
-	  if (!heatmapConfig.isExperimentPage) {
-	    return function () {
-	      return null;
-	    };
-	  }
-
-	  var tooltipDataPerHeader = {};
-	  for (var i = 0; i < xAxisCategories.length; i++) {
-	    if (xAxisCategories[i].info.tooltip) {
-	      tooltipDataPerHeader[xAxisCategories[i].label] = xAxisCategories[i].info.tooltip;
-	    }
-	  }
-	  Object.freeze(tooltipDataPerHeader);
-
-	  var Tooltip = heatmapConfig.isDifferential ? __webpack_require__(639) : __webpack_require__(640);
-
-	  return function (columnLabel) {
-	    return tooltipDataPerHeader.hasOwnProperty(columnLabel) ? React.createElement(Tooltip, tooltipDataPerHeader[columnLabel]) : null;
-	  };
-	};
-	var createRowLabelTooltipRenderer = function createRowLabelTooltipRenderer(heatmapConfig, yAxisCategories) {
-	  //We have the labels, but we need the indentifiers to do lookups
-	  var rowHeaderPerLabel = {};
-	  for (var i = 0; i < yAxisCategories.length; i++) {
-	    rowHeaderPerLabel[yAxisCategories[i].label] = yAxisCategories[i];
-	  }
-	  Object.freeze(rowHeaderPerLabel);
-
-	  var resultCache = {};
-	  return function (rowLabel) {
-	    if (!rowHeaderPerLabel.hasOwnProperty(rowLabel)) {
-	      return null;
-	    }
-	    var bioentityIdentifier = rowHeaderPerLabel[rowLabel].id;
-	    return React.createElement(GeneTooltip, _extends({
-	      key: bioentityIdentifier,
-	      atlasBaseURL: heatmapConfig.atlasBaseURL,
-	      label: rowLabel,
-	      id: bioentityIdentifier,
-	      designElement: rowHeaderPerLabel[rowLabel].info.designElement || ""
-	    }, resultCache.hasOwnProperty(bioentityIdentifier) ? { data: resultCache[bioentityIdentifier] } : { onAjaxSuccessfulCacheResult: function onAjaxSuccessfulCacheResult(result) {
-	        resultCache[bioentityIdentifier] = result;
-	      } }));
-	  };
-	};
-
-	//TODO consider what the interface of this function should be.
-	module.exports = function (heatmapConfig, xAxisCategories, yAxisCategories) {
-	  return {
-	    row: createRowLabelTooltipRenderer(heatmapConfig, yAxisCategories),
-	    column: createColumnLabelTooltipRenderer(heatmapConfig, xAxisCategories),
-	    point: function point() {}
-	  };
-	};
-
-/***/ },
-/* 634 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	//*------------------------------------------------------------------*
-
-	var React = __webpack_require__(138);
-
-	//*------------------------------------------------------------------*
-
-	var GeneTooltip = React.createClass({
-	  displayName: 'GeneTooltip',
-
-	  propTypes: {
-	    atlasBaseURL: React.PropTypes.string.isRequired,
-	    label: React.PropTypes.string.isRequired,
-	    id: React.PropTypes.string.isRequired,
-	    designElement: React.PropTypes.string,
-	    data: React.PropTypes.shape({
-	      synonyms: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	      goterms: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	      interproterms: React.PropTypes.arrayOf(React.PropTypes.string).isRequired
-	    }),
-	    onAjaxSuccessfulCacheResult: React.PropTypes.func
-	  },
-	  getInitialState: function getInitialState(props) {
-	    return {
-	      loaded: !!this.props.data,
-	      error: false,
-	      data: this.props.data || {
-	        synonyms: [],
-	        goterms: [],
-	        interproterms: []
-	      }
-	    };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    if (this.state.loaded) {
-	      return;
-	    }
-	    //https://www.sitepoint.com/guide-vanilla-ajax-without-jquery/
-	    var xhr = new XMLHttpRequest();
-	    xhr.open('GET', this.props.atlasBaseURL + "/json/genename-tooltip?identifier=" + this.props.id, true);
-	    xhr.onreadystatechange = function () {
-	      if (xhr.readyState === 4) {
-	        //request done
-	        if (xhr.status === 200) {
-	          var result = JSON.parse(xhr.responseText);
-	          this.setState({ data: result, loaded: true });
-	          this.props.onAjaxSuccessfulCacheResult && this.props.onAjaxSuccessfulCacheResult(result);
-	        } else {
-	          this.setState({ error: xhr.status, loaded: true });
-	        }
-	      }
-	    }.bind(this);
-	    xhr.send();
-	  },
-	  _row: function _row(name, values) {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'span',
-	        { className: 'propertyName' },
-	        name
-	      ),
-	      React.createElement(
-	        'span',
-	        { className: 'propertyValues' },
-	        values
-	      )
-	    );
-	  },
-
-	  _propertyValueList: function _propertyValueList(values) {
-	    return values.map(function (value) {
-	      return React.createElement(
-	        'span',
-	        { className: 'propertyValue', key: value },
-	        value
-	      );
-	    });
-	  },
-	  _bracketedList: function _bracketedList(values) {
-	    return values.length ? [React.createElement(
-	      'span',
-	      { key: '(' },
-	      "("
-	    )].concat(this._propertyValueList(values)).concat([React.createElement(
-	      'span',
-	      { key: ')' },
-	      ")"
-	    )]) : [];
-	  },
-
-
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      { className: 'gxaGeneTooltip' },
-	      this._row(this.props.label, this._bracketedList([].concat.apply([], [this.props.label].concat(this.state.data.synonyms).indexOf(this.props.id) == -1 ? [this.props.id] : [], this.state.data.synonyms))),
-	      this.props.designElement ? this._row("Design element:", this._propertyValueList([this.props.designElement])) : null,
-	      this.state.data.goterms.length ? this._row("Gene ontology terms:", this._propertyValueList(this.state.data.goterms)) : null,
-	      this.state.data.interproterms.length ? this._row("Interpro terms:", this._propertyValueList(this.state.data.interproterms)) : null,
-	      this.state.loading ? React.createElement(
-	        'div',
-	        null,
-	        '...'
-	      ) : null,
-	      this.state.error ? React.createElement(
-	        'div',
-	        null,
-	        "Error: " + this.state.error
-	      ) : null
-	    );
-	  }
-	});
-
-	module.exports = GeneTooltip;
-
-/***/ },
-/* 635 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(636);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(638)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/less-loader/index.js!./Tooltips.less", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/less-loader/index.js!./Tooltips.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 636 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(637)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".gxaTooltip {\n  border: solid transparent;\n  color: darkslategray;\n  padding: 2px;\n  font: 10px Verdana, Helvetica, Arial, sans-serif;\n  background-color: floralwhite;\n}\n.gxaTooltip table {\n  margin: 0;\n  /* overrides ebi-visual.css:134 */\n  background-color: white;\n  border: 1px solid lightgrey;\n  border-collapse: collapse;\n}\n.gxaTooltip th {\n  border-bottom: 1px solid lightgrey;\n  background-color: floralwhite;\n}\n.gxaTooltip td {\n  border: 1px solid lightgrey;\n}\n.gxaTooltip td,\n.gxaTooltip .gxaTooltip th {\n  vertical-align: middle;\n  padding: 8px;\n}\n.gxaGeneTooltip {\n  border: solid transparent;\n  color: darkslategray;\n  padding: 2px;\n  font: 10px Verdana, Helvetica, Arial, sans-serif;\n  background-color: floralwhite;\n  max-width: 250px;\n  text-align: justify;\n}\n.gxaGeneTooltip table {\n  margin: 0;\n  /* overrides ebi-visual.css:134 */\n  background-color: white;\n  border: 1px solid lightgrey;\n  border-collapse: collapse;\n}\n.gxaGeneTooltip th {\n  border-bottom: 1px solid lightgrey;\n  background-color: floralwhite;\n}\n.gxaGeneTooltip td {\n  border: 1px solid lightgrey;\n}\n.gxaGeneTooltip td,\n.gxaGeneTooltip .gxaTooltip th {\n  vertical-align: middle;\n  padding: 8px;\n}\n.gxaGeneTooltip .propertyName {\n  color: brown;\n  font-weight: bold;\n  display: inline-block;\n  text-align: left;\n  margin-right: 5px;\n}\n.gxaGeneTooltip .propertyValue {\n  display: inline-block;\n  text-align: center;\n  background-color: #dfd5d5;\n}\n.gxaGeneTooltip .propertyValue:first-child {\n  margin-left: 5px;\n}\n.gxaGeneTooltip .propertyValue + .propertyValue {\n  margin-left: 5px;\n}\n.gxaContrastTooltip {\n  border: solid transparent;\n  color: darkslategray;\n  padding: 2px;\n  font: 10px Verdana, Helvetica, Arial, sans-serif;\n  background-color: floralwhite;\n  max-width: 500px;\n  display: inline-block;\n}\n.gxaContrastTooltip table {\n  margin: 0;\n  /* overrides ebi-visual.css:134 */\n  background-color: white;\n  border: 1px solid lightgrey;\n  border-collapse: collapse;\n}\n.gxaContrastTooltip th {\n  border-bottom: 1px solid lightgrey;\n  background-color: floralwhite;\n}\n.gxaContrastTooltip td {\n  border: 1px solid lightgrey;\n}\n.gxaContrastTooltip td,\n.gxaContrastTooltip .gxaTooltip th {\n  vertical-align: middle;\n  padding: 8px;\n}\n.gxaContrastTooltip .contrastPlots .info {\n  font-style: italic;\n  font-size: xsmall;\n  align-content: right;\n  text-align: right;\n}\n.gxaFactorTooltip {\n  border: solid transparent;\n  color: darkslategray;\n  padding: 2px;\n  font: 10px Verdana, Helvetica, Arial, sans-serif;\n  background-color: floralwhite;\n  max-width: 600px;\n}\n.gxaFactorTooltip table {\n  margin: 0;\n  /* overrides ebi-visual.css:134 */\n  background-color: white;\n  border: 1px solid lightgrey;\n  border-collapse: collapse;\n}\n.gxaFactorTooltip th {\n  border-bottom: 1px solid lightgrey;\n  background-color: floralwhite;\n}\n.gxaFactorTooltip td {\n  border: 1px solid lightgrey;\n}\n.gxaFactorTooltip td,\n.gxaFactorTooltip .gxaTooltip th {\n  vertical-align: middle;\n  padding: 8px;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 637 */
-/***/ function(module, exports) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	// css base code, injected by the css-loader
-	module.exports = function() {
-		var list = [];
-
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-
-		// import a list of modules into the list
-		list.i = function(modules, mediaQuery) {
-			if(typeof modules === "string")
-				modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for(var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if(typeof id === "number")
-					alreadyImportedModules[id] = true;
-			}
-			for(i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if(mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if(mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
-	};
-
-
-/***/ },
-/* 638 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isOldIE = memoize(function() {
-			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0,
-		styleElementsInsertedAtTop = [];
-
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
-
-		options = options || {};
-		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
-		// By default, add <style> tags to the bottom of <head>.
-		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
-
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
-
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
-
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
-
-	function insertStyleElement(options, styleElement) {
-		var head = getHeadElement();
-		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-		if (options.insertAt === "top") {
-			if(!lastStyleElementInsertedAtTop) {
-				head.insertBefore(styleElement, head.firstChild);
-			} else if(lastStyleElementInsertedAtTop.nextSibling) {
-				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-			} else {
-				head.appendChild(styleElement);
-			}
-			styleElementsInsertedAtTop.push(styleElement);
-		} else if (options.insertAt === "bottom") {
-			head.appendChild(styleElement);
-		} else {
-			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-		}
-	}
-
-	function removeStyleElement(styleElement) {
-		styleElement.parentNode.removeChild(styleElement);
-		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
-		if(idx >= 0) {
-			styleElementsInsertedAtTop.splice(idx, 1);
-		}
-	}
-
-	function createStyleElement(options) {
-		var styleElement = document.createElement("style");
-		styleElement.type = "text/css";
-		insertStyleElement(options, styleElement);
-		return styleElement;
-	}
-
-	function createLinkElement(options) {
-		var linkElement = document.createElement("link");
-		linkElement.rel = "stylesheet";
-		insertStyleElement(options, linkElement);
-		return linkElement;
-	}
-
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
-
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement(options));
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else if(obj.sourceMap &&
-			typeof URL === "function" &&
-			typeof URL.createObjectURL === "function" &&
-			typeof URL.revokeObjectURL === "function" &&
-			typeof Blob === "function" &&
-			typeof btoa === "function") {
-			styleElement = createLinkElement(options);
-			update = updateLink.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-				if(styleElement.href)
-					URL.revokeObjectURL(styleElement.href);
-			};
-		} else {
-			styleElement = createStyleElement(options);
-			update = applyToTag.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-			};
-		}
-
-		update(obj);
-
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
-
-	var replaceText = (function () {
-		var textStore = [];
-
-		return function (index, replacement) {
-			textStore[index] = replacement;
-			return textStore.filter(Boolean).join('\n');
-		};
-	})();
-
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
-
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
-
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-
-		if(media) {
-			styleElement.setAttribute("media", media)
-		}
-
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
-
-	function updateLink(linkElement, obj) {
-		var css = obj.css;
-		var sourceMap = obj.sourceMap;
-
-		if(sourceMap) {
-			// http://stackoverflow.com/a/26603875
-			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-		}
-
-		var blob = new Blob([css], { type: "text/css" });
-
-		var oldSrc = linkElement.href;
-
-		linkElement.href = URL.createObjectURL(blob);
-
-		if(oldSrc)
-			URL.revokeObjectURL(oldSrc);
-	}
-
-
-/***/ },
-/* 639 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	//*------------------------------------------------------------------*
-
-	var React = __webpack_require__(138);
-
-	//*------------------------------------------------------------------*
-
-	var contrastTablePropTypes = {
-	    experimentDescription: React.PropTypes.string.isRequired,
-	    contrastDescription: React.PropTypes.string.isRequired,
-	    testReplicates: React.PropTypes.number.isRequired,
-	    referenceReplicates: React.PropTypes.number.isRequired,
-	    properties: React.PropTypes.arrayOf(React.PropTypes.shape({
-	        contrastPropertyType: React.PropTypes.string,
-	        propertyName: React.PropTypes.string.isRequired,
-	        referenceValue: React.PropTypes.string.isRequired,
-	        testValue: React.PropTypes.string.isRequired
-	    }))
-	};
-
-	var ContrastTooltipTable = React.createClass({
-	    displayName: "ContrastTooltipTable",
-
-	    propTypes: contrastTablePropTypes,
-
-	    propertyRow: function propertyRow(property) {
-	        if (!property.testValue && !property.referenceValue) {
-	            return null;
-	        }
-
-	        function isFactor(property) {
-	            return property.contrastPropertyType === "FACTOR";
-	        }
-
-	        var style = { whiteSpace: "normal" };
-
-	        if (isFactor(property)) {
-	            style.fontWeight = "bold";
-	        } else {
-	            style.color = "gray";
-	        }
-
-	        return React.createElement(
-	            "tr",
-	            { key: property.contrastPropertyType + "-" + property.propertyName },
-	            React.createElement(
-	                "td",
-	                { style: style },
-	                property.propertyName
-	            ),
-	            React.createElement(
-	                "td",
-	                { style: style },
-	                property.testValue
-	            ),
-	            React.createElement(
-	                "td",
-	                { style: style },
-	                property.referenceValue
-	            )
-	        );
-	    },
-
-	    render: function render() {
-	        return React.createElement(
-	            "div",
-	            null,
-	            React.createElement(
-	                "div",
-	                { id: "contrastExperimentDescription", style: { fontWeight: "bold", color: "blue", textAlign: "center" } },
-	                this.props.experimentDescription
-	            ),
-	            React.createElement(
-	                "div",
-	                { id: "contrastDescription", style: { textAlign: "center" } },
-	                this.props.contrastDescription
-	            ),
-	            React.createElement(
-	                "table",
-	                { style: { padding: "0px", margin: "0px", width: "100%" } },
-	                React.createElement(
-	                    "thead",
-	                    null,
-	                    React.createElement(
-	                        "tr",
-	                        null,
-	                        React.createElement(
-	                            "th",
-	                            null,
-	                            "Property"
-	                        ),
-	                        React.createElement(
-	                            "th",
-	                            null,
-	                            "Test value (N=",
-	                            this.props.testReplicates,
-	                            ")"
-	                        ),
-	                        React.createElement(
-	                            "th",
-	                            null,
-	                            "Reference value (N=",
-	                            this.props.referenceReplicates,
-	                            ")"
-	                        )
-	                    )
-	                ),
-	                React.createElement(
-	                    "tbody",
-	                    null,
-	                    this.props.properties.map(this.propertyRow)
-	                )
-	            )
-	        );
-	    }
-	});
-
-	var ContrastTooltip = React.createClass({
-	    displayName: "ContrastTooltip",
-
-	    propTypes: Object.assign({
-	        resources: React.PropTypes.arrayOf(React.PropTypes.shape({
-	            type: React.PropTypes.oneOf(["gsea_go", "gsea_interpro", "gsea_reactome", "ma-plot"]).isRequired,
-	            uri: React.PropTypes.string.isRequired
-	        })).isRequired
-	    }, contrastTablePropTypes),
-
-	    render: function render() {
-	        var descriptions = {
-	            "gsea_go": "Click to view GO terms enrichment analysis plot",
-	            "gsea_interpro": "Click to view Interpro domains enrichment analysis plot",
-	            "gsea_reactome": "Click to view Reactome pathways enrichment analysis plot",
-	            "ma-plot": "Click to view MA plot for the contrast across all genes"
-	        };
-	        return React.createElement(
-	            "div",
-	            { className: "gxaContrastTooltip" },
-	            React.createElement(ContrastTooltipTable, this.props),
-	            React.createElement(
-	                "div",
-	                { className: "contrastPlots" },
-	                React.createElement(
-	                    "span",
-	                    null,
-	                    this.props.resources.length && React.createElement(
-	                        "span",
-	                        null,
-	                        " Available plots: "
-	                    ),
-	                    this.props.resources.map(function (resource) {
-	                        return React.createElement(
-	                            "a",
-	                            {
-	                                href: resource.uri,
-	                                key: resource.type,
-	                                title: descriptions[resource.type],
-	                                style: { textDecoration: "none" },
-	                                target: "_blank" },
-	                            React.createElement("img", { src: resource.icon })
-	                        );
-	                    })
-	                ),
-	                React.createElement(
-	                    "div",
-	                    { className: "info" },
-	                    " Click label to interact with tooltip"
-	                )
-	            )
-	        );
-	    }
-	});
-
-	//*------------------------------------------------------------------*
-
-	module.exports = ContrastTooltip;
-
-/***/ },
-/* 640 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	//*------------------------------------------------------------------*
-
-	var React = __webpack_require__(138);
-
-	//*------------------------------------------------------------------*
-
-	var FactorTooltip = React.createClass({
-	  displayName: 'FactorTooltip',
-
-
-	  propertyRow: function propertyRow(property) {
-	    if (!property.testValue) {
-	      return null;
-	    }
-
-	    function isFactor(property) {
-	      return property.contrastPropertyType === 'FACTOR';
-	    }
-
-	    var style = { 'whiteSpace': 'normal' };
-
-	    if (isFactor(property)) {
-	      style['fontWeight'] = 'bold';
-	    } else {
-	      style['color'] = 'gray';
-	    }
-
-	    return React.createElement(
-	      'tr',
-	      { key: property.propertyName },
-	      React.createElement(
-	        'td',
-	        { style: style },
-	        property.propertyName
-	      ),
-	      React.createElement(
-	        'td',
-	        { style: style },
-	        property.testValue
-	      )
-	    );
-	  },
-
-	  render: function render() {
-	    var _this = this;
-
-	    var propertyNames = this.props.properties.map(function (e) {
-	      return e.propertyName;
-	    }).filter(function (e, ix, self) {
-	      return self.indexOf(e) == ix;
-	    });
-
-	    return React.createElement(
-	      'div',
-	      { className: 'gxaFactorTooltip' },
-	      React.createElement(
-	        'table',
-	        null,
-	        React.createElement(
-	          'thead',
-	          null,
-	          React.createElement(
-	            'tr',
-	            null,
-	            React.createElement(
-	              'th',
-	              null,
-	              'Property'
-	            ),
-	            React.createElement(
-	              'th',
-	              null,
-	              'Value',
-	              this.props.replicates ? " (N=" + this.props.replicates + ")" : ""
-	            )
-	          )
-	        ),
-	        React.createElement(
-	          'tbody',
-	          null,
-	          propertyNames.map(function (propertyName) {
-	            var values = _this.props.properties.filter(function (e) {
-	              return e.propertyName == propertyName;
-	            }).map(function (e) {
-	              return e.testValue;
-	            }).filter(function (e, ix, self) {
-	              return self.indexOf(e) == ix;
-	            });
-	            return {
-	              propertyName: propertyName,
-	              testValue: values.length ? values.reduce(function (l, r) {
-	                return l + ", " + r;
-	              }) : ""
-	            };
-	          }).map(this.propertyRow)
-	        )
-	      )
-	    );
-	  }
-	});
-
-	//*------------------------------------------------------------------*
-
-	module.exports = FactorTooltip;
-
-/***/ },
-/* 641 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var React = __webpack_require__(138);
-	var PropTypes = __webpack_require__(615);
-	var Button = __webpack_require__(389);
-	var DownloadProfilesButton = __webpack_require__(642);
-	var HeatmapCanvas = __webpack_require__(666);
-	var OrderingsDropdown = __webpack_require__(667);
-	var SettingsModal = __webpack_require__(668);
-	var TooltipStateManager = __webpack_require__(770);
-	var CoexpressionOption = __webpack_require__(784);
-
-	__webpack_require__(789);
-
-	var HeatmapLegendBox = React.createClass({
-	    displayName: "HeatmapLegendBox",
-
-	    propTypes: {
-	        name: React.PropTypes.string.isRequired,
-	        colour: React.PropTypes.string.isRequired,
-	        on: React.PropTypes.bool.isRequired
-	    },
-
-	    render: function render() {
-	        return React.createElement(
-	            "div",
-	            { className: "legend-item" + (this.props.on ? "" : " legend-item-off") },
-	            React.createElement("div", { style: { background: this.props.colour }, className: "legend-rectangle" }),
-	            React.createElement(
-	                "span",
-	                { style: { verticalAlign: "middle" } },
-	                this.props.name
-	            )
-	        );
-	    }
-	});
-
-	var HeatmapOptions = React.createClass({
-	    displayName: "HeatmapOptions",
-
-	    propTypes: {
-	        marginRight: React.PropTypes.number.isRequired,
-	        downloadOptions: React.PropTypes.object.isRequired,
-	        googleAnalyticsCallback: React.PropTypes.func.isRequired,
-	        showUsageMessage: React.PropTypes.bool.isRequired,
-	        orderings: React.PropTypes.shape(PropTypes.Orderings),
-	        filters: React.PropTypes.arrayOf(PropTypes.Filter).isRequired,
-	        filtersSelect: React.PropTypes.func.isRequired,
-	        disableSettings: React.PropTypes.bool.isRequired
-	    },
-
-	    render: function render() {
-	        var _this = this;
-
-	        return React.createElement(
-	            "div",
-	            { className: "gxaHeatmapCountAndLegend", style: { paddingBottom: "15px", position: "sticky", zIndex: "1" } },
-	            React.createElement(
-	                "div",
-	                { style: { display: "inline-block", verticalAlign: "top" } },
-	                this.props.introductoryMessage
-	            ),
-	            React.createElement(
-	                "div",
-	                { style: { display: "inline-block", verticalAlign: "top", float: "right", marginRight: this.props.marginRight } },
-	                React.createElement(
-	                    "div",
-	                    { style: { display: "inline-block" } },
-	                    React.createElement(OrderingsDropdown, {
-	                        orderings: this.props.orderings,
-	                        disabled: this.props.disableSettings
-	                    })
-	                ),
-	                React.createElement(
-	                    "div",
-	                    { style: { display: "inline-block", paddingLeft: "10px" } },
-	                    React.createElement(SettingsModal, {
-	                        filters: this.props.filters,
-	                        orderings: this.props.orderings,
-	                        propagateChosenFilterSelection: this.props.filtersSelect,
-	                        disabled: this.props.disableSettings
-	                    })
-	                ),
-	                React.createElement(
-	                    "div",
-	                    { style: { display: "inline-block", paddingLeft: "10px" } },
-	                    React.createElement(DownloadProfilesButton, _extends({}, this.props.downloadOptions, {
-	                        onDownloadCallbackForAnalytics: function onDownloadCallbackForAnalytics() {
-	                            _this.props.googleAnalyticsCallback("send", "event", "HeatmapHighcharts", "downloadData");
-	                        }
-	                    }))
-	                )
-	            ),
-	            this.props.showUsageMessage ? React.createElement(
-	                "div",
-	                { style: { fontSize: "small", color: "grey" } },
-	                "Select a section of the heatmap to zoom in"
-	            ) : null
-	        );
-	    }
-	});
-
-	var HeatmapCanvasWithTooltips = React.createClass({
-	    displayName: "HeatmapCanvasWithTooltips",
-	    render: function render() {
-	        return React.createElement(TooltipStateManager, {
-	            managedComponent: HeatmapCanvas,
-	            managedComponentProps: this.props.heatmapProps,
-	            tooltips: this.props.tooltips,
-	            onUserSelectsColumn: this.props.anatomogramCallbacks.onUserSelectsColumn,
-	            onUserSelectsRow: this.props.anatomogramCallbacks.onUserSelectsRow,
-	            onUserSelectsPoint: this.props.anatomogramCallbacks.onUserSelectsPoint,
-	            enableFreeze: this.props.enableFreeze
-	        });
-	    }
-	});
-
-	var __heatmapCanvas = function __heatmapCanvas(tooltips, anatomogramCallbacks, heatmapProps, interactiveColumnTooltips) {
-	    return !tooltips ? React.createElement(HeatmapCanvas, _extends({}, heatmapProps, anatomogramCallbacks)) : React.createElement(HeatmapCanvasWithTooltips, {
-	        heatmapProps: heatmapProps,
-	        tooltips: tooltips,
-	        anatomogramCallbacks: anatomogramCallbacks,
-	        enableFreeze: interactiveColumnTooltips
-	    });
-	};
-
-	var heatmapCanvas = function heatmapCanvas(heatmapConfig, tooltips, anatomogramCallbacks, heatmapProps) {
-	    return __heatmapCanvas(heatmapConfig.isExperimentPage && tooltips, anatomogramCallbacks, heatmapProps, heatmapConfig.isExperimentPage && heatmapConfig.isDifferential);
-	};
-
-	var anatomogramCallbacks = function anatomogramCallbacks(heatmapDataToPresent, highlightOntologyIds) {
-	    return {
-	        onUserSelectsRow: function onUserSelectsRow(rowLabel) {
-	            var y = heatmapDataToPresent.yAxisCategories.findIndex(function (e) {
-	                return e.label === rowLabel;
-	            });
-
-	            highlightOntologyIds([].concat.apply([], [].concat.apply([], heatmapDataToPresent.dataSeries.map(function (series) {
-	                return series.data;
-	            })).filter(function (point) {
-	                return point.y === y;
-	            }).map(function (point) {
-	                return point.info.xId || heatmapDataToPresent.xAxisCategories[point.x].id;
-	            }).map(function (e) {
-	                return Array.isArray(e) ? e : [e];
-	            })).filter(function (e, ix, self) {
-	                return self.indexOf(e) === ix;
-	            }));
-	        },
-	        onUserSelectsColumn: function onUserSelectsColumn(columnLabel) {
-	            highlightOntologyIds(heatmapDataToPresent.xAxisCategories.filter(function (e) {
-	                return e.label === columnLabel;
-	            }).map(function (e) {
-	                return e.id;
-	            }).concat([""])[0]);
-	        },
-	        onUserSelectsPoint: function onUserSelectsPoint(columnId) {
-	            //Column ids are, in fact, factorValueOntologyTermId's
-	            highlightOntologyIds(columnId || "");
-	        }
-	    };
-	};
-
-	var show = function show(heatmapDataToPresent, orderings, filters, filtersSelect, zoom, zoomCallback, colorAxis, formatters, tooltips, legend, coexpressions, properties) {
-	    var marginRight = 60;
-	    var heatmapConfig = properties.loadResult.heatmapConfig;
-	    return React.createElement(
-	        "div",
-	        null,
-	        React.createElement(HeatmapOptions, { marginRight: marginRight,
-	            introductoryMessage: heatmapConfig.introductoryMessage,
-	            downloadOptions: {
-	                download: {
-	                    name: heatmapConfig.shortDescription || "download",
-	                    descriptionLines: [].concat.apply([], [heatmapConfig.description, orderings.selected != "Default" ? ["Ordering: " + orderings.selected] : [], filters.filter(function (_filter) {
-	                        return _filter.selected.length < _filter.values.length;
-	                    }).map(function (_filter) {
-	                        return "Filter By " + _filter.name + ": " + (_filter.selected.length < 5 ? _filter.selected.join(", ") : _filter.selected.length) + " selected out of " + (_filter.values.length < 5 ? _filter.values.join(", ") : _filter.values.length + " filter values");
-	                    }), coexpressions ? "Including " + coexpressions.numCoexpressionsVisible + " genes with similar expression pattern" : []]),
-	                    heatmapData: heatmapDataToPresent
-	                },
-	                disclaimer: heatmapConfig.disclaimer
-	            },
-	            orderings: orderings,
-	            filters: filters,
-	            filtersSelect: filtersSelect,
-	            disableSettings: zoom,
-	            googleAnalyticsCallback: properties.googleAnalyticsCallback,
-	            showUsageMessage: heatmapDataToPresent.xAxisCategories.length > 100
-	        }),
-	        React.createElement(
-	            "div",
-	            null,
-	            heatmapDataToPresent.dataSeries.map(function (e) {
-	                return e.data;
-	            }).reduce(function (l, r) {
-	                return l.concat(r);
-	            }, []).length ? heatmapCanvas(heatmapConfig, tooltips, anatomogramCallbacks(heatmapDataToPresent, properties.onOntologyIdIsUnderFocus), {
-	                marginRight: marginRight,
-	                ontologyIdsToHighlight: properties.ontologyIdsToHighlight,
-	                heatmapData: heatmapDataToPresent,
-	                colorAxis: colorAxis,
-	                onHeatmapRedrawn: properties.onHeatmapRedrawn,
-	                formatters: formatters,
-	                genomeBrowserTemplate: heatmapConfig.genomeBrowserTemplate,
-	                onZoom: zoomCallback
-	            }) : React.createElement(
-	                "p",
-	                null,
-	                " No data in the series currently selected. "
-	            )
-	        ),
-	        legend ? React.createElement(
-	            "div",
-	            { className: "gxaHeatmapLegend" },
-	            legend.map(function (legendItemProps) {
-	                return React.createElement(HeatmapLegendBox, legendItemProps);
-	            }),
-	            React.createElement(
-	                "div",
-	                { className: "legend-item" },
-	                React.createElement("span", { className: "icon icon-generic", "data-icon": "i", "data-toggle": "tooltip", "data-placement": "bottom",
-	                    title: "Baseline expression levels in RNA-seq experiments are in FPKM or TPM. Low: 0-10, Medium: 11-1000,  High: >1000. Proteomics expression levels are mapped to low, medium, high on per experiment basis." })
-	            ),
-	            React.createElement(HeatmapLegendBox, { key: "No data available",
-	                name: "No data available",
-	                colour: "white",
-	                on: true
-	            })
-	        ) : null,
-	        coexpressions ? React.createElement(CoexpressionOption, coexpressions) : null
-	    );
-	};
-
-	module.exports = show;
-
-/***/ },
-/* 642 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(138);
-	var Modal = __webpack_require__(536);
-	var Button = __webpack_require__(389);
-	var Glyphicon = __webpack_require__(395);
-	var Disclaimers = __webpack_require__(643);
-	var PropTypes = __webpack_require__(615);
-
-	var Download = __webpack_require__(644).commenceDownload;
-	var DownloadProfilesButton = React.createClass({
-	    displayName: "DownloadProfilesButton",
-
-	    propTypes: {
-	        download: React.PropTypes.shape({
-	            name: React.PropTypes.string.isRequired,
-	            descriptionLines: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	            heatmapData: PropTypes.HeatmapData
-	        }),
-	        disclaimer: React.PropTypes.string.isRequired,
-	        onDownloadCallbackForAnalytics: React.PropTypes.func.isRequired
-	    },
-
-	    getInitialState: function getInitialState() {
-	        return { showModal: false };
-	    },
-	    _closeModal: function _closeModal() {
-	        this.setState({ showModal: false });
-	    },
-	    _disclaimer: function _disclaimer() {
-	        return this.props.disclaimer && Disclaimers[this.props.disclaimer] || { title: null, content: null };
-	    },
-	    _afterDownloadButtonClicked: function _afterDownloadButtonClicked() {
-	        if (!this._disclaimer().title && !this._disclaimer().content) {
-	            this._commenceDownload();
-	        } else {
-	            this.setState({ showModal: true });
-	        }
-	    },
-	    _commenceDownload: function _commenceDownload() {
-	        this.props.onDownloadCallbackForAnalytics();
-	        Download(this.props.download);
-	    },
-	    _commenceDownloadAndCloseModal: function _commenceDownloadAndCloseModal() {
-	        this._commenceDownload();
-	        this._closeModal();
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            "a",
-	            { onClick: this._afterDownloadButtonClicked },
-	            React.createElement(
-	                Button,
-	                { bsSize: "small" },
-	                React.createElement(Glyphicon, { glyph: "download-alt" }),
-	                " Download table content"
-	            ),
-	            React.createElement(
-	                Modal,
-	                { show: this.state.showModal, onHide: this._closeModal },
-	                React.createElement(
-	                    Modal.Header,
-	                    { closeButton: true },
-	                    React.createElement(
-	                        Modal.Title,
-	                        null,
-	                        this._disclaimer().title
-	                    )
-	                ),
-	                React.createElement(
-	                    Modal.Body,
-	                    null,
-	                    this._disclaimer().content
-	                ),
-	                React.createElement(
-	                    Modal.Footer,
-	                    null,
-	                    React.createElement(
-	                        Button,
-	                        { onClick: this._closeModal },
-	                        "Close"
-	                    ),
-	                    React.createElement(
-	                        Button,
-	                        { bsStyle: "primary", onClick: this._commenceDownloadAndCloseModal },
-	                        "Continue downloading"
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-
-	module.exports = DownloadProfilesButton;
-
-/***/ },
-/* 643 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(138);
-
-	var BlueprintText = {
-	    title: "The Blueprint project Data Reuse statement",
-	    content: React.createElement(
-	        "div",
-	        null,
-	        React.createElement(
-	            "p",
-	            null,
-	            "This document refers to the reuse of data generated by the EC funded FP7 High Impact Project, Blueprint."
-	        ),
-	        React.createElement(
-	            "p",
-	            null,
-	            "Blueprint regularly released analysis results via its ftp site and makes the raw sequence data available through the sequence archives at the EMBL-EBI. Much Blueprint data is generated from samples whose data must be released through a managed access process. For these data sets external users must apply for permission to access the data from the European Genome-phenome Archive (EGA) through the Blueprint Data Access Committee."
-	        ),
-	        React.createElement(
-	            "p",
-	            null,
-	            "The Blueprint consortium expects this data to be valuable to other researchers and in keeping with Fort Lauderdale principles data users may use the data for many studies, but are expected to allow the data producers to make the first presentations and to publish the first paper with global analyses of the data."
-	        ),
-	        React.createElement(
-	            "h4",
-	            null,
-	            "Global analyses of Project data"
-	        ),
-	        React.createElement(
-	            "p",
-	            null,
-	            "Blueprint plans to publish global analyses of the sequencing data, epigenetic marks, expression levels and variation both in the context of normal hematopoietic cells and of those neoplastic and non-neoplastic diseases studied within th econsortium. Talks, posters, and papers on all such analyses are to be published first by the Blueprint project, by approved presenters on behalf of the Project, with the Project as author. When the first major Project paper on these analyses is published, then researchers inside and outside the Project are free to present and publish using the Project data for these and other analyses."
-	        ),
-	        React.createElement(
-	            "h4",
-	            null,
-	            "Large-scale analyses of Project data"
-	        ),
-	        React.createElement(
-	            "p",
-	            null,
-	            "Groups within the Project may make presentations and publish papers on more extensive analyses of topics to be included in the main analysis presentations and papers, coincident with the main project analysis presentations and papers. The major points would be included in the main Project presentations and papers, but these additional presentations and papers allow more focused discussion of methods and results. The author list would include the Consortium."
-	        ),
-	        React.createElement(
-	            "h4",
-	            null,
-	            "Methods development using Project data"
-	        ),
-	        React.createElement(
-	            "p",
-	            null,
-	            "Researchers who have used small amounts of Project data (<= one chromosome) may present methods development posters, talks, and papers that include these data prior to the first major Project paper, without needing Project approval or authorship, although the Project should be acknowledged. Methods presentations or papers on global analyses or analyses using large amounts of Project data, on topics that the Consortium plans to examine, would be similar to large-scale analyses of Project data: researchers within the Project may make presentations or submit papers at the same time as the main Project presentations and papers, and others could do so after the Project publishes the first major analysis paper."
-	        ),
-	        React.createElement(
-	            "h4",
-	            null,
-	            "Disease studies using Project data"
-	        ),
-	        React.createElement(
-	            "p",
-	            null,
-	            "Researchers may present and publish on use of Project data in specific chromosome regions (that are not of general interest) or as summaries (such as number of differentially expressed genes in cell types assayed by Blueprint) for studies on diseases not studied by BLUEPRINT without Project approval, prior to the first major Project paper being published. The Project should not be listed as an author."
-	        ),
-	        React.createElement(
-	            "h4",
-	            null,
-	            "Authors who use data from the project must acknowledge Blueprint using the following wording"
-	        ),
-	        React.createElement(
-	            "p",
-	            null,
-	            "This study makes use of data generated by the Blueprint Consortium. A full list of the investigators who contributed to the generation of the data is available from",
-	            React.createElement(
-	                "a",
-	                { href: "http://www.blueprint-epigenome.eu" },
-	                "www.blueprint-epigenome.eu"
-	            ),
-	            ". Funding for the project was provided by the European Union's Seventh Framework Programme (FP7/2007-2013) under grant agreement no 282510 \u2013 BLUEPRINT."
-	        )
-	    )
-	};
-
-	var ZebrafishText = {
-	    title: "Data Reuse statement",
-	    content: React.createElement(
-	        "div",
-	        null,
-	        React.createElement(
-	            "p",
-	            null,
-	            "This is a pre-publication release in accordance with ",
-	            React.createElement(
-	                "a",
-	                { href: "http://www.sanger.ac.uk/datasharing/" },
-	                "the Fort Lauderdale Agreement "
-	            ),
-	            ". Feel free to search and download data on your genes of interest."
-	        ),
-	        React.createElement(
-	            "p",
-	            null,
-	            "Equally, you can use the dataset to show developmental expression profiles for specific genes in your publications."
-	        ),
-	        React.createElement(
-	            "p",
-	            null,
-	            "However, we ask that you refrain from publishing larger scale or genome-wide analyses of this dataset for 12 months from the time of deposition in Expression Atlas or until we have published our transcriptional time-course paper, whichever comes first."
-	        ),
-	        React.createElement(
-	            "p",
-	            null,
-	            "For citations in publications before the paper is out please use this link to the Expression Atlas site (",
-	            React.createElement(
-	                "a",
-	                { href: "https://www.ebi.ac.uk/gxa/experiments/E-ERAD-475" },
-	                "http://www.ebi.ac.uk/gxa/experiments/E-ERAD-475"
-	            ),
-	            ") and acknowledge us: \u201CWe would like to thank the Busch-Nentwich lab for providing RNA-seq data.\u201D"
-	        )
-	    )
-	};
-
-	module.exports = { "fortLauderdale": BlueprintText, "zebrafish": ZebrafishText };
-
-/***/ },
-/* 644 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _range = __webpack_require__(645);
-	var CommenceDownload = __webpack_require__(665);
-
-	/*
-	TODO Units? there can be both FPKMs and sometimes TPMs
-	*/
-
-	var heatmapDataIntoLinesOfData = function heatmapDataIntoLinesOfData(heatmapData) {
-
-	  var heatmapDataAsMatrix = _range(heatmapData.yAxisCategories.length).map(function (y) {
-	    return _range(heatmapData.xAxisCategories.length).map(function (x) {
-	      return "NA";
-	    });
-	  });
-	  heatmapData.dataSeries.forEach(function (series) {
-	    series.data.forEach(function (point) {
-	      heatmapDataAsMatrix[point.y][point.x] = point.value;
-	    });
-	  });
-	  return [[""].concat(heatmapData.xAxisCategories.map(function (header) {
-	    return header.label;
-	  }))].concat(heatmapData.yAxisCategories.map(function (rowLabel, ix) {
-	    return [].concat.apply([rowLabel.label], heatmapDataAsMatrix[ix]);
-	  })).map(function (line) {
-	    return line.join('\t');
-	  });
-	};
-
-	var buildUrl = function buildUrl(lines) {
-	  return 'data:text/tsv;charset=utf-8,' + encodeURI(lines.join('\n'));
-	};
-
-	exports.buildUrl = buildUrl;
-
-	exports.commenceDownload = function (args) {
-	  CommenceDownload(buildUrl(["# Downloaded from: " + window.location.href, "# Timestamp: " + new Date().toISOString()].concat(args.descriptionLines.map(function (line) {
-	    return "# " + line;
-	  }), heatmapDataIntoLinesOfData(args.heatmapData))), args.name.replace(/" +"/, "_") + ".tsv", "text/tsv");
-	};
-
-/***/ },
-/* 645 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var createRange = __webpack_require__(646);
-
-	/**
-	 * Creates an array of numbers (positive and/or negative) progressing from
-	 * `start` up to, but not including, `end`. A step of `-1` is used if a negative
-	 * `start` is specified without an `end` or `step`. If `end` is not specified,
-	 * it's set to `start` with `start` then set to `0`.
-	 *
-	 * **Note:** JavaScript follows the IEEE-754 standard for resolving
-	 * floating-point values which can produce unexpected results.
-	 *
-	 * @static
-	 * @since 0.1.0
-	 * @memberOf _
-	 * @category Util
-	 * @param {number} [start=0] The start of the range.
-	 * @param {number} end The end of the range.
-	 * @param {number} [step=1] The value to increment or decrement by.
-	 * @returns {Array} Returns the range of numbers.
-	 * @see _.inRange, _.rangeRight
-	 * @example
-	 *
-	 * _.range(4);
-	 * // => [0, 1, 2, 3]
-	 *
-	 * _.range(-4);
-	 * // => [0, -1, -2, -3]
-	 *
-	 * _.range(1, 5);
-	 * // => [1, 2, 3, 4]
-	 *
-	 * _.range(0, 20, 5);
-	 * // => [0, 5, 10, 15]
-	 *
-	 * _.range(0, -4, -1);
-	 * // => [0, -1, -2, -3]
-	 *
-	 * _.range(1, 4, 0);
-	 * // => [1, 1, 1]
-	 *
-	 * _.range(0);
-	 * // => []
-	 */
-	var range = createRange();
-
-	module.exports = range;
-
-
-/***/ },
-/* 646 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseRange = __webpack_require__(647),
-	    isIterateeCall = __webpack_require__(648),
-	    toFinite = __webpack_require__(661);
-
-	/**
-	 * Creates a `_.range` or `_.rangeRight` function.
-	 *
-	 * @private
-	 * @param {boolean} [fromRight] Specify iterating from right to left.
-	 * @returns {Function} Returns the new range function.
-	 */
-	function createRange(fromRight) {
-	  return function(start, end, step) {
-	    if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
-	      end = step = undefined;
-	    }
-	    // Ensure the sign of `-0` is preserved.
-	    start = toFinite(start);
-	    if (end === undefined) {
-	      end = start;
-	      start = 0;
-	    } else {
-	      end = toFinite(end);
-	    }
-	    step = step === undefined ? (start < end ? 1 : -1) : toFinite(step);
-	    return baseRange(start, end, step, fromRight);
-	  };
-	}
-
-	module.exports = createRange;
-
-
-/***/ },
-/* 647 */
-/***/ function(module, exports) {
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeCeil = Math.ceil,
-	    nativeMax = Math.max;
-
-	/**
-	 * The base implementation of `_.range` and `_.rangeRight` which doesn't
-	 * coerce arguments.
-	 *
-	 * @private
-	 * @param {number} start The start of the range.
-	 * @param {number} end The end of the range.
-	 * @param {number} step The value to increment or decrement by.
-	 * @param {boolean} [fromRight] Specify iterating from right to left.
-	 * @returns {Array} Returns the range of numbers.
-	 */
-	function baseRange(start, end, step, fromRight) {
-	  var index = -1,
-	      length = nativeMax(nativeCeil((end - start) / (step || 1)), 0),
-	      result = Array(length);
-
-	  while (length--) {
-	    result[fromRight ? length : ++index] = start;
-	    start += step;
-	  }
-	  return result;
-	}
-
-	module.exports = baseRange;
-
-
-/***/ },
-/* 648 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var eq = __webpack_require__(649),
-	    isArrayLike = __webpack_require__(650),
-	    isIndex = __webpack_require__(660),
-	    isObject = __webpack_require__(658);
-
-	/**
-	 * Checks if the given arguments are from an iteratee call.
-	 *
-	 * @private
-	 * @param {*} value The potential iteratee value argument.
-	 * @param {*} index The potential iteratee index or key argument.
-	 * @param {*} object The potential iteratee object argument.
-	 * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
-	 *  else `false`.
-	 */
-	function isIterateeCall(value, index, object) {
-	  if (!isObject(object)) {
-	    return false;
-	  }
-	  var type = typeof index;
-	  if (type == 'number'
-	        ? (isArrayLike(object) && isIndex(index, object.length))
-	        : (type == 'string' && index in object)
-	      ) {
-	    return eq(object[index], value);
-	  }
-	  return false;
-	}
-
-	module.exports = isIterateeCall;
-
-
-/***/ },
-/* 649 */
-/***/ function(module, exports) {
-
-	/**
-	 * Performs a
-	 * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
-	 * comparison between two values to determine if they are equivalent.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to compare.
-	 * @param {*} other The other value to compare.
-	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-	 * @example
-	 *
-	 * var object = { 'a': 1 };
-	 * var other = { 'a': 1 };
-	 *
-	 * _.eq(object, object);
-	 * // => true
-	 *
-	 * _.eq(object, other);
-	 * // => false
-	 *
-	 * _.eq('a', 'a');
-	 * // => true
-	 *
-	 * _.eq('a', Object('a'));
-	 * // => false
-	 *
-	 * _.eq(NaN, NaN);
-	 * // => true
-	 */
-	function eq(value, other) {
-	  return value === other || (value !== value && other !== other);
-	}
-
-	module.exports = eq;
-
-
-/***/ },
-/* 650 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isFunction = __webpack_require__(651),
-	    isLength = __webpack_require__(659);
-
-	/**
-	 * Checks if `value` is array-like. A value is considered array-like if it's
-	 * not a function and has a `value.length` that's an integer greater than or
-	 * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-	 * @example
-	 *
-	 * _.isArrayLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArrayLike(document.body.children);
-	 * // => true
-	 *
-	 * _.isArrayLike('abc');
-	 * // => true
-	 *
-	 * _.isArrayLike(_.noop);
-	 * // => false
-	 */
-	function isArrayLike(value) {
-	  return value != null && isLength(value.length) && !isFunction(value);
-	}
-
-	module.exports = isArrayLike;
-
-
-/***/ },
-/* 651 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseGetTag = __webpack_require__(652),
-	    isObject = __webpack_require__(658);
-
-	/** `Object#toString` result references. */
-	var asyncTag = '[object AsyncFunction]',
-	    funcTag = '[object Function]',
-	    genTag = '[object GeneratorFunction]',
-	    proxyTag = '[object Proxy]';
-
-	/**
-	 * Checks if `value` is classified as a `Function` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a function, else `false`.
-	 * @example
-	 *
-	 * _.isFunction(_);
-	 * // => true
-	 *
-	 * _.isFunction(/abc/);
-	 * // => false
-	 */
-	function isFunction(value) {
-	  if (!isObject(value)) {
-	    return false;
-	  }
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in Safari 9 which returns 'object' for typed arrays and other constructors.
-	  var tag = baseGetTag(value);
-	  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
-	}
-
-	module.exports = isFunction;
-
-
-/***/ },
-/* 652 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Symbol = __webpack_require__(653),
-	    getRawTag = __webpack_require__(656),
-	    objectToString = __webpack_require__(657);
-
-	/** `Object#toString` result references. */
-	var nullTag = '[object Null]',
-	    undefinedTag = '[object Undefined]';
-
-	/** Built-in value references. */
-	var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-	/**
-	 * The base implementation of `getTag` without fallbacks for buggy environments.
-	 *
-	 * @private
-	 * @param {*} value The value to query.
-	 * @returns {string} Returns the `toStringTag`.
-	 */
-	function baseGetTag(value) {
-	  if (value == null) {
-	    return value === undefined ? undefinedTag : nullTag;
-	  }
-	  value = Object(value);
-	  return (symToStringTag && symToStringTag in value)
-	    ? getRawTag(value)
-	    : objectToString(value);
-	}
-
-	module.exports = baseGetTag;
-
-
-/***/ },
-/* 653 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var root = __webpack_require__(654);
-
-	/** Built-in value references. */
-	var Symbol = root.Symbol;
-
-	module.exports = Symbol;
-
-
-/***/ },
-/* 654 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var freeGlobal = __webpack_require__(655);
-
-	/** Detect free variable `self`. */
-	var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-	/** Used as a reference to the global object. */
-	var root = freeGlobal || freeSelf || Function('return this')();
-
-	module.exports = root;
-
-
-/***/ },
-/* 655 */
-/***/ function(module, exports) {
-
-	/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
-	var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
-
-	module.exports = freeGlobal;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
-
-/***/ },
-/* 656 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Symbol = __webpack_require__(653);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Used to resolve the
-	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var nativeObjectToString = objectProto.toString;
-
-	/** Built-in value references. */
-	var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-	/**
-	 * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
-	 *
-	 * @private
-	 * @param {*} value The value to query.
-	 * @returns {string} Returns the raw `toStringTag`.
-	 */
-	function getRawTag(value) {
-	  var isOwn = hasOwnProperty.call(value, symToStringTag),
-	      tag = value[symToStringTag];
-
-	  try {
-	    value[symToStringTag] = undefined;
-	    var unmasked = true;
-	  } catch (e) {}
-
-	  var result = nativeObjectToString.call(value);
-	  if (unmasked) {
-	    if (isOwn) {
-	      value[symToStringTag] = tag;
-	    } else {
-	      delete value[symToStringTag];
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = getRawTag;
-
-
-/***/ },
-/* 657 */
-/***/ function(module, exports) {
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/**
-	 * Used to resolve the
-	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var nativeObjectToString = objectProto.toString;
-
-	/**
-	 * Converts `value` to a string using `Object.prototype.toString`.
-	 *
-	 * @private
-	 * @param {*} value The value to convert.
-	 * @returns {string} Returns the converted string.
-	 */
-	function objectToString(value) {
-	  return nativeObjectToString.call(value);
-	}
-
-	module.exports = objectToString;
-
-
-/***/ },
-/* 658 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is the
-	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
-	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(_.noop);
-	 * // => true
-	 *
-	 * _.isObject(null);
-	 * // => false
-	 */
-	function isObject(value) {
-	  var type = typeof value;
-	  return value != null && (type == 'object' || type == 'function');
-	}
-
-	module.exports = isObject;
-
-
-/***/ },
-/* 659 */
-/***/ function(module, exports) {
-
-	/** Used as references for various `Number` constants. */
-	var MAX_SAFE_INTEGER = 9007199254740991;
-
-	/**
-	 * Checks if `value` is a valid array-like length.
-	 *
-	 * **Note:** This method is loosely based on
-	 * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-	 * @example
-	 *
-	 * _.isLength(3);
-	 * // => true
-	 *
-	 * _.isLength(Number.MIN_VALUE);
-	 * // => false
-	 *
-	 * _.isLength(Infinity);
-	 * // => false
-	 *
-	 * _.isLength('3');
-	 * // => false
-	 */
-	function isLength(value) {
-	  return typeof value == 'number' &&
-	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-	}
-
-	module.exports = isLength;
-
-
-/***/ },
-/* 660 */
-/***/ function(module, exports) {
-
-	/** Used as references for various `Number` constants. */
-	var MAX_SAFE_INTEGER = 9007199254740991;
-
-	/** Used to detect unsigned integer values. */
-	var reIsUint = /^(?:0|[1-9]\d*)$/;
-
-	/**
-	 * Checks if `value` is a valid array-like index.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-	 */
-	function isIndex(value, length) {
-	  length = length == null ? MAX_SAFE_INTEGER : length;
-	  return !!length &&
-	    (typeof value == 'number' || reIsUint.test(value)) &&
-	    (value > -1 && value % 1 == 0 && value < length);
-	}
-
-	module.exports = isIndex;
-
-
-/***/ },
-/* 661 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var toNumber = __webpack_require__(662);
-
-	/** Used as references for various `Number` constants. */
-	var INFINITY = 1 / 0,
-	    MAX_INTEGER = 1.7976931348623157e+308;
-
-	/**
-	 * Converts `value` to a finite number.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.12.0
-	 * @category Lang
-	 * @param {*} value The value to convert.
-	 * @returns {number} Returns the converted number.
-	 * @example
-	 *
-	 * _.toFinite(3.2);
-	 * // => 3.2
-	 *
-	 * _.toFinite(Number.MIN_VALUE);
-	 * // => 5e-324
-	 *
-	 * _.toFinite(Infinity);
-	 * // => 1.7976931348623157e+308
-	 *
-	 * _.toFinite('3.2');
-	 * // => 3.2
-	 */
-	function toFinite(value) {
-	  if (!value) {
-	    return value === 0 ? value : 0;
-	  }
-	  value = toNumber(value);
-	  if (value === INFINITY || value === -INFINITY) {
-	    var sign = (value < 0 ? -1 : 1);
-	    return sign * MAX_INTEGER;
-	  }
-	  return value === value ? value : 0;
-	}
-
-	module.exports = toFinite;
-
-
-/***/ },
-/* 662 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isObject = __webpack_require__(658),
-	    isSymbol = __webpack_require__(663);
-
-	/** Used as references for various `Number` constants. */
-	var NAN = 0 / 0;
-
-	/** Used to match leading and trailing whitespace. */
-	var reTrim = /^\s+|\s+$/g;
-
-	/** Used to detect bad signed hexadecimal string values. */
-	var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
-
-	/** Used to detect binary string values. */
-	var reIsBinary = /^0b[01]+$/i;
-
-	/** Used to detect octal string values. */
-	var reIsOctal = /^0o[0-7]+$/i;
-
-	/** Built-in method references without a dependency on `root`. */
-	var freeParseInt = parseInt;
-
-	/**
-	 * Converts `value` to a number.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to process.
-	 * @returns {number} Returns the number.
-	 * @example
-	 *
-	 * _.toNumber(3.2);
-	 * // => 3.2
-	 *
-	 * _.toNumber(Number.MIN_VALUE);
-	 * // => 5e-324
-	 *
-	 * _.toNumber(Infinity);
-	 * // => Infinity
-	 *
-	 * _.toNumber('3.2');
-	 * // => 3.2
-	 */
-	function toNumber(value) {
-	  if (typeof value == 'number') {
-	    return value;
-	  }
-	  if (isSymbol(value)) {
-	    return NAN;
-	  }
-	  if (isObject(value)) {
-	    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
-	    value = isObject(other) ? (other + '') : other;
-	  }
-	  if (typeof value != 'string') {
-	    return value === 0 ? value : +value;
-	  }
-	  value = value.replace(reTrim, '');
-	  var isBinary = reIsBinary.test(value);
-	  return (isBinary || reIsOctal.test(value))
-	    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
-	    : (reIsBadHex.test(value) ? NAN : +value);
-	}
-
-	module.exports = toNumber;
-
-
-/***/ },
-/* 663 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseGetTag = __webpack_require__(652),
-	    isObjectLike = __webpack_require__(664);
-
-	/** `Object#toString` result references. */
-	var symbolTag = '[object Symbol]';
-
-	/**
-	 * Checks if `value` is classified as a `Symbol` primitive or object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
-	 * @example
-	 *
-	 * _.isSymbol(Symbol.iterator);
-	 * // => true
-	 *
-	 * _.isSymbol('abc');
-	 * // => false
-	 */
-	function isSymbol(value) {
-	  return typeof value == 'symbol' ||
-	    (isObjectLike(value) && baseGetTag(value) == symbolTag);
-	}
-
-	module.exports = isSymbol;
-
-
-/***/ },
-/* 664 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is object-like. A value is object-like if it's not `null`
-	 * and has a `typeof` result of "object".
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 * @example
-	 *
-	 * _.isObjectLike({});
-	 * // => true
-	 *
-	 * _.isObjectLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObjectLike(_.noop);
-	 * // => false
-	 *
-	 * _.isObjectLike(null);
-	 * // => false
-	 */
-	function isObjectLike(value) {
-	  return value != null && typeof value == 'object';
-	}
-
-	module.exports = isObjectLike;
-
-
-/***/ },
-/* 665 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//download.js v4.2, by dandavis; 2008-2016. [MIT] see http://danml.com/download.html for tests/usage
-	// v1 landed a FF+Chrome compat way of downloading strings to local un-named files, upgraded to use a hidden frame and optional mime
-	// v2 added named files via a[download], msSaveBlob, IE (10+) support, and window.URL support for larger+faster saves than dataURLs
-	// v3 added dataURL and Blob Input, bind-toggle arity, and legacy dataURL fallback was improved with force-download mime and base64 support. 3.1 improved safari handling.
-	// v4 adds AMD/UMD, commonJS, and plain browser support
-	// v4.1 adds url download capability via solo URL argument (same domain/CORS only)
-	// v4.2 adds semantic variable names, long (over 2MB) dataURL support, and hidden by default temp anchors
-	// https://github.com/rndme/download
-
-	(function (root, factory) {
-		if (true) {
-			// AMD. Register as an anonymous module.
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else if (typeof exports === 'object') {
-			// Node. Does not work with strict CommonJS, but
-			// only CommonJS-like environments that support module.exports,
-			// like Node.
-			module.exports = factory();
-		} else {
-			// Browser globals (root is window)
-			root.download = factory();
-	  }
-	}(this, function () {
-
-		return function download(data, strFileName, strMimeType) {
-
-			var self = window, // this script is only for browsers anyway...
-				defaultMime = "application/octet-stream", // this default mime also triggers iframe downloads
-				mimeType = strMimeType || defaultMime,
-				payload = data,
-				url = !strFileName && !strMimeType && payload,
-				anchor = document.createElement("a"),
-				toString = function(a){return String(a);},
-				myBlob = (self.Blob || self.MozBlob || self.WebKitBlob || toString),
-				fileName = strFileName || "download",
-				blob,
-				reader;
-				myBlob= myBlob.call ? myBlob.bind(self) : Blob ;
-		  
-			if(String(this)==="true"){ //reverse arguments, allowing download.bind(true, "text/xml", "export.xml") to act as a callback
-				payload=[payload, mimeType];
-				mimeType=payload[0];
-				payload=payload[1];
-			}
-
-
-			if(url && url.length< 2048){ // if no filename and no mime, assume a url was passed as the only argument
-				fileName = url.split("/").pop().split("?")[0];
-				anchor.href = url; // assign href prop to temp anchor
-			  	if(anchor.href.indexOf(url) !== -1){ // if the browser determines that it's a potentially valid url path:
-	        		var ajax=new XMLHttpRequest();
-	        		ajax.open( "GET", url, true);
-	        		ajax.responseType = 'blob';
-	        		ajax.onload= function(e){ 
-					  download(e.target.response, fileName, defaultMime);
-					};
-	        		setTimeout(function(){ ajax.send();}, 0); // allows setting custom ajax headers using the return:
-				    return ajax;
-				} // end if valid url?
-			} // end if url?
-
-
-			//go ahead and download dataURLs right away
-			if(/^data\:[\w+\-]+\/[\w+\-\.]+[,;]/.test(payload)){
-			
-				if(payload.length > (1024*1024*1.999) && myBlob !== toString ){
-					payload=dataUrlToBlob(payload);
-					mimeType=payload.type || defaultMime;
-				}else{			
-					return navigator.msSaveBlob ?  // IE10 can't do a[download], only Blobs:
-						navigator.msSaveBlob(dataUrlToBlob(payload), fileName) :
-						saver(payload) ; // everyone else can save dataURLs un-processed
-				}
-				
-			}else{//not data url, is it a string with special needs?
-				if(/([\x80-\xff])/.test(payload)){			  
-					var i=0, tempUiArr= new Uint8Array(payload.length), mx=tempUiArr.length;
-					for(i;i<mx;++i) tempUiArr[i]= payload.charCodeAt(i);
-				 	payload=new myBlob([tempUiArr], {type: mimeType});
-				}		  
-			}
-			blob = payload instanceof myBlob ?
-				payload :
-				new myBlob([payload], {type: mimeType}) ;
-
-
-			function dataUrlToBlob(strUrl) {
-				var parts= strUrl.split(/[:;,]/),
-				type= parts[1],
-				decoder= parts[2] == "base64" ? atob : decodeURIComponent,
-				binData= decoder( parts.pop() ),
-				mx= binData.length,
-				i= 0,
-				uiArr= new Uint8Array(mx);
-
-				for(i;i<mx;++i) uiArr[i]= binData.charCodeAt(i);
-
-				return new myBlob([uiArr], {type: type});
-			 }
-
-			function saver(url, winMode){
-
-				if ('download' in anchor) { //html5 A[download]
-					anchor.href = url;
-					anchor.setAttribute("download", fileName);
-					anchor.className = "download-js-link";
-					anchor.innerHTML = "downloading...";
-					anchor.style.display = "none";
-					document.body.appendChild(anchor);
-					setTimeout(function() {
-						anchor.click();
-						document.body.removeChild(anchor);
-						if(winMode===true){setTimeout(function(){ self.URL.revokeObjectURL(anchor.href);}, 250 );}
-					}, 66);
-					return true;
-				}
-
-				// handle non-a[download] safari as best we can:
-				if(/(Version)\/(\d+)\.(\d+)(?:\.(\d+))?.*Safari\//.test(navigator.userAgent)) {
-					if(/^data:/.test(url))	url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
-					if(!window.open(url)){ // popup blocked, offer direct download:
-						if(confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.")){ location.href=url; }
-					}
-					return true;
-				}
-
-				//do iframe dataURL download (old ch+FF):
-				var f = document.createElement("iframe");
-				document.body.appendChild(f);
-
-				if(!winMode && /^data:/.test(url)){ // force a mime that will download:
-					url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
-				}
-				f.src=url;
-				setTimeout(function(){ document.body.removeChild(f); }, 333);
-
-			}//end saver
-
-
-
-
-			if (navigator.msSaveBlob) { // IE10+ : (has Blob, but not a[download] or URL)
-				return navigator.msSaveBlob(blob, fileName);
-			}
-
-			if(self.URL){ // simple fast and modern way using Blob and URL:
-				saver(self.URL.createObjectURL(blob), true);
-			}else{
-				// handle non-Blob()+non-URL browsers:
-				if(typeof blob === "string" || blob.constructor===toString ){
-					try{
-						return saver( "data:" +  mimeType   + ";base64,"  +  self.btoa(blob)  );
-					}catch(y){
-						return saver( "data:" +  mimeType   + "," + encodeURIComponent(blob)  );
-					}
-				}
-
-				// Blob but not URL support:
-				reader=new FileReader();
-				reader.onload=function(e){
-					saver(this.result);
-				};
-				reader.readAsDataURL(blob);
-			}
-			return true;
-		}; /* end download() */
-	}));
-
-
-/***/ },
-/* 666 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	//*------------------------------------------------------------------*
-
-	var React = __webpack_require__(138);
-	var ReactHighcharts = __webpack_require__(604);
-	var Highcharts = ReactHighcharts.Highcharts;
-	__webpack_require__(16)(Highcharts);
-	__webpack_require__(15)(Highcharts);
-	var hash = __webpack_require__(19);
-
-	var PropTypes = __webpack_require__(615);
-
-	//*------------------------------------------------------------------*
-
-	var HeatmapCanvas = React.createClass({
-	    displayName: 'HeatmapCanvas',
-
-	    propTypes: {
-	        marginRight: React.PropTypes.number.isRequired,
-	        ontologyIdsToHighlight: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	        heatmapData: PropTypes.HeatmapData,
-	        colorAxis: React.PropTypes.object,
-	        formatters: React.PropTypes.shape({
-	            xAxis: PropTypes.Formatter,
-	            xAxisStyle: React.PropTypes.object.isRequired,
-	            yAxis: PropTypes.Formatter,
-	            yAxisStyle: React.PropTypes.object.isRequired,
-	            tooltip: PropTypes.Formatter
-	        }).isRequired,
-	        genomeBrowserTemplate: React.PropTypes.string.isRequired,
-	        onUserSelectsRow: React.PropTypes.func.isRequired,
-	        onUserSelectsColumn: React.PropTypes.func.isRequired,
-	        onUserSelectsPoint: React.PropTypes.func.isRequired,
-	        onUserClicksColumn: React.PropTypes.func,
-	        onZoom: React.PropTypes.func.isRequired
-	    },
-
-	    shouldComponentUpdate: function shouldComponentUpdate(nextProps) {
-	        return hash.MD5(nextProps.heatmapData) !== hash.MD5(this.props.heatmapData);
-	    },
-
-	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	        var chart = this.refs.chart.getChart();
-	        var forEachXNotInYsEmit = function forEachXNotInYsEmit(xs, ys, eventName) {
-	            xs.filter(function (id) {
-	                return ys.indexOf(id) == -1;
-	            }).filter(function uniq(id, ix, self) {
-	                return ix == self.indexOf(id);
-	            }).forEach(function (id) {
-	                Highcharts.fireEvent(chart, eventName, { svgPathId: id });
-	            }.bind(this));
-	        };
-	        forEachXNotInYsEmit(nextProps.ontologyIdsToHighlight, this.props.ontologyIdsToHighlight, 'handleGxaAnatomogramTissueMouseEnter');
-	        forEachXNotInYsEmit(this.props.ontologyIdsToHighlight, nextProps.ontologyIdsToHighlight, 'handleGxaAnatomogramTissueMouseLeave');
-	    },
-
-	    render: function render() {
-	        var xAxisLongestHeaderLength = Math.max.apply(null, this.props.heatmapData.xAxisCategories.map(function (category) {
-	            return category.label.length;
-	        }));
-	        var marginTop = this.props.heatmapData.xAxisCategories.length < 10 ? 30 : // labels aren’t tilted
-	        this.props.heatmapData.xAxisCategories.length < 50 ? Math.min(150, Math.round(xAxisLongestHeaderLength * 3.75)) : // labels at -45°
-	        Math.min(250, Math.round(xAxisLongestHeaderLength * 5.5)); // labels at -90°
-
-	        var dimensions = {
-	            marginTop: marginTop,
-	            marginRight: //leave space for tilted long headers
-	            //TODO the marginRight value of props used to be the same here and in top legend.
-	            //Probably it's time to get rid of this prop.
-	            this.props.marginRight * (1 + 10 / Math.pow(1 + this._countColumnsToShow(), 2)),
-	            height: Math.max(70, this._countRowsToShow() * 30 + marginTop)
-	        };
-
-	        var maxWidthFraction = 1 - Math.exp(-(0.2 + 0.05 * Math.pow(this._countColumnsToShow() + 1, 2)));
-	        return React.createElement(
-	            'div',
-	            { style: { maxWidth: maxWidthFraction * 100 + "%" } },
-	            React.createElement(ReactHighcharts, {
-	                config: this._highchartsOptions(dimensions, this.props.heatmapData),
-	                ref: 'chart' })
-	        );
-	    },
-	    _count_sToShow: function _count_sToShow(xOrY) {
-	        return [].concat.apply([], this.props.heatmapData.dataSeries.map(function (el) {
-	            return el.data;
-	        })).map(function (el) {
-	            return el[xOrY];
-	        }).sort(function (l, r) {
-	            return l - r;
-	        }).filter(function (el, ix, self) {
-	            return self.indexOf(el) == ix;
-	        }).length;
-	    },
-
-	    _countRowsToShow: function _countRowsToShow() {
-	        return this._count_sToShow("y");
-	    },
-
-	    _countColumnsToShow: function _countColumnsToShow() {
-	        //we have turned the min and max on to show empty columns in heatmap
-	        return this.props.heatmapData.xAxisCategories.length;
-	    },
-
-	    _highchartsOptions: function _highchartsOptions(dimensions, data) {
-	        var _this = this;
-
-	        return {
-	            plotOptions: {
-	                heatmap: {
-	                    turboThreshold: 0
-	                },
-	                series: {
-	                    cursor: !!this.props.genomeBrowserTemplate ? "pointer" : undefined,
-	                    point: {
-	                        events: {
-	                            mouseOver: function () {
-	                                var f = this.props.onUserSelectsPoint;
-	                                return function () {
-	                                    return f(this.options.info.xId || this.series.xAxis.categories[this.x].id, this.series.yAxis.categories[this.y].id);
-	                                };
-	                            }.bind(this)(),
-	                            mouseOut: function () {
-	                                var f = this.props.onUserSelectsColumn;
-	                                return function () {
-	                                    return f("", "");
-	                                };
-	                            }.bind(this)(),
-	                            click: !this.props.genomeBrowserTemplate ? function () {} : function () {
-	                                var x = this.series.xAxis.categories[this.x].info.trackId;
-	                                var y = this.series.yAxis.categories[this.y].info.trackId;
-	                                window.open(this.series.chart.userOptions.genomeBrowserTemplate.replace(/__x__/g, x).replace(/__y__/g, y), "_blank");
-	                            }
-	                        }
-	                    },
-
-	                    states: {
-	                        hover: {
-	                            color: '#eeec38' //#edab12 color cell on mouse over
-	                        },
-	                        select: {
-	                            color: '#eeec38'
-	                        }
-	                    }
-	                }
-	            },
-	            credits: {
-	                enabled: false //remove Highcharts text in the bottom right corner
-	            },
-	            chart: Object.assign({
-	                type: 'heatmap',
-	                spacingTop: 0,
-	                plotBorderWidth: 1,
-	                zoomType: 'x',
-	                events: {
-	                    handleGxaAnatomogramTissueMouseEnter: function handleGxaAnatomogramTissueMouseEnter(e) {
-	                        Highcharts.each(this.series, function (series) {
-	                            Highcharts.each(series.points, function (point) {
-	                                if (point.series.xAxis.categories[point.x].id === e.svgPathId) {
-	                                    point.select(true, true);
-	                                }
-	                            });
-	                        });
-	                    },
-	                    handleGxaAnatomogramTissueMouseLeave: function handleGxaAnatomogramTissueMouseLeave(e) {
-	                        var points = this.getSelectedPoints();
-	                        if (points.length > 0) {
-	                            Highcharts.each(points, function (point) {
-	                                point.select(false);
-	                            });
-	                        }
-	                    }
-	                }
-	            }, dimensions),
-	            legend: {
-	                enabled: false
-	            },
-	            title: null,
-	            colorAxis: this.props.colorAxis || undefined,
-	            xAxis: { //assays
-	                tickLength: 5,
-	                tickColor: 'rgb(192, 192, 192)',
-	                lineColor: 'rgb(192, 192, 192)',
-	                labels: {
-	                    style: this.props.formatters.xAxisStyle,
-	                    events: {
-	                        mouseover: function () {
-	                            var f = _this.props.onUserSelectsColumn;
-	                            return function () {
-	                                return f && f(this.value);
-	                            };
-	                        }(),
-	                        mouseout: function () {
-	                            var f = _this.props.onUserSelectsColumn;
-	                            return function () {
-	                                return f && f("");
-	                            };
-	                        }(),
-	                        click: function () {
-	                            var f = _this.props.onUserClicksColumn;
-	                            return function () {
-	                                return f && f(this.value);
-	                            };
-	                        }()
-	                    },
-	                    autoRotation: [-45, -90],
-	                    formatter: function () {
-	                        var f = this.props.formatters.xAxis;return function () {
-	                            return f(this.value);
-	                        };
-	                    }.bind(this)()
-	                },
-
-	                opposite: 'true',
-	                categories: data.xAxisCategories,
-	                min: 0,
-	                max: data.xAxisCategories.length - 1,
-
-	                events: {
-	                    setExtremes: function (event) {
-	                        this.props.onZoom(event.min !== undefined && event.max !== undefined);
-	                    }.bind(this)
-	                }
-	            },
-	            yAxis: { //experiments or bioentities
-	                useHTML: true,
-	                reversed: true,
-	                labels: {
-	                    style: this.props.formatters.yAxisStyle,
-	                    events: {
-	                        mouseover: function () {
-	                            var f = this.props.onUserSelectsRow;
-	                            return function () {
-	                                return f( //We assume the longest text is the callback we want
-	                                [].concat.apply([], [].concat.apply([], this.element.children).filter(function (c) {
-	                                    return !c.style || c.style.fill != "black";
-	                                }) //skip design elements
-	                                ).map(function (c) {
-	                                    return c.textContent;
-	                                }).reduce(function (l, r) {
-	                                    return l.length > r.length ? l : r;
-	                                }, ""));
-	                            };
-	                        }.bind(this)(),
-	                        mouseout: function () {
-	                            var f = this.props.onUserSelectsRow;return function () {
-	                                return f("");
-	                            };
-	                        }.bind(this)()
-	                    },
-	                    formatter: function () {
-	                        var f = this.props.formatters.yAxis;return function () {
-	                            return f(this.value);
-	                        };
-	                    }.bind(this)()
-	                },
-
-	                categories: data.yAxisCategories,
-	                title: null,
-	                gridLineWidth: 0,
-	                minorGridLineWidth: 0,
-	                endOnTick: false
-	            },
-	            tooltip: {
-	                useHTML: true,
-	                formatter: function () {
-	                    var f = this.props.formatters.tooltip;return function () {
-	                        return f(this.series, this.point);
-	                    };
-	                }.bind(this)()
-	            },
-
-	            genomeBrowserTemplate: this.props.genomeBrowserTemplate,
-	            series: data.dataSeries.map(function (e) {
-	                return {
-	                    name: e.info.name,
-	                    color: e.info.colour,
-	                    borderWidth: data.xAxisCategories.length > 200 ? 0 : 1,
-	                    borderColor: "white",
-	                    data: e.data
-	                };
-	            })
-	        };
-	    }
-	});
-
-	module.exports = HeatmapCanvas;
-
-/***/ },
-/* 667 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(138);
-	var Dropdown = __webpack_require__(422);
-	var MenuItem = __webpack_require__(535);
-	var Glyphicon = __webpack_require__(395);
-	var PropTypes = __webpack_require__(615);
-
-	var OrderingsDropdown = React.createClass({
-	    displayName: "OrderingsDropdown",
-
-	    propTypes: {
-	        orderings: PropTypes.Orderings,
-	        disabled: React.PropTypes.bool.isRequired
-	    },
-
-	    handleChange: function handleChange(eventKey, event) {
-	        this.props.orderings.onSelect(event.target.text);
-	    },
-	    _orderingIcon: function _orderingIcon(ordering) {
-	        switch (ordering) {
-	            case "Alphabetical order":
-	                return "sort-by-alphabet";
-	            case "Gene expression rank":
-	                return "sort-by-attributes-alt";
-	            case "Default":
-	                return "sort-by-order";
-	            default:
-	                return "sort-by-order";
-	        }
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            "span",
-	            null,
-	            React.createElement(
-	                Dropdown,
-	                { id: "orderings-dropdown", onSelect: this.handleChange, title: this.props.disabled ? "Reset zoom to enable sorting options" : "" },
-	                React.createElement(
-	                    Dropdown.Toggle,
-	                    { bsSize: "small", disabled: this.props.disabled },
-	                    React.createElement(Glyphicon, { glyph: this._orderingIcon(this.props.orderings.selected) }),
-	                    " ",
-	                    this.props.orderings.selected
-	                ),
-	                React.createElement(
-	                    Dropdown.Menu,
-	                    { bsSize: "small" },
-	                    this.props.orderings.available.map(function (orderingName) {
-	                        return React.createElement(
-	                            MenuItem,
-	                            { style: { textDecoration: "none" }, key: orderingName },
-	                            orderingName
-	                        );
-	                    })
-	                )
-	            )
-	        );
-	    }
-	});
-
-	module.exports = OrderingsDropdown;
-
-/***/ },
-/* 668 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var React = __webpack_require__(138);
-	var Modal = __webpack_require__(536);
-	var Button = __webpack_require__(389);
-	var Glyphicon = __webpack_require__(395);
-
-	var PropTypes = __webpack_require__(615);
-	var FlatFilter = __webpack_require__(669);
-	var GroupedFilter = __webpack_require__(738);
-	var deepEquals = __webpack_require__(739);
-
-	var SettingsModal = React.createClass({
-	    displayName: "SettingsModal",
-
-	    propTypes: {
-	        filters: React.PropTypes.arrayOf(PropTypes.Filter).isRequired,
-	        disabled: React.PropTypes.bool.isRequired,
-	        propagateChosenFilterSelection: React.PropTypes.func.isRequired
-	    },
-
-	    _filtersSelectionBeforeModalOpen: function _filtersSelectionBeforeModalOpen() {
-	        return this.props.filters.map(function (_filter) {
-	            return {
-	                name: _filter.name,
-	                selected: _filter.selected
-	            };
-	        });
-	    },
-	    getInitialState: function getInitialState() {
-	        return {
-	            filtersSelection: this._filtersSelectionBeforeModalOpen(),
-	            showModal: false
-	        };
-	    },
-	    _close: function _close() {
-	        this.setState({
-	            showModal: false
-	        });
-	    },
-	    _apply: function _apply() {
-	        this.props.propagateChosenFilterSelection(this.state.filtersSelection);
-	        this.setState({ showModal: false });
-	    },
-	    _open: function _open() {
-	        this.setState({ showModal: true,
-	            filtersSelection: this._filtersSelectionBeforeModalOpen() });
-	    },
-	    _renderFilter: function _renderFilter(_filter) {
-	        var _this = this;
-
-	        var FilterComponent = _filter.valueGroupings ? GroupedFilter : FlatFilter;
-
-	        return React.createElement(FilterComponent, _extends({
-	            key: _filter.name,
-	            propagateFilterSelection: function propagateFilterSelection(selected) {
-	                _this.setState(function (previousState) {
-	                    return {
-	                        filtersSelection: previousState.filtersSelection.map(function (filterSelection) {
-	                            return filterSelection.name == _filter.name ? Object.assign({}, filterSelection, { selected: selected }) : filterSelection;
-	                        })
-	                    };
-	                });
-	            },
-	            disabled: this.props.disabled
-	        }, _filter));
-	    },
-	    _filtersCorrespondingToCurrentSelection: function _filtersCorrespondingToCurrentSelection() {
-	        var _this2 = this;
-
-	        return this.props.filters.map(function (_filter) {
-	            return Object.assign({}, _filter, { selected: _this2.state.filtersSelection.find(function (f) {
-	                    return f.name == _filter.name;
-	                }).selected
-	            });
-	        });
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            "div",
-	            null,
-	            React.createElement(
-	                Button,
-	                { bsSize: "small", onClick: this._open, disabled: this.props.disabled, title: this.props.disabled ? "Reset zoom to enable filters" : "" },
-	                React.createElement(Glyphicon, { glyph: "equalizer" }),
-	                React.createElement(
-	                    "span",
-	                    { style: { verticalAlign: "middle" } },
-	                    " Filters"
-	                )
-	            ),
-	            React.createElement(
-	                Modal,
-	                { show: this.state.showModal, onHide: this._close, bsSize: "large" },
-	                React.createElement(
-	                    Modal.Header,
-	                    { closeButton: true },
-	                    React.createElement(
-	                        Modal.Title,
-	                        null,
-	                        "Filters"
-	                    )
-	                ),
-	                React.createElement(
-	                    Modal.Body,
-	                    null,
-	                    this._filtersCorrespondingToCurrentSelection().map(this._renderFilter)
-	                ),
-	                React.createElement(
-	                    Modal.Footer,
-	                    null,
-	                    React.createElement(
-	                        Button,
-	                        { bsStyle: "primary", onClick: this._apply },
-	                        "Apply"
-	                    ),
-	                    React.createElement(
-	                        Button,
-	                        { onClick: this._close },
-	                        "Close"
-	                    )
-	                )
-	            )
-	        );
-	    }
-	});
-
-	module.exports = SettingsModal;
-
-/***/ },
-/* 669 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(138);
-	var PropTypes = __webpack_require__(615);
-	var xor = __webpack_require__(670);
-
-	__webpack_require__(736);
-
-	var FlatFilter = React.createClass({
-	  displayName: "FlatFilter",
-
-	  propTypes: Object.assign({}, PropTypes.FilterProps, {
-	    propagateFilterSelection: React.PropTypes.func.isRequired,
-	    disabled: React.PropTypes.bool.isRequired
-	  }),
-
-	  toggleOne: function toggleOne(which, evt) {
-	    this.props.propagateFilterSelection(xor(this.props.selected, [which]));
-	  },
-	  render: function render() {
-	    var _this = this;
-
-	    return React.createElement(
-	      "div",
-	      { className: "gxaFilter" },
-	      React.createElement(
-	        "h4",
-	        null,
-	        this.props.name
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "filterBody" },
-	        React.createElement(
-	          "div",
-	          null,
-	          this.props.values.map(function (value) {
-	            return React.createElement(
-	              "div",
-	              { key: value },
-	              React.createElement("input", { type: "checkbox",
-	                value: value,
-	                onChange: function onChange(evt) {
-	                  return _this.toggleOne(value, evt);
-	                },
-	                disabled: _this.props.selectDisabled,
-	                checked: _this.props.selected.indexOf(value) > -1 }),
-	              value
-	            );
-	          })
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = FlatFilter;
-
-/***/ },
-/* 670 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var arrayFilter = __webpack_require__(671),
-	    baseRest = __webpack_require__(672),
-	    baseXor = __webpack_require__(687),
-	    isArrayLikeObject = __webpack_require__(735);
-
-	/**
-	 * Creates an array of unique values that is the
-	 * [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
-	 * of the given arrays. The order of result values is determined by the order
-	 * they occur in the arrays.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 2.4.0
-	 * @category Array
-	 * @param {...Array} [arrays] The arrays to inspect.
-	 * @returns {Array} Returns the new array of filtered values.
-	 * @see _.difference, _.without
-	 * @example
-	 *
-	 * _.xor([2, 1], [2, 3]);
-	 * // => [1, 3]
-	 */
-	var xor = baseRest(function(arrays) {
-	  return baseXor(arrayFilter(arrays, isArrayLikeObject));
-	});
-
-	module.exports = xor;
-
-
-/***/ },
-/* 671 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.filter` for arrays without support for
-	 * iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to iterate over.
-	 * @param {Function} predicate The function invoked per iteration.
-	 * @returns {Array} Returns the new filtered array.
-	 */
-	function arrayFilter(array, predicate) {
-	  var index = -1,
-	      length = array == null ? 0 : array.length,
-	      resIndex = 0,
-	      result = [];
-
-	  while (++index < length) {
-	    var value = array[index];
-	    if (predicate(value, index, array)) {
-	      result[resIndex++] = value;
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = arrayFilter;
-
-
-/***/ },
-/* 672 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var identity = __webpack_require__(673),
-	    overRest = __webpack_require__(674),
-	    setToString = __webpack_require__(676);
-
-	/**
-	 * The base implementation of `_.rest` which doesn't validate or coerce arguments.
-	 *
-	 * @private
-	 * @param {Function} func The function to apply a rest parameter to.
-	 * @param {number} [start=func.length-1] The start position of the rest parameter.
-	 * @returns {Function} Returns the new function.
-	 */
-	function baseRest(func, start) {
-	  return setToString(overRest(func, start, identity), func + '');
-	}
-
-	module.exports = baseRest;
-
-
-/***/ },
-/* 673 */
-/***/ function(module, exports) {
-
-	/**
-	 * This method returns the first argument it receives.
-	 *
-	 * @static
-	 * @since 0.1.0
-	 * @memberOf _
-	 * @category Util
-	 * @param {*} value Any value.
-	 * @returns {*} Returns `value`.
-	 * @example
-	 *
-	 * var object = { 'a': 1 };
-	 *
-	 * console.log(_.identity(object) === object);
-	 * // => true
-	 */
-	function identity(value) {
-	  return value;
-	}
-
-	module.exports = identity;
-
-
-/***/ },
-/* 674 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var apply = __webpack_require__(675);
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeMax = Math.max;
-
-	/**
-	 * A specialized version of `baseRest` which transforms the rest array.
-	 *
-	 * @private
-	 * @param {Function} func The function to apply a rest parameter to.
-	 * @param {number} [start=func.length-1] The start position of the rest parameter.
-	 * @param {Function} transform The rest array transform.
-	 * @returns {Function} Returns the new function.
-	 */
-	function overRest(func, start, transform) {
-	  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
-	  return function() {
-	    var args = arguments,
-	        index = -1,
-	        length = nativeMax(args.length - start, 0),
-	        array = Array(length);
-
-	    while (++index < length) {
-	      array[index] = args[start + index];
-	    }
-	    index = -1;
-	    var otherArgs = Array(start + 1);
-	    while (++index < start) {
-	      otherArgs[index] = args[index];
-	    }
-	    otherArgs[start] = transform(array);
-	    return apply(func, this, otherArgs);
-	  };
-	}
-
-	module.exports = overRest;
-
-
-/***/ },
-/* 675 */
-/***/ function(module, exports) {
-
-	/**
-	 * A faster alternative to `Function#apply`, this function invokes `func`
-	 * with the `this` binding of `thisArg` and the arguments of `args`.
-	 *
-	 * @private
-	 * @param {Function} func The function to invoke.
-	 * @param {*} thisArg The `this` binding of `func`.
-	 * @param {Array} args The arguments to invoke `func` with.
-	 * @returns {*} Returns the result of `func`.
-	 */
-	function apply(func, thisArg, args) {
-	  switch (args.length) {
-	    case 0: return func.call(thisArg);
-	    case 1: return func.call(thisArg, args[0]);
-	    case 2: return func.call(thisArg, args[0], args[1]);
-	    case 3: return func.call(thisArg, args[0], args[1], args[2]);
-	  }
-	  return func.apply(thisArg, args);
-	}
-
-	module.exports = apply;
-
-
-/***/ },
-/* 676 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseSetToString = __webpack_require__(677),
-	    shortOut = __webpack_require__(686);
-
-	/**
-	 * Sets the `toString` method of `func` to return `string`.
-	 *
-	 * @private
-	 * @param {Function} func The function to modify.
-	 * @param {Function} string The `toString` result.
-	 * @returns {Function} Returns `func`.
-	 */
-	var setToString = shortOut(baseSetToString);
-
-	module.exports = setToString;
-
-
-/***/ },
-/* 677 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var constant = __webpack_require__(678),
-	    defineProperty = __webpack_require__(679),
-	    identity = __webpack_require__(673);
-
-	/**
-	 * The base implementation of `setToString` without support for hot loop shorting.
-	 *
-	 * @private
-	 * @param {Function} func The function to modify.
-	 * @param {Function} string The `toString` result.
-	 * @returns {Function} Returns `func`.
-	 */
-	var baseSetToString = !defineProperty ? identity : function(func, string) {
-	  return defineProperty(func, 'toString', {
-	    'configurable': true,
-	    'enumerable': false,
-	    'value': constant(string),
-	    'writable': true
-	  });
-	};
-
-	module.exports = baseSetToString;
-
-
-/***/ },
-/* 678 */
-/***/ function(module, exports) {
-
-	/**
-	 * Creates a function that returns `value`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 2.4.0
-	 * @category Util
-	 * @param {*} value The value to return from the new function.
-	 * @returns {Function} Returns the new constant function.
-	 * @example
-	 *
-	 * var objects = _.times(2, _.constant({ 'a': 1 }));
-	 *
-	 * console.log(objects);
-	 * // => [{ 'a': 1 }, { 'a': 1 }]
-	 *
-	 * console.log(objects[0] === objects[1]);
-	 * // => true
-	 */
-	function constant(value) {
-	  return function() {
-	    return value;
-	  };
-	}
-
-	module.exports = constant;
-
-
-/***/ },
-/* 679 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(680);
-
-	var defineProperty = (function() {
-	  try {
-	    var func = getNative(Object, 'defineProperty');
-	    func({}, '', {});
-	    return func;
-	  } catch (e) {}
-	}());
-
-	module.exports = defineProperty;
-
-
-/***/ },
-/* 680 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsNative = __webpack_require__(681),
-	    getValue = __webpack_require__(685);
-
-	/**
-	 * Gets the native function at `key` of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {string} key The key of the method to get.
-	 * @returns {*} Returns the function if it's native, else `undefined`.
-	 */
-	function getNative(object, key) {
-	  var value = getValue(object, key);
-	  return baseIsNative(value) ? value : undefined;
-	}
-
-	module.exports = getNative;
-
-
-/***/ },
-/* 681 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isFunction = __webpack_require__(651),
-	    isMasked = __webpack_require__(682),
-	    isObject = __webpack_require__(658),
-	    toSource = __webpack_require__(684);
-
-	/**
-	 * Used to match `RegExp`
-	 * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
-	 */
-	var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
-
-	/** Used to detect host constructors (Safari). */
-	var reIsHostCtor = /^\[object .+?Constructor\]$/;
-
-	/** Used for built-in method references. */
-	var funcProto = Function.prototype,
-	    objectProto = Object.prototype;
-
-	/** Used to resolve the decompiled source of functions. */
-	var funcToString = funcProto.toString;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/** Used to detect if a method is native. */
-	var reIsNative = RegExp('^' +
-	  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
-	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
-	);
-
-	/**
-	 * The base implementation of `_.isNative` without bad shim checks.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a native function,
-	 *  else `false`.
-	 */
-	function baseIsNative(value) {
-	  if (!isObject(value) || isMasked(value)) {
-	    return false;
-	  }
-	  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
-	  return pattern.test(toSource(value));
-	}
-
-	module.exports = baseIsNative;
-
-
-/***/ },
-/* 682 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var coreJsData = __webpack_require__(683);
-
-	/** Used to detect methods masquerading as native. */
-	var maskSrcKey = (function() {
-	  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
-	  return uid ? ('Symbol(src)_1.' + uid) : '';
-	}());
-
-	/**
-	 * Checks if `func` has its source masked.
-	 *
-	 * @private
-	 * @param {Function} func The function to check.
-	 * @returns {boolean} Returns `true` if `func` is masked, else `false`.
-	 */
-	function isMasked(func) {
-	  return !!maskSrcKey && (maskSrcKey in func);
-	}
-
-	module.exports = isMasked;
-
-
-/***/ },
-/* 683 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var root = __webpack_require__(654);
-
-	/** Used to detect overreaching core-js shims. */
-	var coreJsData = root['__core-js_shared__'];
-
-	module.exports = coreJsData;
-
-
-/***/ },
-/* 684 */
-/***/ function(module, exports) {
-
-	/** Used for built-in method references. */
-	var funcProto = Function.prototype;
-
-	/** Used to resolve the decompiled source of functions. */
-	var funcToString = funcProto.toString;
-
-	/**
-	 * Converts `func` to its source code.
-	 *
-	 * @private
-	 * @param {Function} func The function to convert.
-	 * @returns {string} Returns the source code.
-	 */
-	function toSource(func) {
-	  if (func != null) {
-	    try {
-	      return funcToString.call(func);
-	    } catch (e) {}
-	    try {
-	      return (func + '');
-	    } catch (e) {}
-	  }
-	  return '';
-	}
-
-	module.exports = toSource;
-
-
-/***/ },
-/* 685 */
-/***/ function(module, exports) {
-
-	/**
-	 * Gets the value at `key` of `object`.
-	 *
-	 * @private
-	 * @param {Object} [object] The object to query.
-	 * @param {string} key The key of the property to get.
-	 * @returns {*} Returns the property value.
-	 */
-	function getValue(object, key) {
-	  return object == null ? undefined : object[key];
-	}
-
-	module.exports = getValue;
-
-
-/***/ },
-/* 686 */
-/***/ function(module, exports) {
-
-	/** Used to detect hot functions by number of calls within a span of milliseconds. */
-	var HOT_COUNT = 800,
-	    HOT_SPAN = 16;
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeNow = Date.now;
-
-	/**
-	 * Creates a function that'll short out and invoke `identity` instead
-	 * of `func` when it's called `HOT_COUNT` or more times in `HOT_SPAN`
-	 * milliseconds.
-	 *
-	 * @private
-	 * @param {Function} func The function to restrict.
-	 * @returns {Function} Returns the new shortable function.
-	 */
-	function shortOut(func) {
-	  var count = 0,
-	      lastCalled = 0;
-
-	  return function() {
-	    var stamp = nativeNow(),
-	        remaining = HOT_SPAN - (stamp - lastCalled);
-
-	    lastCalled = stamp;
-	    if (remaining > 0) {
-	      if (++count >= HOT_COUNT) {
-	        return arguments[0];
-	      }
-	    } else {
-	      count = 0;
-	    }
-	    return func.apply(undefined, arguments);
-	  };
-	}
-
-	module.exports = shortOut;
-
-
-/***/ },
-/* 687 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseDifference = __webpack_require__(688),
-	    baseFlatten = __webpack_require__(724),
-	    baseUniq = __webpack_require__(730);
-
-	/**
-	 * The base implementation of methods like `_.xor`, without support for
-	 * iteratee shorthands, that accepts an array of arrays to inspect.
-	 *
-	 * @private
-	 * @param {Array} arrays The arrays to inspect.
-	 * @param {Function} [iteratee] The iteratee invoked per element.
-	 * @param {Function} [comparator] The comparator invoked per element.
-	 * @returns {Array} Returns the new array of values.
-	 */
-	function baseXor(arrays, iteratee, comparator) {
-	  var length = arrays.length;
-	  if (length < 2) {
-	    return length ? baseUniq(arrays[0]) : [];
-	  }
-	  var index = -1,
-	      result = Array(length);
-
-	  while (++index < length) {
-	    var array = arrays[index],
-	        othIndex = -1;
-
-	    while (++othIndex < length) {
-	      if (othIndex != index) {
-	        result[index] = baseDifference(result[index] || array, arrays[othIndex], iteratee, comparator);
-	      }
-	    }
-	  }
-	  return baseUniq(baseFlatten(result, 1), iteratee, comparator);
-	}
-
-	module.exports = baseXor;
-
-
-/***/ },
-/* 688 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SetCache = __webpack_require__(689),
-	    arrayIncludes = __webpack_require__(715),
-	    arrayIncludesWith = __webpack_require__(720),
-	    arrayMap = __webpack_require__(721),
-	    baseUnary = __webpack_require__(722),
-	    cacheHas = __webpack_require__(723);
-
-	/** Used as the size to enable large array optimizations. */
-	var LARGE_ARRAY_SIZE = 200;
-
-	/**
-	 * The base implementation of methods like `_.difference` without support
-	 * for excluding multiple arrays or iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {Array} values The values to exclude.
-	 * @param {Function} [iteratee] The iteratee invoked per element.
-	 * @param {Function} [comparator] The comparator invoked per element.
-	 * @returns {Array} Returns the new array of filtered values.
-	 */
-	function baseDifference(array, values, iteratee, comparator) {
-	  var index = -1,
-	      includes = arrayIncludes,
-	      isCommon = true,
-	      length = array.length,
-	      result = [],
-	      valuesLength = values.length;
-
-	  if (!length) {
-	    return result;
-	  }
-	  if (iteratee) {
-	    values = arrayMap(values, baseUnary(iteratee));
-	  }
-	  if (comparator) {
-	    includes = arrayIncludesWith;
-	    isCommon = false;
-	  }
-	  else if (values.length >= LARGE_ARRAY_SIZE) {
-	    includes = cacheHas;
-	    isCommon = false;
-	    values = new SetCache(values);
-	  }
-	  outer:
-	  while (++index < length) {
-	    var value = array[index],
-	        computed = iteratee == null ? value : iteratee(value);
-
-	    value = (comparator || value !== 0) ? value : 0;
-	    if (isCommon && computed === computed) {
-	      var valuesIndex = valuesLength;
-	      while (valuesIndex--) {
-	        if (values[valuesIndex] === computed) {
-	          continue outer;
-	        }
-	      }
-	      result.push(value);
-	    }
-	    else if (!includes(values, computed, comparator)) {
-	      result.push(value);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = baseDifference;
-
-
-/***/ },
-/* 689 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var MapCache = __webpack_require__(690),
-	    setCacheAdd = __webpack_require__(713),
-	    setCacheHas = __webpack_require__(714);
-
-	/**
-	 *
-	 * Creates an array cache object to store unique values.
-	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [values] The values to cache.
-	 */
-	function SetCache(values) {
-	  var index = -1,
-	      length = values == null ? 0 : values.length;
-
-	  this.__data__ = new MapCache;
-	  while (++index < length) {
-	    this.add(values[index]);
-	  }
-	}
-
-	// Add methods to `SetCache`.
-	SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
-	SetCache.prototype.has = setCacheHas;
-
-	module.exports = SetCache;
-
-
-/***/ },
-/* 690 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var mapCacheClear = __webpack_require__(691),
-	    mapCacheDelete = __webpack_require__(707),
-	    mapCacheGet = __webpack_require__(710),
-	    mapCacheHas = __webpack_require__(711),
-	    mapCacheSet = __webpack_require__(712);
-
-	/**
-	 * Creates a map cache object to store key-value pairs.
-	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [entries] The key-value pairs to cache.
-	 */
-	function MapCache(entries) {
-	  var index = -1,
-	      length = entries == null ? 0 : entries.length;
-
-	  this.clear();
-	  while (++index < length) {
-	    var entry = entries[index];
-	    this.set(entry[0], entry[1]);
-	  }
-	}
-
-	// Add methods to `MapCache`.
-	MapCache.prototype.clear = mapCacheClear;
-	MapCache.prototype['delete'] = mapCacheDelete;
-	MapCache.prototype.get = mapCacheGet;
-	MapCache.prototype.has = mapCacheHas;
-	MapCache.prototype.set = mapCacheSet;
-
-	module.exports = MapCache;
-
-
-/***/ },
-/* 691 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Hash = __webpack_require__(692),
-	    ListCache = __webpack_require__(699),
-	    Map = __webpack_require__(706);
-
-	/**
-	 * Removes all key-value entries from the map.
-	 *
-	 * @private
-	 * @name clear
-	 * @memberOf MapCache
-	 */
-	function mapCacheClear() {
-	  this.size = 0;
-	  this.__data__ = {
-	    'hash': new Hash,
-	    'map': new (Map || ListCache),
-	    'string': new Hash
-	  };
-	}
-
-	module.exports = mapCacheClear;
-
-
-/***/ },
-/* 692 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var hashClear = __webpack_require__(693),
-	    hashDelete = __webpack_require__(695),
-	    hashGet = __webpack_require__(696),
-	    hashHas = __webpack_require__(697),
-	    hashSet = __webpack_require__(698);
-
-	/**
-	 * Creates a hash object.
-	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [entries] The key-value pairs to cache.
-	 */
-	function Hash(entries) {
-	  var index = -1,
-	      length = entries == null ? 0 : entries.length;
-
-	  this.clear();
-	  while (++index < length) {
-	    var entry = entries[index];
-	    this.set(entry[0], entry[1]);
-	  }
-	}
-
-	// Add methods to `Hash`.
-	Hash.prototype.clear = hashClear;
-	Hash.prototype['delete'] = hashDelete;
-	Hash.prototype.get = hashGet;
-	Hash.prototype.has = hashHas;
-	Hash.prototype.set = hashSet;
-
-	module.exports = Hash;
-
-
-/***/ },
-/* 693 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var nativeCreate = __webpack_require__(694);
-
-	/**
-	 * Removes all key-value entries from the hash.
-	 *
-	 * @private
-	 * @name clear
-	 * @memberOf Hash
-	 */
-	function hashClear() {
-	  this.__data__ = nativeCreate ? nativeCreate(null) : {};
-	  this.size = 0;
-	}
-
-	module.exports = hashClear;
-
-
-/***/ },
-/* 694 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(680);
-
-	/* Built-in method references that are verified to be native. */
-	var nativeCreate = getNative(Object, 'create');
-
-	module.exports = nativeCreate;
-
-
-/***/ },
-/* 695 */
-/***/ function(module, exports) {
-
-	/**
-	 * Removes `key` and its value from the hash.
-	 *
-	 * @private
-	 * @name delete
-	 * @memberOf Hash
-	 * @param {Object} hash The hash to modify.
-	 * @param {string} key The key of the value to remove.
-	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-	 */
-	function hashDelete(key) {
-	  var result = this.has(key) && delete this.__data__[key];
-	  this.size -= result ? 1 : 0;
-	  return result;
-	}
-
-	module.exports = hashDelete;
-
-
-/***/ },
-/* 696 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var nativeCreate = __webpack_require__(694);
-
-	/** Used to stand-in for `undefined` hash values. */
-	var HASH_UNDEFINED = '__lodash_hash_undefined__';
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Gets the hash value for `key`.
-	 *
-	 * @private
-	 * @name get
-	 * @memberOf Hash
-	 * @param {string} key The key of the value to get.
-	 * @returns {*} Returns the entry value.
-	 */
-	function hashGet(key) {
-	  var data = this.__data__;
-	  if (nativeCreate) {
-	    var result = data[key];
-	    return result === HASH_UNDEFINED ? undefined : result;
-	  }
-	  return hasOwnProperty.call(data, key) ? data[key] : undefined;
-	}
-
-	module.exports = hashGet;
-
-
-/***/ },
-/* 697 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var nativeCreate = __webpack_require__(694);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Checks if a hash value for `key` exists.
-	 *
-	 * @private
-	 * @name has
-	 * @memberOf Hash
-	 * @param {string} key The key of the entry to check.
-	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-	 */
-	function hashHas(key) {
-	  var data = this.__data__;
-	  return nativeCreate ? data[key] !== undefined : hasOwnProperty.call(data, key);
-	}
-
-	module.exports = hashHas;
-
-
-/***/ },
-/* 698 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var nativeCreate = __webpack_require__(694);
-
-	/** Used to stand-in for `undefined` hash values. */
-	var HASH_UNDEFINED = '__lodash_hash_undefined__';
-
-	/**
-	 * Sets the hash `key` to `value`.
-	 *
-	 * @private
-	 * @name set
-	 * @memberOf Hash
-	 * @param {string} key The key of the value to set.
-	 * @param {*} value The value to set.
-	 * @returns {Object} Returns the hash instance.
-	 */
-	function hashSet(key, value) {
-	  var data = this.__data__;
-	  this.size += this.has(key) ? 0 : 1;
-	  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
-	  return this;
-	}
-
-	module.exports = hashSet;
-
-
-/***/ },
-/* 699 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var listCacheClear = __webpack_require__(700),
-	    listCacheDelete = __webpack_require__(701),
-	    listCacheGet = __webpack_require__(703),
-	    listCacheHas = __webpack_require__(704),
-	    listCacheSet = __webpack_require__(705);
-
-	/**
-	 * Creates an list cache object.
-	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [entries] The key-value pairs to cache.
-	 */
-	function ListCache(entries) {
-	  var index = -1,
-	      length = entries == null ? 0 : entries.length;
-
-	  this.clear();
-	  while (++index < length) {
-	    var entry = entries[index];
-	    this.set(entry[0], entry[1]);
-	  }
-	}
-
-	// Add methods to `ListCache`.
-	ListCache.prototype.clear = listCacheClear;
-	ListCache.prototype['delete'] = listCacheDelete;
-	ListCache.prototype.get = listCacheGet;
-	ListCache.prototype.has = listCacheHas;
-	ListCache.prototype.set = listCacheSet;
-
-	module.exports = ListCache;
-
-
-/***/ },
-/* 700 */
-/***/ function(module, exports) {
-
-	/**
-	 * Removes all key-value entries from the list cache.
-	 *
-	 * @private
-	 * @name clear
-	 * @memberOf ListCache
-	 */
-	function listCacheClear() {
-	  this.__data__ = [];
-	  this.size = 0;
-	}
-
-	module.exports = listCacheClear;
-
-
-/***/ },
-/* 701 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assocIndexOf = __webpack_require__(702);
-
-	/** Used for built-in method references. */
-	var arrayProto = Array.prototype;
-
-	/** Built-in value references. */
-	var splice = arrayProto.splice;
-
-	/**
-	 * Removes `key` and its value from the list cache.
-	 *
-	 * @private
-	 * @name delete
-	 * @memberOf ListCache
-	 * @param {string} key The key of the value to remove.
-	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-	 */
-	function listCacheDelete(key) {
-	  var data = this.__data__,
-	      index = assocIndexOf(data, key);
-
-	  if (index < 0) {
-	    return false;
-	  }
-	  var lastIndex = data.length - 1;
-	  if (index == lastIndex) {
-	    data.pop();
-	  } else {
-	    splice.call(data, index, 1);
-	  }
-	  --this.size;
-	  return true;
-	}
-
-	module.exports = listCacheDelete;
-
-
-/***/ },
-/* 702 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var eq = __webpack_require__(649);
-
-	/**
-	 * Gets the index at which the `key` is found in `array` of key-value pairs.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {*} key The key to search for.
-	 * @returns {number} Returns the index of the matched value, else `-1`.
-	 */
-	function assocIndexOf(array, key) {
-	  var length = array.length;
-	  while (length--) {
-	    if (eq(array[length][0], key)) {
-	      return length;
-	    }
-	  }
-	  return -1;
-	}
-
-	module.exports = assocIndexOf;
-
-
-/***/ },
-/* 703 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assocIndexOf = __webpack_require__(702);
-
-	/**
-	 * Gets the list cache value for `key`.
-	 *
-	 * @private
-	 * @name get
-	 * @memberOf ListCache
-	 * @param {string} key The key of the value to get.
-	 * @returns {*} Returns the entry value.
-	 */
-	function listCacheGet(key) {
-	  var data = this.__data__,
-	      index = assocIndexOf(data, key);
-
-	  return index < 0 ? undefined : data[index][1];
-	}
-
-	module.exports = listCacheGet;
-
-
-/***/ },
-/* 704 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assocIndexOf = __webpack_require__(702);
-
-	/**
-	 * Checks if a list cache value for `key` exists.
-	 *
-	 * @private
-	 * @name has
-	 * @memberOf ListCache
-	 * @param {string} key The key of the entry to check.
-	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-	 */
-	function listCacheHas(key) {
-	  return assocIndexOf(this.__data__, key) > -1;
-	}
-
-	module.exports = listCacheHas;
-
-
-/***/ },
-/* 705 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var assocIndexOf = __webpack_require__(702);
-
-	/**
-	 * Sets the list cache `key` to `value`.
-	 *
-	 * @private
-	 * @name set
-	 * @memberOf ListCache
-	 * @param {string} key The key of the value to set.
-	 * @param {*} value The value to set.
-	 * @returns {Object} Returns the list cache instance.
-	 */
-	function listCacheSet(key, value) {
-	  var data = this.__data__,
-	      index = assocIndexOf(data, key);
-
-	  if (index < 0) {
-	    ++this.size;
-	    data.push([key, value]);
-	  } else {
-	    data[index][1] = value;
-	  }
-	  return this;
-	}
-
-	module.exports = listCacheSet;
-
-
-/***/ },
-/* 706 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(680),
-	    root = __webpack_require__(654);
-
-	/* Built-in method references that are verified to be native. */
-	var Map = getNative(root, 'Map');
-
-	module.exports = Map;
-
-
-/***/ },
-/* 707 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getMapData = __webpack_require__(708);
-
-	/**
-	 * Removes `key` and its value from the map.
-	 *
-	 * @private
-	 * @name delete
-	 * @memberOf MapCache
-	 * @param {string} key The key of the value to remove.
-	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-	 */
-	function mapCacheDelete(key) {
-	  var result = getMapData(this, key)['delete'](key);
-	  this.size -= result ? 1 : 0;
-	  return result;
-	}
-
-	module.exports = mapCacheDelete;
-
-
-/***/ },
-/* 708 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isKeyable = __webpack_require__(709);
-
-	/**
-	 * Gets the data for `map`.
-	 *
-	 * @private
-	 * @param {Object} map The map to query.
-	 * @param {string} key The reference key.
-	 * @returns {*} Returns the map data.
-	 */
-	function getMapData(map, key) {
-	  var data = map.__data__;
-	  return isKeyable(key)
-	    ? data[typeof key == 'string' ? 'string' : 'hash']
-	    : data.map;
-	}
-
-	module.exports = getMapData;
-
-
-/***/ },
-/* 709 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is suitable for use as unique object key.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
-	 */
-	function isKeyable(value) {
-	  var type = typeof value;
-	  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
-	    ? (value !== '__proto__')
-	    : (value === null);
-	}
-
-	module.exports = isKeyable;
-
-
-/***/ },
-/* 710 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getMapData = __webpack_require__(708);
-
-	/**
-	 * Gets the map value for `key`.
-	 *
-	 * @private
-	 * @name get
-	 * @memberOf MapCache
-	 * @param {string} key The key of the value to get.
-	 * @returns {*} Returns the entry value.
-	 */
-	function mapCacheGet(key) {
-	  return getMapData(this, key).get(key);
-	}
-
-	module.exports = mapCacheGet;
-
-
-/***/ },
-/* 711 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getMapData = __webpack_require__(708);
-
-	/**
-	 * Checks if a map value for `key` exists.
-	 *
-	 * @private
-	 * @name has
-	 * @memberOf MapCache
-	 * @param {string} key The key of the entry to check.
-	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-	 */
-	function mapCacheHas(key) {
-	  return getMapData(this, key).has(key);
-	}
-
-	module.exports = mapCacheHas;
-
-
-/***/ },
-/* 712 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getMapData = __webpack_require__(708);
-
-	/**
-	 * Sets the map `key` to `value`.
-	 *
-	 * @private
-	 * @name set
-	 * @memberOf MapCache
-	 * @param {string} key The key of the value to set.
-	 * @param {*} value The value to set.
-	 * @returns {Object} Returns the map cache instance.
-	 */
-	function mapCacheSet(key, value) {
-	  var data = getMapData(this, key),
-	      size = data.size;
-
-	  data.set(key, value);
-	  this.size += data.size == size ? 0 : 1;
-	  return this;
-	}
-
-	module.exports = mapCacheSet;
-
-
-/***/ },
-/* 713 */
-/***/ function(module, exports) {
-
-	/** Used to stand-in for `undefined` hash values. */
-	var HASH_UNDEFINED = '__lodash_hash_undefined__';
-
-	/**
-	 * Adds `value` to the array cache.
-	 *
-	 * @private
-	 * @name add
-	 * @memberOf SetCache
-	 * @alias push
-	 * @param {*} value The value to cache.
-	 * @returns {Object} Returns the cache instance.
-	 */
-	function setCacheAdd(value) {
-	  this.__data__.set(value, HASH_UNDEFINED);
-	  return this;
-	}
-
-	module.exports = setCacheAdd;
-
-
-/***/ },
-/* 714 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is in the array cache.
-	 *
-	 * @private
-	 * @name has
-	 * @memberOf SetCache
-	 * @param {*} value The value to search for.
-	 * @returns {number} Returns `true` if `value` is found, else `false`.
-	 */
-	function setCacheHas(value) {
-	  return this.__data__.has(value);
-	}
-
-	module.exports = setCacheHas;
-
-
-/***/ },
-/* 715 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIndexOf = __webpack_require__(716);
-
-	/**
-	 * A specialized version of `_.includes` for arrays without support for
-	 * specifying an index to search from.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to inspect.
-	 * @param {*} target The value to search for.
-	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
-	 */
-	function arrayIncludes(array, value) {
-	  var length = array == null ? 0 : array.length;
-	  return !!length && baseIndexOf(array, value, 0) > -1;
-	}
-
-	module.exports = arrayIncludes;
-
-
-/***/ },
-/* 716 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseFindIndex = __webpack_require__(717),
-	    baseIsNaN = __webpack_require__(718),
-	    strictIndexOf = __webpack_require__(719);
-
-	/**
-	 * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {*} value The value to search for.
-	 * @param {number} fromIndex The index to search from.
-	 * @returns {number} Returns the index of the matched value, else `-1`.
-	 */
-	function baseIndexOf(array, value, fromIndex) {
-	  return value === value
-	    ? strictIndexOf(array, value, fromIndex)
-	    : baseFindIndex(array, baseIsNaN, fromIndex);
-	}
-
-	module.exports = baseIndexOf;
-
-
-/***/ },
-/* 717 */
-/***/ function(module, exports) {
-
-	/**
-	 * The base implementation of `_.findIndex` and `_.findLastIndex` without
-	 * support for iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {Function} predicate The function invoked per iteration.
-	 * @param {number} fromIndex The index to search from.
-	 * @param {boolean} [fromRight] Specify iterating from right to left.
-	 * @returns {number} Returns the index of the matched value, else `-1`.
-	 */
-	function baseFindIndex(array, predicate, fromIndex, fromRight) {
-	  var length = array.length,
-	      index = fromIndex + (fromRight ? 1 : -1);
-
-	  while ((fromRight ? index-- : ++index < length)) {
-	    if (predicate(array[index], index, array)) {
-	      return index;
-	    }
-	  }
-	  return -1;
-	}
-
-	module.exports = baseFindIndex;
-
-
-/***/ },
-/* 718 */
-/***/ function(module, exports) {
-
-	/**
-	 * The base implementation of `_.isNaN` without support for number objects.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
-	 */
-	function baseIsNaN(value) {
-	  return value !== value;
-	}
-
-	module.exports = baseIsNaN;
-
-
-/***/ },
-/* 719 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.indexOf` which performs strict equality
-	 * comparisons of values, i.e. `===`.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {*} value The value to search for.
-	 * @param {number} fromIndex The index to search from.
-	 * @returns {number} Returns the index of the matched value, else `-1`.
-	 */
-	function strictIndexOf(array, value, fromIndex) {
-	  var index = fromIndex - 1,
-	      length = array.length;
-
-	  while (++index < length) {
-	    if (array[index] === value) {
-	      return index;
-	    }
-	  }
-	  return -1;
-	}
-
-	module.exports = strictIndexOf;
-
-
-/***/ },
-/* 720 */
-/***/ function(module, exports) {
-
-	/**
-	 * This function is like `arrayIncludes` except that it accepts a comparator.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to inspect.
-	 * @param {*} target The value to search for.
-	 * @param {Function} comparator The comparator invoked per element.
-	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
-	 */
-	function arrayIncludesWith(array, value, comparator) {
-	  var index = -1,
-	      length = array == null ? 0 : array.length;
-
-	  while (++index < length) {
-	    if (comparator(value, array[index])) {
-	      return true;
-	    }
-	  }
-	  return false;
-	}
-
-	module.exports = arrayIncludesWith;
-
-
-/***/ },
-/* 721 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.map` for arrays without support for iteratee
-	 * shorthands.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array} Returns the new mapped array.
-	 */
-	function arrayMap(array, iteratee) {
-	  var index = -1,
-	      length = array == null ? 0 : array.length,
-	      result = Array(length);
-
-	  while (++index < length) {
-	    result[index] = iteratee(array[index], index, array);
-	  }
-	  return result;
-	}
-
-	module.exports = arrayMap;
-
-
-/***/ },
-/* 722 */
-/***/ function(module, exports) {
-
-	/**
-	 * The base implementation of `_.unary` without support for storing metadata.
-	 *
-	 * @private
-	 * @param {Function} func The function to cap arguments for.
-	 * @returns {Function} Returns the new capped function.
-	 */
-	function baseUnary(func) {
-	  return function(value) {
-	    return func(value);
-	  };
-	}
-
-	module.exports = baseUnary;
-
-
-/***/ },
-/* 723 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if a `cache` value for `key` exists.
-	 *
-	 * @private
-	 * @param {Object} cache The cache to query.
-	 * @param {string} key The key of the entry to check.
-	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-	 */
-	function cacheHas(cache, key) {
-	  return cache.has(key);
-	}
-
-	module.exports = cacheHas;
-
-
-/***/ },
-/* 724 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var arrayPush = __webpack_require__(725),
-	    isFlattenable = __webpack_require__(726);
-
-	/**
-	 * The base implementation of `_.flatten` with support for restricting flattening.
-	 *
-	 * @private
-	 * @param {Array} array The array to flatten.
-	 * @param {number} depth The maximum recursion depth.
-	 * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
-	 * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
-	 * @param {Array} [result=[]] The initial result value.
-	 * @returns {Array} Returns the new flattened array.
-	 */
-	function baseFlatten(array, depth, predicate, isStrict, result) {
-	  var index = -1,
-	      length = array.length;
-
-	  predicate || (predicate = isFlattenable);
-	  result || (result = []);
-
-	  while (++index < length) {
-	    var value = array[index];
-	    if (depth > 0 && predicate(value)) {
-	      if (depth > 1) {
-	        // Recursively flatten arrays (susceptible to call stack limits).
-	        baseFlatten(value, depth - 1, predicate, isStrict, result);
-	      } else {
-	        arrayPush(result, value);
-	      }
-	    } else if (!isStrict) {
-	      result[result.length] = value;
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = baseFlatten;
-
-
-/***/ },
-/* 725 */
-/***/ function(module, exports) {
-
-	/**
-	 * Appends the elements of `values` to `array`.
-	 *
-	 * @private
-	 * @param {Array} array The array to modify.
-	 * @param {Array} values The values to append.
-	 * @returns {Array} Returns `array`.
-	 */
-	function arrayPush(array, values) {
-	  var index = -1,
-	      length = values.length,
-	      offset = array.length;
-
-	  while (++index < length) {
-	    array[offset + index] = values[index];
-	  }
-	  return array;
-	}
-
-	module.exports = arrayPush;
-
-
-/***/ },
-/* 726 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Symbol = __webpack_require__(653),
-	    isArguments = __webpack_require__(727),
-	    isArray = __webpack_require__(729);
-
-	/** Built-in value references. */
-	var spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined;
-
-	/**
-	 * Checks if `value` is a flattenable `arguments` object or array.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
-	 */
-	function isFlattenable(value) {
-	  return isArray(value) || isArguments(value) ||
-	    !!(spreadableSymbol && value && value[spreadableSymbol]);
-	}
-
-	module.exports = isFlattenable;
-
-
-/***/ },
-/* 727 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsArguments = __webpack_require__(728),
-	    isObjectLike = __webpack_require__(664);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/** Built-in value references. */
-	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-
-	/**
-	 * Checks if `value` is likely an `arguments` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an `arguments` object,
-	 *  else `false`.
-	 * @example
-	 *
-	 * _.isArguments(function() { return arguments; }());
-	 * // => true
-	 *
-	 * _.isArguments([1, 2, 3]);
-	 * // => false
-	 */
-	var isArguments = baseIsArguments(function() { return arguments; }()) ? baseIsArguments : function(value) {
-	  return isObjectLike(value) && hasOwnProperty.call(value, 'callee') &&
-	    !propertyIsEnumerable.call(value, 'callee');
-	};
-
-	module.exports = isArguments;
-
-
-/***/ },
-/* 728 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseGetTag = __webpack_require__(652),
-	    isObjectLike = __webpack_require__(664);
-
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]';
-
-	/**
-	 * The base implementation of `_.isArguments`.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an `arguments` object,
-	 */
-	function baseIsArguments(value) {
-	  return isObjectLike(value) && baseGetTag(value) == argsTag;
-	}
-
-	module.exports = baseIsArguments;
-
-
-/***/ },
-/* 729 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is classified as an `Array` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an array, else `false`.
-	 * @example
-	 *
-	 * _.isArray([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArray(document.body.children);
-	 * // => false
-	 *
-	 * _.isArray('abc');
-	 * // => false
-	 *
-	 * _.isArray(_.noop);
-	 * // => false
-	 */
-	var isArray = Array.isArray;
-
-	module.exports = isArray;
-
-
-/***/ },
-/* 730 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SetCache = __webpack_require__(689),
-	    arrayIncludes = __webpack_require__(715),
-	    arrayIncludesWith = __webpack_require__(720),
-	    cacheHas = __webpack_require__(723),
-	    createSet = __webpack_require__(731),
-	    setToArray = __webpack_require__(734);
-
-	/** Used as the size to enable large array optimizations. */
-	var LARGE_ARRAY_SIZE = 200;
-
-	/**
-	 * The base implementation of `_.uniqBy` without support for iteratee shorthands.
-	 *
-	 * @private
-	 * @param {Array} array The array to inspect.
-	 * @param {Function} [iteratee] The iteratee invoked per element.
-	 * @param {Function} [comparator] The comparator invoked per element.
-	 * @returns {Array} Returns the new duplicate free array.
-	 */
-	function baseUniq(array, iteratee, comparator) {
-	  var index = -1,
-	      includes = arrayIncludes,
-	      length = array.length,
-	      isCommon = true,
-	      result = [],
-	      seen = result;
-
-	  if (comparator) {
-	    isCommon = false;
-	    includes = arrayIncludesWith;
-	  }
-	  else if (length >= LARGE_ARRAY_SIZE) {
-	    var set = iteratee ? null : createSet(array);
-	    if (set) {
-	      return setToArray(set);
-	    }
-	    isCommon = false;
-	    includes = cacheHas;
-	    seen = new SetCache;
-	  }
-	  else {
-	    seen = iteratee ? [] : result;
-	  }
-	  outer:
-	  while (++index < length) {
-	    var value = array[index],
-	        computed = iteratee ? iteratee(value) : value;
-
-	    value = (comparator || value !== 0) ? value : 0;
-	    if (isCommon && computed === computed) {
-	      var seenIndex = seen.length;
-	      while (seenIndex--) {
-	        if (seen[seenIndex] === computed) {
-	          continue outer;
-	        }
-	      }
-	      if (iteratee) {
-	        seen.push(computed);
-	      }
-	      result.push(value);
-	    }
-	    else if (!includes(seen, computed, comparator)) {
-	      if (seen !== result) {
-	        seen.push(computed);
-	      }
-	      result.push(value);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = baseUniq;
-
-
-/***/ },
-/* 731 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Set = __webpack_require__(732),
-	    noop = __webpack_require__(733),
-	    setToArray = __webpack_require__(734);
-
-	/** Used as references for various `Number` constants. */
-	var INFINITY = 1 / 0;
-
-	/**
-	 * Creates a set object of `values`.
-	 *
-	 * @private
-	 * @param {Array} values The values to add to the set.
-	 * @returns {Object} Returns the new set.
-	 */
-	var createSet = !(Set && (1 / setToArray(new Set([,-0]))[1]) == INFINITY) ? noop : function(values) {
-	  return new Set(values);
-	};
-
-	module.exports = createSet;
-
-
-/***/ },
-/* 732 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(680),
-	    root = __webpack_require__(654);
-
-	/* Built-in method references that are verified to be native. */
-	var Set = getNative(root, 'Set');
-
-	module.exports = Set;
-
-
-/***/ },
-/* 733 */
-/***/ function(module, exports) {
-
-	/**
-	 * This method returns `undefined`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 2.3.0
-	 * @category Util
-	 * @example
-	 *
-	 * _.times(2, _.noop);
-	 * // => [undefined, undefined]
-	 */
-	function noop() {
-	  // No operation performed.
-	}
-
-	module.exports = noop;
-
-
-/***/ },
-/* 734 */
-/***/ function(module, exports) {
-
-	/**
-	 * Converts `set` to an array of its values.
-	 *
-	 * @private
-	 * @param {Object} set The set to convert.
-	 * @returns {Array} Returns the values.
-	 */
-	function setToArray(set) {
-	  var index = -1,
-	      result = Array(set.size);
-
-	  set.forEach(function(value) {
-	    result[++index] = value;
-	  });
-	  return result;
-	}
-
-	module.exports = setToArray;
-
-
-/***/ },
-/* 735 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isArrayLike = __webpack_require__(650),
-	    isObjectLike = __webpack_require__(664);
-
-	/**
-	 * This method is like `_.isArrayLike` except that it also checks if `value`
-	 * is an object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an array-like object,
-	 *  else `false`.
-	 * @example
-	 *
-	 * _.isArrayLikeObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArrayLikeObject(document.body.children);
-	 * // => true
-	 *
-	 * _.isArrayLikeObject('abc');
-	 * // => false
-	 *
-	 * _.isArrayLikeObject(_.noop);
-	 * // => false
-	 */
-	function isArrayLikeObject(value) {
-	  return isObjectLike(value) && isArrayLike(value);
-	}
-
-	module.exports = isArrayLikeObject;
-
-
-/***/ },
-/* 736 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(737);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(638)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/less-loader/index.js!./Components.less", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/less-loader/index.js!./Components.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 737 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(637)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".gxaFilter .filterBody .groupName {\n  display: inline-block;\n  cursor: pointer;\n}\n.gxaFilter .filterBody .groupName:hover {\n  text-decoration: underline;\n}\n.gxaFilter .filterBody .options {\n  padding-left: 15px;\n  font-size: 85%;\n  -webkit-column-width: 180px;\n  -moz-column-width: 180px;\n  column-width: 180px;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 738 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(138);
-	var Button = __webpack_require__(389);
-	var Glyphicon = __webpack_require__(395);
-	var PropTypes = __webpack_require__(615);
-	var xor = __webpack_require__(670);
-	__webpack_require__(736);
-
-	var FilterOption = React.createClass({
-	  displayName: "FilterOption",
-
-	  propTypes: {
-	    name: React.PropTypes.string.isRequired,
-	    values: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    selected: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    isOpen: React.PropTypes.bool.isRequired,
-	    selectDisabled: React.PropTypes.bool.isRequired,
-	    closeDisabled: React.PropTypes.bool.isRequired,
-	    onToggleOpen: React.PropTypes.func.isRequired,
-	    onNewSelected: React.PropTypes.func.isRequired
-	  },
-
-	  toggleAll: function toggleAll(evt) {
-	    this.props.onNewSelected(xor(this.props.values, this.props.selected).length ? this.props.values : []);
-	  },
-	  toggleOne: function toggleOne(which, evt) {
-	    this.props.onNewSelected(xor(this.props.selected, [which]));
-	  },
-	  toggleOpen: function toggleOpen(evt) {
-	    this.props.onToggleOpen();
-	  },
-	  render: function render() {
-	    var _this = this;
-
-	    return React.createElement(
-	      "div",
-	      { className: "filterBody" },
-	      React.createElement("input", { type: "checkbox",
-	        value: this.props.name,
-	        onChange: this.toggleAll,
-	        disabled: this.props.selectDisabled,
-	        checked: this.props.values.every(function (v) {
-	          return _this.props.selected.indexOf(v) > -1;
-	        }) }),
-	      React.createElement(
-	        "div",
-	        { className: "groupName",
-	          onClick: this.props.closeDisabled ? function () {} : this.toggleOpen,
-	          href: "#" },
-	        this.props.name,
-	        !this.props.closeDisabled && React.createElement(Glyphicon, { style: { fontSize: "x-small", paddingLeft: "5px" }, glyph: this.props.isOpen ? "menu-up" : "menu-down" })
-	      ),
-	      this.props.isOpen && React.createElement(
-	        "div",
-	        { className: "options" },
-	        this.props.values.map(function (value) {
-	          return React.createElement(
-	            "div",
-	            { className: "option", key: value },
-	            React.createElement("input", { type: "checkbox",
-	              value: value,
-	              onChange: function onChange(evt) {
-	                return _this.toggleOne(value, evt);
-	              },
-	              disabled: _this.props.selectDisabled,
-	              checked: _this.props.selected.indexOf(value) > -1 }),
-	            React.createElement(
-	              "span",
-	              null,
-	              " ",
-	              value
-	            )
-	          );
-	        })
-	      )
-	    );
-	  }
-	});
-
-	var GroupedFilter = React.createClass({
-	  displayName: "GroupedFilter",
-
-	  propTypes: Object.assign({}, PropTypes.FilterProps, {
-	    propagateFilterSelection: React.PropTypes.func.isRequired,
-	    disabled: React.PropTypes.bool.isRequired
-	  }),
-
-	  getInitialState: function getInitialState() {
-	    return {
-	      groupsUserAskedToKeepOpen: []
-	    };
-	  },
-	  renderValueGrouping: function renderValueGrouping(name, values) {
-	    var _this2 = this;
-
-	    var userWantedOpen = this.state.groupsUserAskedToKeepOpen.indexOf(name) > -1;
-	    var selectedHere = this.props.selected.filter(function (e) {
-	      return values.indexOf(e) > -1;
-	    });
-	    var selectedNotHere = this.props.selected.filter(function (e) {
-	      return values.indexOf(e) == -1;
-	    });
-	    var impliedOpen = !(selectedHere.length == 0 || values.every(function (v) {
-	      return selectedHere.indexOf(v) > -1;
-	    }));
-	    return React.createElement(FilterOption, { key: name,
-	      name: name,
-	      values: values,
-	      selected: selectedHere,
-	      isOpen: userWantedOpen || impliedOpen,
-	      selectDisabled: this.props.disabled,
-	      closeDisabled: impliedOpen,
-	      onToggleOpen: function onToggleOpen() {
-	        _this2.setState(function (previousState) {
-	          return { groupsUserAskedToKeepOpen: xor(previousState.groupsUserAskedToKeepOpen, [name]) };
-	        });
-	      },
-	      onNewSelected: function onNewSelected(selectedInThisOption) {
-	        _this2.props.propagateFilterSelection(selectedNotHere.concat(selectedInThisOption));
-	      } });
-	  },
-	  render: function render() {
-	    var _this3 = this;
-
-	    return React.createElement(
-	      "div",
-	      { className: "gxaFilter" },
-	      React.createElement(
-	        "h4",
-	        null,
-	        this.props.name
-	      ),
-	      React.createElement(
-	        Button,
-	        { bsSize: "xsmall", onClick: function onClick() {
-	            _this3.props.propagateFilterSelection(_this3.props.values);
-	          } },
-	        React.createElement(Glyphicon, { glyph: "plus" }),
-	        React.createElement(
-	          "span",
-	          { style: { verticalAlign: "middle" } },
-	          " Choose all"
-	        )
-	      ),
-	      React.createElement(
-	        Button,
-	        { bsSize: "xsmall", onClick: function onClick() {
-	            _this3.props.propagateFilterSelection([]);
-	          } },
-	        React.createElement(Glyphicon, { glyph: "minus" }),
-	        React.createElement(
-	          "span",
-	          { style: { verticalAlign: "middle" } },
-	          " Remove all"
-	        )
-	      ),
-	      this.props.valueGroupings.map(function (a) {
-	        return _this3.renderValueGrouping(a[0], a[1]);
-	      })
-	    );
-	  }
-	});
-	module.exports = GroupedFilter;
-
-/***/ },
-/* 739 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsEqual = __webpack_require__(740);
-
-	/**
-	 * Performs a deep comparison between two values to determine if they are
-	 * equivalent.
-	 *
-	 * **Note:** This method supports comparing arrays, array buffers, booleans,
-	 * date objects, error objects, maps, numbers, `Object` objects, regexes,
-	 * sets, strings, symbols, and typed arrays. `Object` objects are compared
-	 * by their own, not inherited, enumerable properties. Functions and DOM
-	 * nodes are **not** supported.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to compare.
-	 * @param {*} other The other value to compare.
-	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-	 * @example
-	 *
-	 * var object = { 'a': 1 };
-	 * var other = { 'a': 1 };
-	 *
-	 * _.isEqual(object, other);
-	 * // => true
-	 *
-	 * object === other;
-	 * // => false
-	 */
-	function isEqual(value, other) {
-	  return baseIsEqual(value, other);
-	}
-
-	module.exports = isEqual;
-
-
-/***/ },
-/* 740 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsEqualDeep = __webpack_require__(741),
-	    isObject = __webpack_require__(658),
-	    isObjectLike = __webpack_require__(664);
-
-	/**
-	 * The base implementation of `_.isEqual` which supports partial comparisons
-	 * and tracks traversed objects.
-	 *
-	 * @private
-	 * @param {*} value The value to compare.
-	 * @param {*} other The other value to compare.
-	 * @param {Function} [customizer] The function to customize comparisons.
-	 * @param {boolean} [bitmask] The bitmask of comparison flags.
-	 *  The bitmask may be composed of the following flags:
-	 *     1 - Unordered comparison
-	 *     2 - Partial comparison
-	 * @param {Object} [stack] Tracks traversed `value` and `other` objects.
-	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-	 */
-	function baseIsEqual(value, other, customizer, bitmask, stack) {
-	  if (value === other) {
-	    return true;
-	  }
-	  if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
-	    return value !== value && other !== other;
-	  }
-	  return baseIsEqualDeep(value, other, baseIsEqual, customizer, bitmask, stack);
-	}
-
-	module.exports = baseIsEqual;
-
-
-/***/ },
-/* 741 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Stack = __webpack_require__(742),
-	    equalArrays = __webpack_require__(748),
-	    equalByTag = __webpack_require__(750),
-	    equalObjects = __webpack_require__(753),
-	    getTag = __webpack_require__(766),
-	    isArray = __webpack_require__(729),
-	    isBuffer = __webpack_require__(757),
-	    isTypedArray = __webpack_require__(759);
-
-	/** Used to compose bitmasks for comparison styles. */
-	var PARTIAL_COMPARE_FLAG = 2;
-
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]',
-	    arrayTag = '[object Array]',
-	    objectTag = '[object Object]';
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * A specialized version of `baseIsEqual` for arrays and objects which performs
-	 * deep comparisons and tracks traversed objects enabling objects with circular
-	 * references to be compared.
-	 *
-	 * @private
-	 * @param {Object} object The object to compare.
-	 * @param {Object} other The other object to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} [customizer] The function to customize comparisons.
-	 * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual`
-	 *  for more details.
-	 * @param {Object} [stack] Tracks traversed `object` and `other` objects.
-	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
-	 */
-	function baseIsEqualDeep(object, other, equalFunc, customizer, bitmask, stack) {
-	  var objIsArr = isArray(object),
-	      othIsArr = isArray(other),
-	      objTag = arrayTag,
-	      othTag = arrayTag;
-
-	  if (!objIsArr) {
-	    objTag = getTag(object);
-	    objTag = objTag == argsTag ? objectTag : objTag;
-	  }
-	  if (!othIsArr) {
-	    othTag = getTag(other);
-	    othTag = othTag == argsTag ? objectTag : othTag;
-	  }
-	  var objIsObj = objTag == objectTag,
-	      othIsObj = othTag == objectTag,
-	      isSameTag = objTag == othTag;
-
-	  if (isSameTag && isBuffer(object)) {
-	    if (!isBuffer(other)) {
-	      return false;
-	    }
-	    objIsArr = true;
-	    objIsObj = false;
-	  }
-	  if (isSameTag && !objIsObj) {
-	    stack || (stack = new Stack);
-	    return (objIsArr || isTypedArray(object))
-	      ? equalArrays(object, other, equalFunc, customizer, bitmask, stack)
-	      : equalByTag(object, other, objTag, equalFunc, customizer, bitmask, stack);
-	  }
-	  if (!(bitmask & PARTIAL_COMPARE_FLAG)) {
-	    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
-	        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
-
-	    if (objIsWrapped || othIsWrapped) {
-	      var objUnwrapped = objIsWrapped ? object.value() : object,
-	          othUnwrapped = othIsWrapped ? other.value() : other;
-
-	      stack || (stack = new Stack);
-	      return equalFunc(objUnwrapped, othUnwrapped, customizer, bitmask, stack);
-	    }
-	  }
-	  if (!isSameTag) {
-	    return false;
-	  }
-	  stack || (stack = new Stack);
-	  return equalObjects(object, other, equalFunc, customizer, bitmask, stack);
-	}
-
-	module.exports = baseIsEqualDeep;
-
-
-/***/ },
-/* 742 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListCache = __webpack_require__(699),
-	    stackClear = __webpack_require__(743),
-	    stackDelete = __webpack_require__(744),
-	    stackGet = __webpack_require__(745),
-	    stackHas = __webpack_require__(746),
-	    stackSet = __webpack_require__(747);
-
-	/**
-	 * Creates a stack cache object to store key-value pairs.
-	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [entries] The key-value pairs to cache.
-	 */
-	function Stack(entries) {
-	  var data = this.__data__ = new ListCache(entries);
-	  this.size = data.size;
-	}
-
-	// Add methods to `Stack`.
-	Stack.prototype.clear = stackClear;
-	Stack.prototype['delete'] = stackDelete;
-	Stack.prototype.get = stackGet;
-	Stack.prototype.has = stackHas;
-	Stack.prototype.set = stackSet;
-
-	module.exports = Stack;
-
-
-/***/ },
-/* 743 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListCache = __webpack_require__(699);
-
-	/**
-	 * Removes all key-value entries from the stack.
-	 *
-	 * @private
-	 * @name clear
-	 * @memberOf Stack
-	 */
-	function stackClear() {
-	  this.__data__ = new ListCache;
-	  this.size = 0;
-	}
-
-	module.exports = stackClear;
-
-
-/***/ },
-/* 744 */
-/***/ function(module, exports) {
-
-	/**
-	 * Removes `key` and its value from the stack.
-	 *
-	 * @private
-	 * @name delete
-	 * @memberOf Stack
-	 * @param {string} key The key of the value to remove.
-	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-	 */
-	function stackDelete(key) {
-	  var data = this.__data__,
-	      result = data['delete'](key);
-
-	  this.size = data.size;
-	  return result;
-	}
-
-	module.exports = stackDelete;
-
-
-/***/ },
-/* 745 */
-/***/ function(module, exports) {
-
-	/**
-	 * Gets the stack value for `key`.
-	 *
-	 * @private
-	 * @name get
-	 * @memberOf Stack
-	 * @param {string} key The key of the value to get.
-	 * @returns {*} Returns the entry value.
-	 */
-	function stackGet(key) {
-	  return this.__data__.get(key);
-	}
-
-	module.exports = stackGet;
-
-
-/***/ },
-/* 746 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if a stack value for `key` exists.
-	 *
-	 * @private
-	 * @name has
-	 * @memberOf Stack
-	 * @param {string} key The key of the entry to check.
-	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-	 */
-	function stackHas(key) {
-	  return this.__data__.has(key);
-	}
-
-	module.exports = stackHas;
-
-
-/***/ },
-/* 747 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListCache = __webpack_require__(699),
-	    Map = __webpack_require__(706),
-	    MapCache = __webpack_require__(690);
-
-	/** Used as the size to enable large array optimizations. */
-	var LARGE_ARRAY_SIZE = 200;
-
-	/**
-	 * Sets the stack `key` to `value`.
-	 *
-	 * @private
-	 * @name set
-	 * @memberOf Stack
-	 * @param {string} key The key of the value to set.
-	 * @param {*} value The value to set.
-	 * @returns {Object} Returns the stack cache instance.
-	 */
-	function stackSet(key, value) {
-	  var data = this.__data__;
-	  if (data instanceof ListCache) {
-	    var pairs = data.__data__;
-	    if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
-	      pairs.push([key, value]);
-	      this.size = ++data.size;
-	      return this;
-	    }
-	    data = this.__data__ = new MapCache(pairs);
-	  }
-	  data.set(key, value);
-	  this.size = data.size;
-	  return this;
-	}
-
-	module.exports = stackSet;
-
-
-/***/ },
-/* 748 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SetCache = __webpack_require__(689),
-	    arraySome = __webpack_require__(749),
-	    cacheHas = __webpack_require__(723);
-
-	/** Used to compose bitmasks for comparison styles. */
-	var UNORDERED_COMPARE_FLAG = 1,
-	    PARTIAL_COMPARE_FLAG = 2;
-
-	/**
-	 * A specialized version of `baseIsEqualDeep` for arrays with support for
-	 * partial deep comparisons.
-	 *
-	 * @private
-	 * @param {Array} array The array to compare.
-	 * @param {Array} other The other array to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} customizer The function to customize comparisons.
-	 * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
-	 *  for more details.
-	 * @param {Object} stack Tracks traversed `array` and `other` objects.
-	 * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
-	 */
-	function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
-	  var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
-	      arrLength = array.length,
-	      othLength = other.length;
-
-	  if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
-	    return false;
-	  }
-	  // Assume cyclic values are equal.
-	  var stacked = stack.get(array);
-	  if (stacked && stack.get(other)) {
-	    return stacked == other;
-	  }
-	  var index = -1,
-	      result = true,
-	      seen = (bitmask & UNORDERED_COMPARE_FLAG) ? new SetCache : undefined;
-
-	  stack.set(array, other);
-	  stack.set(other, array);
-
-	  // Ignore non-index properties.
-	  while (++index < arrLength) {
-	    var arrValue = array[index],
-	        othValue = other[index];
-
-	    if (customizer) {
-	      var compared = isPartial
-	        ? customizer(othValue, arrValue, index, other, array, stack)
-	        : customizer(arrValue, othValue, index, array, other, stack);
-	    }
-	    if (compared !== undefined) {
-	      if (compared) {
-	        continue;
-	      }
-	      result = false;
-	      break;
-	    }
-	    // Recursively compare arrays (susceptible to call stack limits).
-	    if (seen) {
-	      if (!arraySome(other, function(othValue, othIndex) {
-	            if (!cacheHas(seen, othIndex) &&
-	                (arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack))) {
-	              return seen.push(othIndex);
-	            }
-	          })) {
-	        result = false;
-	        break;
-	      }
-	    } else if (!(
-	          arrValue === othValue ||
-	            equalFunc(arrValue, othValue, customizer, bitmask, stack)
-	        )) {
-	      result = false;
-	      break;
-	    }
-	  }
-	  stack['delete'](array);
-	  stack['delete'](other);
-	  return result;
-	}
-
-	module.exports = equalArrays;
-
-
-/***/ },
-/* 749 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.some` for arrays without support for iteratee
-	 * shorthands.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to iterate over.
-	 * @param {Function} predicate The function invoked per iteration.
-	 * @returns {boolean} Returns `true` if any element passes the predicate check,
-	 *  else `false`.
-	 */
-	function arraySome(array, predicate) {
-	  var index = -1,
-	      length = array == null ? 0 : array.length;
-
-	  while (++index < length) {
-	    if (predicate(array[index], index, array)) {
-	      return true;
-	    }
-	  }
-	  return false;
-	}
-
-	module.exports = arraySome;
-
-
-/***/ },
-/* 750 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Symbol = __webpack_require__(653),
-	    Uint8Array = __webpack_require__(751),
-	    eq = __webpack_require__(649),
-	    equalArrays = __webpack_require__(748),
-	    mapToArray = __webpack_require__(752),
-	    setToArray = __webpack_require__(734);
-
-	/** Used to compose bitmasks for comparison styles. */
-	var UNORDERED_COMPARE_FLAG = 1,
-	    PARTIAL_COMPARE_FLAG = 2;
-
-	/** `Object#toString` result references. */
-	var boolTag = '[object Boolean]',
-	    dateTag = '[object Date]',
-	    errorTag = '[object Error]',
-	    mapTag = '[object Map]',
-	    numberTag = '[object Number]',
-	    regexpTag = '[object RegExp]',
-	    setTag = '[object Set]',
-	    stringTag = '[object String]',
-	    symbolTag = '[object Symbol]';
-
-	var arrayBufferTag = '[object ArrayBuffer]',
-	    dataViewTag = '[object DataView]';
-
-	/** Used to convert symbols to primitives and strings. */
-	var symbolProto = Symbol ? Symbol.prototype : undefined,
-	    symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
-
-	/**
-	 * A specialized version of `baseIsEqualDeep` for comparing objects of
-	 * the same `toStringTag`.
-	 *
-	 * **Note:** This function only supports comparing values with tags of
-	 * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
-	 *
-	 * @private
-	 * @param {Object} object The object to compare.
-	 * @param {Object} other The other object to compare.
-	 * @param {string} tag The `toStringTag` of the objects to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} customizer The function to customize comparisons.
-	 * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
-	 *  for more details.
-	 * @param {Object} stack Tracks traversed `object` and `other` objects.
-	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
-	 */
-	function equalByTag(object, other, tag, equalFunc, customizer, bitmask, stack) {
-	  switch (tag) {
-	    case dataViewTag:
-	      if ((object.byteLength != other.byteLength) ||
-	          (object.byteOffset != other.byteOffset)) {
-	        return false;
-	      }
-	      object = object.buffer;
-	      other = other.buffer;
-
-	    case arrayBufferTag:
-	      if ((object.byteLength != other.byteLength) ||
-	          !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
-	        return false;
-	      }
-	      return true;
-
-	    case boolTag:
-	    case dateTag:
-	    case numberTag:
-	      // Coerce booleans to `1` or `0` and dates to milliseconds.
-	      // Invalid dates are coerced to `NaN`.
-	      return eq(+object, +other);
-
-	    case errorTag:
-	      return object.name == other.name && object.message == other.message;
-
-	    case regexpTag:
-	    case stringTag:
-	      // Coerce regexes to strings and treat strings, primitives and objects,
-	      // as equal. See http://www.ecma-international.org/ecma-262/7.0/#sec-regexp.prototype.tostring
-	      // for more details.
-	      return object == (other + '');
-
-	    case mapTag:
-	      var convert = mapToArray;
-
-	    case setTag:
-	      var isPartial = bitmask & PARTIAL_COMPARE_FLAG;
-	      convert || (convert = setToArray);
-
-	      if (object.size != other.size && !isPartial) {
-	        return false;
-	      }
-	      // Assume cyclic values are equal.
-	      var stacked = stack.get(object);
-	      if (stacked) {
-	        return stacked == other;
-	      }
-	      bitmask |= UNORDERED_COMPARE_FLAG;
-
-	      // Recursively compare objects (susceptible to call stack limits).
-	      stack.set(object, other);
-	      var result = equalArrays(convert(object), convert(other), equalFunc, customizer, bitmask, stack);
-	      stack['delete'](object);
-	      return result;
-
-	    case symbolTag:
-	      if (symbolValueOf) {
-	        return symbolValueOf.call(object) == symbolValueOf.call(other);
-	      }
-	  }
-	  return false;
-	}
-
-	module.exports = equalByTag;
-
-
-/***/ },
-/* 751 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var root = __webpack_require__(654);
-
-	/** Built-in value references. */
-	var Uint8Array = root.Uint8Array;
-
-	module.exports = Uint8Array;
-
-
-/***/ },
-/* 752 */
-/***/ function(module, exports) {
-
-	/**
-	 * Converts `map` to its key-value pairs.
-	 *
-	 * @private
-	 * @param {Object} map The map to convert.
-	 * @returns {Array} Returns the key-value pairs.
-	 */
-	function mapToArray(map) {
-	  var index = -1,
-	      result = Array(map.size);
-
-	  map.forEach(function(value, key) {
-	    result[++index] = [key, value];
-	  });
-	  return result;
-	}
-
-	module.exports = mapToArray;
-
-
-/***/ },
-/* 753 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var keys = __webpack_require__(754);
-
-	/** Used to compose bitmasks for comparison styles. */
-	var PARTIAL_COMPARE_FLAG = 2;
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * A specialized version of `baseIsEqualDeep` for objects with support for
-	 * partial deep comparisons.
-	 *
-	 * @private
-	 * @param {Object} object The object to compare.
-	 * @param {Object} other The other object to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} customizer The function to customize comparisons.
-	 * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
-	 *  for more details.
-	 * @param {Object} stack Tracks traversed `object` and `other` objects.
-	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
-	 */
-	function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
-	  var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
-	      objProps = keys(object),
-	      objLength = objProps.length,
-	      othProps = keys(other),
-	      othLength = othProps.length;
-
-	  if (objLength != othLength && !isPartial) {
-	    return false;
-	  }
-	  var index = objLength;
-	  while (index--) {
-	    var key = objProps[index];
-	    if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
-	      return false;
-	    }
-	  }
-	  // Assume cyclic values are equal.
-	  var stacked = stack.get(object);
-	  if (stacked && stack.get(other)) {
-	    return stacked == other;
-	  }
-	  var result = true;
-	  stack.set(object, other);
-	  stack.set(other, object);
-
-	  var skipCtor = isPartial;
-	  while (++index < objLength) {
-	    key = objProps[index];
-	    var objValue = object[key],
-	        othValue = other[key];
-
-	    if (customizer) {
-	      var compared = isPartial
-	        ? customizer(othValue, objValue, key, other, object, stack)
-	        : customizer(objValue, othValue, key, object, other, stack);
-	    }
-	    // Recursively compare objects (susceptible to call stack limits).
-	    if (!(compared === undefined
-	          ? (objValue === othValue || equalFunc(objValue, othValue, customizer, bitmask, stack))
-	          : compared
-	        )) {
-	      result = false;
-	      break;
-	    }
-	    skipCtor || (skipCtor = key == 'constructor');
-	  }
-	  if (result && !skipCtor) {
-	    var objCtor = object.constructor,
-	        othCtor = other.constructor;
-
-	    // Non `Object` object instances with different constructors are not equal.
-	    if (objCtor != othCtor &&
-	        ('constructor' in object && 'constructor' in other) &&
-	        !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
-	          typeof othCtor == 'function' && othCtor instanceof othCtor)) {
-	      result = false;
-	    }
-	  }
-	  stack['delete'](object);
-	  stack['delete'](other);
-	  return result;
-	}
-
-	module.exports = equalObjects;
-
-
-/***/ },
-/* 754 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var arrayLikeKeys = __webpack_require__(755),
-	    baseKeys = __webpack_require__(762),
-	    isArrayLike = __webpack_require__(650);
-
-	/**
-	 * Creates an array of the own enumerable property names of `object`.
-	 *
-	 * **Note:** Non-object values are coerced to objects. See the
-	 * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
-	 * for more details.
-	 *
-	 * @static
-	 * @since 0.1.0
-	 * @memberOf _
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.keys(new Foo);
-	 * // => ['a', 'b'] (iteration order is not guaranteed)
-	 *
-	 * _.keys('hi');
-	 * // => ['0', '1']
-	 */
-	function keys(object) {
-	  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
-	}
-
-	module.exports = keys;
-
-
-/***/ },
-/* 755 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseTimes = __webpack_require__(756),
-	    isArguments = __webpack_require__(727),
-	    isArray = __webpack_require__(729),
-	    isBuffer = __webpack_require__(757),
-	    isIndex = __webpack_require__(660),
-	    isTypedArray = __webpack_require__(759);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Creates an array of the enumerable property names of the array-like `value`.
-	 *
-	 * @private
-	 * @param {*} value The value to query.
-	 * @param {boolean} inherited Specify returning inherited property names.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function arrayLikeKeys(value, inherited) {
-	  var isArr = isArray(value),
-	      isArg = !isArr && isArguments(value),
-	      isBuff = !isArr && !isArg && isBuffer(value),
-	      isType = !isArr && !isArg && !isBuff && isTypedArray(value),
-	      skipIndexes = isArr || isArg || isBuff || isType,
-	      result = skipIndexes ? baseTimes(value.length, String) : [],
-	      length = result.length;
-
-	  for (var key in value) {
-	    if ((inherited || hasOwnProperty.call(value, key)) &&
-	        !(skipIndexes && (
-	           // Safari 9 has enumerable `arguments.length` in strict mode.
-	           key == 'length' ||
-	           // Node.js 0.10 has enumerable non-index properties on buffers.
-	           (isBuff && (key == 'offset' || key == 'parent')) ||
-	           // PhantomJS 2 has enumerable non-index properties on typed arrays.
-	           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||
-	           // Skip index properties.
-	           isIndex(key, length)
-	        ))) {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = arrayLikeKeys;
-
-
-/***/ },
-/* 756 */
-/***/ function(module, exports) {
-
-	/**
-	 * The base implementation of `_.times` without support for iteratee shorthands
-	 * or max array length checks.
-	 *
-	 * @private
-	 * @param {number} n The number of times to invoke `iteratee`.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array} Returns the array of results.
-	 */
-	function baseTimes(n, iteratee) {
-	  var index = -1,
-	      result = Array(n);
-
-	  while (++index < n) {
-	    result[index] = iteratee(index);
-	  }
-	  return result;
-	}
-
-	module.exports = baseTimes;
-
-
-/***/ },
-/* 757 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(654),
-	    stubFalse = __webpack_require__(758);
-
-	/** Detect free variable `exports`. */
-	var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
-
-	/** Detect free variable `module`. */
-	var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
-
-	/** Detect the popular CommonJS extension `module.exports`. */
-	var moduleExports = freeModule && freeModule.exports === freeExports;
-
-	/** Built-in value references. */
-	var Buffer = moduleExports ? root.Buffer : undefined;
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
-
-	/**
-	 * Checks if `value` is a buffer.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.3.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
-	 * @example
-	 *
-	 * _.isBuffer(new Buffer(2));
-	 * // => true
-	 *
-	 * _.isBuffer(new Uint8Array(2));
-	 * // => false
-	 */
-	var isBuffer = nativeIsBuffer || stubFalse;
-
-	module.exports = isBuffer;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module)))
-
-/***/ },
-/* 758 */
-/***/ function(module, exports) {
-
-	/**
-	 * This method returns `false`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.13.0
-	 * @category Util
-	 * @returns {boolean} Returns `false`.
-	 * @example
-	 *
-	 * _.times(2, _.stubFalse);
-	 * // => [false, false]
-	 */
-	function stubFalse() {
-	  return false;
-	}
-
-	module.exports = stubFalse;
-
-
-/***/ },
-/* 759 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsTypedArray = __webpack_require__(760),
-	    baseUnary = __webpack_require__(722),
-	    nodeUtil = __webpack_require__(761);
-
-	/* Node.js helper references. */
-	var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
-
-	/**
-	 * Checks if `value` is classified as a typed array.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
-	 * @example
-	 *
-	 * _.isTypedArray(new Uint8Array);
-	 * // => true
-	 *
-	 * _.isTypedArray([]);
-	 * // => false
-	 */
-	var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
-
-	module.exports = isTypedArray;
-
-
-/***/ },
-/* 760 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseGetTag = __webpack_require__(652),
-	    isLength = __webpack_require__(659),
-	    isObjectLike = __webpack_require__(664);
-
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]',
-	    arrayTag = '[object Array]',
-	    boolTag = '[object Boolean]',
-	    dateTag = '[object Date]',
-	    errorTag = '[object Error]',
-	    funcTag = '[object Function]',
-	    mapTag = '[object Map]',
-	    numberTag = '[object Number]',
-	    objectTag = '[object Object]',
-	    regexpTag = '[object RegExp]',
-	    setTag = '[object Set]',
-	    stringTag = '[object String]',
-	    weakMapTag = '[object WeakMap]';
-
-	var arrayBufferTag = '[object ArrayBuffer]',
-	    dataViewTag = '[object DataView]',
-	    float32Tag = '[object Float32Array]',
-	    float64Tag = '[object Float64Array]',
-	    int8Tag = '[object Int8Array]',
-	    int16Tag = '[object Int16Array]',
-	    int32Tag = '[object Int32Array]',
-	    uint8Tag = '[object Uint8Array]',
-	    uint8ClampedTag = '[object Uint8ClampedArray]',
-	    uint16Tag = '[object Uint16Array]',
-	    uint32Tag = '[object Uint32Array]';
-
-	/** Used to identify `toStringTag` values of typed arrays. */
-	var typedArrayTags = {};
-	typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
-	typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
-	typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
-	typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
-	typedArrayTags[uint32Tag] = true;
-	typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
-	typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
-	typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
-	typedArrayTags[errorTag] = typedArrayTags[funcTag] =
-	typedArrayTags[mapTag] = typedArrayTags[numberTag] =
-	typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
-	typedArrayTags[setTag] = typedArrayTags[stringTag] =
-	typedArrayTags[weakMapTag] = false;
-
-	/**
-	 * The base implementation of `_.isTypedArray` without Node.js optimizations.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
-	 */
-	function baseIsTypedArray(value) {
-	  return isObjectLike(value) &&
-	    isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
-	}
-
-	module.exports = baseIsTypedArray;
-
-
-/***/ },
-/* 761 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(655);
-
-	/** Detect free variable `exports`. */
-	var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
-
-	/** Detect free variable `module`. */
-	var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
-
-	/** Detect the popular CommonJS extension `module.exports`. */
-	var moduleExports = freeModule && freeModule.exports === freeExports;
-
-	/** Detect free variable `process` from Node.js. */
-	var freeProcess = moduleExports && freeGlobal.process;
-
-	/** Used to access faster Node.js helpers. */
-	var nodeUtil = (function() {
-	  try {
-	    return freeProcess && freeProcess.binding('util');
-	  } catch (e) {}
-	}());
-
-	module.exports = nodeUtil;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module)))
-
-/***/ },
-/* 762 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isPrototype = __webpack_require__(763),
-	    nativeKeys = __webpack_require__(764);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function baseKeys(object) {
-	  if (!isPrototype(object)) {
-	    return nativeKeys(object);
-	  }
-	  var result = [];
-	  for (var key in Object(object)) {
-	    if (hasOwnProperty.call(object, key) && key != 'constructor') {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = baseKeys;
-
-
-/***/ },
-/* 763 */
-/***/ function(module, exports) {
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/**
-	 * Checks if `value` is likely a prototype object.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
-	 */
-	function isPrototype(value) {
-	  var Ctor = value && value.constructor,
-	      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
-
-	  return value === proto;
-	}
-
-	module.exports = isPrototype;
-
-
-/***/ },
-/* 764 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var overArg = __webpack_require__(765);
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeKeys = overArg(Object.keys, Object);
-
-	module.exports = nativeKeys;
-
-
-/***/ },
-/* 765 */
-/***/ function(module, exports) {
-
-	/**
-	 * Creates a unary function that invokes `func` with its argument transformed.
-	 *
-	 * @private
-	 * @param {Function} func The function to wrap.
-	 * @param {Function} transform The argument transform.
-	 * @returns {Function} Returns the new function.
-	 */
-	function overArg(func, transform) {
-	  return function(arg) {
-	    return func(transform(arg));
-	  };
-	}
-
-	module.exports = overArg;
-
-
-/***/ },
-/* 766 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var DataView = __webpack_require__(767),
-	    Map = __webpack_require__(706),
-	    Promise = __webpack_require__(768),
-	    Set = __webpack_require__(732),
-	    WeakMap = __webpack_require__(769),
-	    baseGetTag = __webpack_require__(652),
-	    toSource = __webpack_require__(684);
-
-	/** `Object#toString` result references. */
-	var mapTag = '[object Map]',
-	    objectTag = '[object Object]',
-	    promiseTag = '[object Promise]',
-	    setTag = '[object Set]',
-	    weakMapTag = '[object WeakMap]';
-
-	var dataViewTag = '[object DataView]';
-
-	/** Used to detect maps, sets, and weakmaps. */
-	var dataViewCtorString = toSource(DataView),
-	    mapCtorString = toSource(Map),
-	    promiseCtorString = toSource(Promise),
-	    setCtorString = toSource(Set),
-	    weakMapCtorString = toSource(WeakMap);
-
-	/**
-	 * Gets the `toStringTag` of `value`.
-	 *
-	 * @private
-	 * @param {*} value The value to query.
-	 * @returns {string} Returns the `toStringTag`.
-	 */
-	var getTag = baseGetTag;
-
-	// Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
-	if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
-	    (Map && getTag(new Map) != mapTag) ||
-	    (Promise && getTag(Promise.resolve()) != promiseTag) ||
-	    (Set && getTag(new Set) != setTag) ||
-	    (WeakMap && getTag(new WeakMap) != weakMapTag)) {
-	  getTag = function(value) {
-	    var result = baseGetTag(value),
-	        Ctor = result == objectTag ? value.constructor : undefined,
-	        ctorString = Ctor ? toSource(Ctor) : '';
-
-	    if (ctorString) {
-	      switch (ctorString) {
-	        case dataViewCtorString: return dataViewTag;
-	        case mapCtorString: return mapTag;
-	        case promiseCtorString: return promiseTag;
-	        case setCtorString: return setTag;
-	        case weakMapCtorString: return weakMapTag;
-	      }
-	    }
-	    return result;
-	  };
-	}
-
-	module.exports = getTag;
-
-
-/***/ },
-/* 767 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(680),
-	    root = __webpack_require__(654);
-
-	/* Built-in method references that are verified to be native. */
-	var DataView = getNative(root, 'DataView');
-
-	module.exports = DataView;
-
-
-/***/ },
-/* 768 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(680),
-	    root = __webpack_require__(654);
-
-	/* Built-in method references that are verified to be native. */
-	var Promise = getNative(root, 'Promise');
-
-	module.exports = Promise;
-
-
-/***/ },
-/* 769 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(680),
-	    root = __webpack_require__(654);
-
-	/* Built-in method references that are verified to be native. */
-	var WeakMap = getNative(root, 'WeakMap');
-
-	module.exports = WeakMap;
-
-
-/***/ },
-/* 770 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	/*
-	This class is a wrapper around react-tooltip that lets us have one big tooltip.
-	The tooltip gets hidden when you hover off, and changes content when you change what you hover on.
-	Hack 1:
-	I wanted the component to store the tooltip content, and then pass it as a child to react-tooltip.
-	This didn't really work because I also need to put display:none on the tooltip when we hover off, not just an empty white tooltip.
-	Hack 2:
-	Additionally we use the freeze feature of react-tooltip- passed inside through props- and want to unfreeze after click outside.
-	But that unfreeze also fired on clicking the column that turned freeze on in the first place, hence counting clicks.
-	*/
-	//*------------------------------------------------------------------*
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var React = __webpack_require__(138);
-	var ReactTooltip = __webpack_require__(771);
-	__webpack_require__(782);
-	//*------------------------------------------------------------------*
-
-	var TooltipStateManager = React.createClass({
-	  displayName: 'TooltipStateManager',
-
-	  propTypes: {
-	    onUserSelectsRow: React.PropTypes.func.isRequired,
-	    onUserSelectsColumn: React.PropTypes.func.isRequired,
-	    onUserSelectsPoint: React.PropTypes.func.isRequired,
-	    tooltips: React.PropTypes.shape({
-	      row: React.PropTypes.func,
-	      column: React.PropTypes.func,
-	      point: React.PropTypes.func
-	    }).isRequired,
-	    managedComponent: React.PropTypes.any.isRequired,
-	    managedComponentProps: React.PropTypes.object.isRequired,
-	    enableFreeze: React.PropTypes.bool.isRequired
-	  },
-
-	  getInitialState: function getInitialState() {
-	    return {
-	      tooltipFrozen: false,
-	      clickCount: 0
-	    };
-	  },
-
-	  _onUserSelectsRow: function _onUserSelectsRow(rowLabel) {
-	    if (this.state.tooltipFrozen) return;
-	    this.refs["tooltip"].setState(rowLabel ? { placeholder: this.props.tooltips.row(rowLabel),
-	      place: "right",
-	      extraClass: "gxaGlobalTooltipContent" } : { extraClass: "gxaDisabled" });
-	    this.props.onUserSelectsRow(rowLabel);
-	  },
-	  _onUserSelectsColumn: function _onUserSelectsColumn(columnLabel) {
-	    if (this.state.tooltipFrozen) return;
-	    this.refs["tooltip"].setState(columnLabel ? { placeholder: this.props.tooltips.column(columnLabel),
-	      place: "bottom",
-	      extraClass: "gxaGlobalTooltipContent" } : { extraClass: "gxaDisabled" });
-	    this.props.onUserSelectsColumn(columnLabel);
-	  },
-	  _onUserSelectsPoint: function _onUserSelectsPoint(__args__) {
-	    /*
-	    //We let Highcharts manage the point formatter for now since we're not disappointed.
-	    this.refs["tooltip"].setState(
-	      hoveredPoint
-	      ? {placeholder: this.props.tooltips.point(hoveredPoint),
-	        extraClass:"gxaGlobalTooltipContent"}
-	      : {extraClass:"gxaDisabled"}
-	    );
-	    */
-	    this.props.onUserSelectsPoint.apply({}, arguments);
-	  },
-
-	  _dismissTooltip: function _dismissTooltip() {
-	    if (this.state.clickCount > 0) {
-	      this.setState({ tooltipFrozen: false, clickCount: 0 });
-	      this.refs["tooltip"].setState({ extraClass: "gxaDisabled" });
-	    }
-	    this.setState(function (previousState) {
-	      return { clickCount: previousState.clickCount + 1 };
-	    });
-	  },
-
-	  _onUserClicksColumn: function _onUserClicksColumn(columnLabel) {
-	    if (this.props.enableFreeze) {
-	      this.setState(function (previousState) {
-	        return { tooltipFrozen: !previousState.tooltipFrozen, clickCount: 0 };
-	      });
-	    }
-	    this._onUserSelectsColumn(columnLabel);
-	  },
-
-	  render: function render() {
-	    var ManagedComponent = this.props.managedComponent;
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'div',
-	        _extends({
-	          'data-tip': true,
-	          'data-for': 'gxaGlobalTooltipOverManagedComponent'
-	        }, this.state.tooltipFrozen ? {
-	          className: "gxaFadeBackgroundForOpenTooltip"
-	        } : {}),
-	        React.createElement(ManagedComponent, Object.assign({}, this.props.managedComponentProps, { onUserSelectsRow: this._onUserSelectsRow,
-	          onUserSelectsColumn: this._onUserSelectsColumn,
-	          onUserSelectsPoint: this._onUserSelectsPoint,
-	          onUserClicksColumn: this._onUserClicksColumn,
-	          "data-tip": true
-	        }))
-	      ),
-	      React.createElement(
-	        ReactTooltip,
-	        {
-	          ref: 'tooltip',
-	          id: 'gxaGlobalTooltipOverManagedComponent',
-	          type: 'light',
-	          frozen: !!this.state.tooltipFrozen,
-	          onClickOutside: this.props.enableFreeze ? this._dismissTooltip : undefined,
-	          'class': "gxaDisabled" },
-	        React.createElement('div', null)
-	      )
-	    );
-	  }
-	});
-
-	module.exports = TooltipStateManager;
-
-/***/ },
-/* 771 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _class, _class2, _temp;
-
-	/* Decoraters */
-
-
-	/* Utils */
-
-
-	/* CSS */
-
-
-	var _react = __webpack_require__(138);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(299);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _classnames = __webpack_require__(772);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _staticMethods = __webpack_require__(773);
-
-	var _staticMethods2 = _interopRequireDefault(_staticMethods);
-
-	var _windowListener = __webpack_require__(775);
-
-	var _windowListener2 = _interopRequireDefault(_windowListener);
-
-	var _customEvent = __webpack_require__(776);
-
-	var _customEvent2 = _interopRequireDefault(_customEvent);
-
-	var _isCapture = __webpack_require__(777);
-
-	var _isCapture2 = _interopRequireDefault(_isCapture);
-
-	var _getPosition = __webpack_require__(778);
-
-	var _getPosition2 = _interopRequireDefault(_getPosition);
-
-	var _getTipContent = __webpack_require__(779);
-
-	var _getTipContent2 = _interopRequireDefault(_getTipContent);
-
-	var _aria = __webpack_require__(780);
-
-	var _style = __webpack_require__(781);
-
-	var _style2 = _interopRequireDefault(_style);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var ReactTooltip = (0, _staticMethods2.default)(_class = (0, _windowListener2.default)(_class = (0, _customEvent2.default)(_class = (0, _isCapture2.default)(_class = (_temp = _class2 = function (_Component) {
-	  _inherits(ReactTooltip, _Component);
-
-	  function ReactTooltip(props) {
-	    _classCallCheck(this, ReactTooltip);
-
-	    var _this = _possibleConstructorReturn(this, (ReactTooltip.__proto__ || Object.getPrototypeOf(ReactTooltip)).call(this, props));
-
-	    _this.onClickOutsideFrozenTooltip = function (e) {
-	      var _this$props = _this.props;
-	      var frozen = _this$props.frozen;
-	      var onClickOutside = _this$props.onClickOutside;
-	      var currentTarget = _this.state.currentTarget;
-
-	      if (frozen && onClickOutside && !_reactDom2.default.findDOMNode(_this).contains(e.target) && e.target !== currentTarget) {
-	        onClickOutside();
-	      }
-	    };
-
-	    _this.state = {
-	      place: 'top', // Direction of tooltip
-	      type: 'dark', // Color theme of tooltip
-	      effect: 'float', // float or fixed
-	      show: false,
-	      border: false,
-	      placeholder: '',
-	      offset: {},
-	      extraClass: '',
-	      html: false,
-	      delayHide: 0,
-	      delayShow: 0,
-	      event: props.event || null,
-	      eventOff: props.eventOff || null,
-	      currentEvent: null, // Current mouse event
-	      currentTarget: null, // Current target of mouse event
-	      ariaProps: (0, _aria.parseAria)(props), // aria- and role attributes
-	      afterUnfreeze: function afterUnfreeze() {},
-	      isEmptyTip: false,
-	      disable: false
-	    };
-
-	    _this.bind(['showTooltip', 'updateTooltip', 'hideTooltip', 'globalRebuild', 'globalShow', 'globalHide', 'onWindowResize']);
-
-	    _this.mount = true;
-	    _this.delayShowLoop = null;
-	    _this.delayHideLoop = null;
-	    _this.intervalUpdateContent = null;
-	    return _this;
-	  }
-
-	  /**
-	   * For unify the bind and unbind listener
-	   */
-
-
-	  _createClass(ReactTooltip, [{
-	    key: 'bind',
-	    value: function bind(methodArray) {
-	      var _this2 = this;
-
-	      methodArray.forEach(function (method) {
-	        _this2[method] = _this2[method].bind(_this2);
-	      });
-	    }
-	  }, {
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.setStyleHeader(); // Set the style to the <link>
-	      this.bindListener(); // Bind listener for tooltip
-	      this.bindWindowEvents(this.props.resizeHide); // Bind global event for static method
-	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(props) {
-	      if (!props.frozen && this.props.frozen) {
-	        this.state.afterUnfreeze();
-	      }
-	      var ariaProps = this.state.ariaProps;
-
-	      var newAriaProps = (0, _aria.parseAria)(props);
-
-	      var isChanged = Object.keys(newAriaProps).some(function (props) {
-	        return newAriaProps[props] !== ariaProps[props];
-	      });
-	      if (isChanged) {
-	        this.setState({ ariaProps: newAriaProps });
-	      }
-	    }
-	  }, {
-	    key: 'componentWillUnmount',
-	    value: function componentWillUnmount() {
-	      this.mount = false;
-
-	      this.clearTimer();
-
-	      this.unbindListener();
-	      this.removeScrollListener();
-	      this.unbindWindowEvents();
-	    }
-
-	    /**
-	     * Pick out corresponded target elements
-	     */
-
-	  }, {
-	    key: 'getTargetArray',
-	    value: function getTargetArray(id) {
-	      var targetArray = void 0;
-
-	      if (!id) {
-	        targetArray = document.querySelectorAll('[data-tip]:not([data-for])');
-	      } else {
-	        targetArray = document.querySelectorAll('[data-tip][data-for="' + id + '"]');
-	      }
-
-	      // targetArray is a NodeList, convert it to a real array
-	      // I hope I can use Object.values...
-	      return Object.keys(targetArray).filter(function (key) {
-	        return key !== 'length';
-	      }).map(function (key) {
-	        return targetArray[key];
-	      });
-	    }
-
-	    /**
-	     * Bind listener to the target elements
-	     * These listeners used to trigger showing or hiding the tooltip
-	     */
-
-	  }, {
-	    key: 'bindListener',
-	    value: function bindListener() {
-	      var _this3 = this;
-
-	      var _props = this.props;
-	      var id = _props.id;
-	      var globalEventOff = _props.globalEventOff;
-
-	      var targetArray = this.getTargetArray(id);
-
-	      targetArray.forEach(function (target) {
-	        var isCaptureMode = _this3.isCapture(target);
-	        if (target.getAttribute('currentItem') === null) {
-	          target.setAttribute('currentItem', 'false');
-	        }
-	        _this3.unbindBasicListener(target);
-
-	        if (_this3.isCustomEvent(target)) {
-	          _this3.customBindListener(target);
-	          return;
-	        }
-
-	        target.addEventListener('mouseenter', _this3.showTooltip, isCaptureMode);
-	        if (_this3.state.effect === 'float') {
-	          target.addEventListener('mousemove', _this3.updateTooltip, isCaptureMode);
-	        }
-	        target.addEventListener('mouseleave', _this3.hideTooltip, isCaptureMode);
-	      });
-
-	      // Global event to hide tooltip
-	      if (globalEventOff) {
-	        window.removeEventListener(globalEventOff, this.hideTooltip);
-	        window.addEventListener(globalEventOff, this.hideTooltip, false);
-	      }
-
-	      if (this.props.onClickOutside) {
-	        window.addEventListener('click', this.onClickOutsideFrozenTooltip);
-	      }
-	    }
-
-	    /**
-	     * Unbind listeners on target elements
-	     */
-
-	  }, {
-	    key: 'unbindListener',
-	    value: function unbindListener() {
-	      var _this4 = this;
-
-	      var _props2 = this.props;
-	      var id = _props2.id;
-	      var globalEventOff = _props2.globalEventOff;
-
-	      var targetArray = this.getTargetArray(id);
-	      targetArray.forEach(function (target) {
-	        _this4.unbindBasicListener(target);
-	        if (_this4.isCustomEvent(target)) _this4.customUnbindListener(target);
-	      });
-
-	      if (globalEventOff) window.removeEventListener(globalEventOff, this.hideTooltip);
-	      window.removeEventListener('click', this.onClickOutsideFrozenTooltip);
-	    }
-
-	    /**
-	     * Invoke this before bind listener and ummount the compont
-	     * it is necessary to invloke this even when binding custom event
-	     * so that the tooltip can switch between custom and default listener
-	     */
-
-	  }, {
-	    key: 'unbindBasicListener',
-	    value: function unbindBasicListener(target) {
-	      target.removeEventListener('mouseenter', this.showTooltip);
-	      target.removeEventListener('mousemove', this.updateTooltip);
-	      target.removeEventListener('mouseleave', this.hideTooltip);
-	    }
-
-	    /**
-	     * When mouse enter, show the tooltip
-	     */
-
-	  }, {
-	    key: 'showTooltip',
-	    value: function showTooltip(e, isGlobalCall) {
-	      var _this5 = this;
-
-	      if (isGlobalCall) {
-	        // Don't trigger other elements belongs to other ReactTooltip
-	        var targetArray = this.getTargetArray(this.props.id);
-	        var isMyElement = targetArray.some(function (ele) {
-	          return ele === e.currentTarget;
-	        });
-	        if (!isMyElement || this.state.show) return;
-	      }
-	      // Get the tooltip content
-	      // calculate in this phrase so that tip width height can be detected
-	      var _props3 = this.props;
-	      var children = _props3.children;
-	      var multiline = _props3.multiline;
-	      var getContent = _props3.getContent;
-	      var frozen = _props3.frozen;
-
-	      if (frozen) return;
-	      var originTooltip = e.currentTarget.getAttribute('data-tip');
-	      var isMultiline = e.currentTarget.getAttribute('data-multiline') || multiline || false;
-
-	      // Generate tootlip content
-	      var content = void 0;
-	      if (getContent) {
-	        if (Array.isArray(getContent)) {
-	          content = getContent[0] && getContent[0]();
-	        } else {
-	          content = getContent();
-	        }
-	      }
-	      var placeholder = (0, _getTipContent2.default)(originTooltip, children, content, isMultiline);
-	      var isEmptyTip = typeof placeholder === 'string' && placeholder === '' || placeholder === null;
-
-	      // If it is focus event or called by ReactTooltip.show, switch to `solid` effect
-	      var switchToSolid = e instanceof window.FocusEvent || isGlobalCall;
-
-	      // if it need to skip adding hide listener to scroll
-	      var scrollHide = true;
-	      if (e.currentTarget.getAttribute('data-scroll-hide')) {
-	        scrollHide = e.currentTarget.getAttribute('data-scroll-hide') === 'true';
-	      } else if (this.props.scrollHide != null) {
-	        scrollHide = this.props.scrollHide;
-	      }
-
-	      this.setState({
-	        placeholder: placeholder,
-	        isEmptyTip: isEmptyTip,
-	        place: e.currentTarget.getAttribute('data-place') || this.props.place || 'top',
-	        type: e.currentTarget.getAttribute('data-type') || this.props.type || 'dark',
-	        effect: switchToSolid && 'solid' || e.currentTarget.getAttribute('data-effect') || this.props.effect || 'float',
-	        offset: e.currentTarget.getAttribute('data-offset') || this.props.offset || {},
-	        html: e.currentTarget.getAttribute('data-html') ? e.currentTarget.getAttribute('data-html') === 'true' : this.props.html || false,
-	        delayShow: e.currentTarget.getAttribute('data-delay-show') || this.props.delayShow || 0,
-	        delayHide: e.currentTarget.getAttribute('data-delay-hide') || this.props.delayHide || 0,
-	        border: e.currentTarget.getAttribute('data-border') ? e.currentTarget.getAttribute('data-border') === 'true' : this.props.border || false,
-	        extraClass: e.currentTarget.getAttribute('data-class') || this.props.class || '',
-	        disable: e.currentTarget.getAttribute('data-tip-disable') ? e.currentTarget.getAttribute('data-tip-disable') === 'true' : this.props.disable || false
-	      }, function () {
-	        if (scrollHide) _this5.addScrollListener(e);
-	        _this5.updateTooltip(e);
-
-	        if (getContent && Array.isArray(getContent)) {
-	          _this5.intervalUpdateContent = setInterval(function () {
-	            if (_this5.mount) {
-	              var _getContent = _this5.props.getContent;
-
-	              var _placeholder = (0, _getTipContent2.default)(originTooltip, _getContent[0](), isMultiline);
-	              var _isEmptyTip = typeof _placeholder === 'string' && _placeholder === '';
-	              _this5.setState({
-	                placeholder: _placeholder,
-	                isEmptyTip: _isEmptyTip
-	              });
-	            }
-	          }, getContent[1]);
-	        }
-	      });
-	    }
-
-	    /**
-	     * When mouse hover, updatetooltip
-	     */
-
-	  }, {
-	    key: 'updateTooltip',
-	    value: function updateTooltip(e) {
-	      var _this6 = this;
-
-	      var _state = this.state;
-	      var delayShow = _state.delayShow;
-	      var show = _state.show;
-	      var isEmptyTip = _state.isEmptyTip;
-	      var disable = _state.disable;
-	      var _props4 = this.props;
-	      var afterShow = _props4.afterShow;
-	      var frozen = _props4.frozen;
-	      var placeholder = this.state.placeholder;
-
-	      var delayTime = show ? 0 : parseInt(delayShow, 10);
-	      var eventTarget = e.currentTarget;
-
-	      if (isEmptyTip || disable) return; // if the tooltip is empty, disable the tooltip
-	      var updateState = function updateState() {
-	        if (Array.isArray(placeholder) && placeholder.length > 0 || placeholder) {
-	          (function () {
-	            var isInvisible = !_this6.state.show;
-	            _this6.setState({
-	              currentEvent: e,
-	              currentTarget: eventTarget,
-	              show: true
-	            }, function () {
-	              _this6.updatePosition();
-	              if (isInvisible && afterShow) afterShow();
-	            });
-	          })();
-	        }
-	      };
-
-	      clearTimeout(this.delayShowLoop);
-	      if (frozen) {
-	        this.setState({ afterUnfreeze: updateState });
-	      } else if (delayShow) {
-	        this.delayShowLoop = setTimeout(updateState, delayTime);
-	      } else {
-	        updateState();
-	      }
-	    }
-	  }, {
-	    key: 'hideTooltip',
-
-
-	    /**
-	     * When mouse leave, hide tooltip
-	     */
-	    value: function hideTooltip(e, hasTarget) {
-	      var _this7 = this;
-
-	      var _state2 = this.state;
-	      var delayHide = _state2.delayHide;
-	      var isEmptyTip = _state2.isEmptyTip;
-	      var disable = _state2.disable;
-	      var _props5 = this.props;
-	      var afterHide = _props5.afterHide;
-	      var frozen = _props5.frozen;
-
-	      if (!this.mount) return;
-	      if (isEmptyTip || disable) return; // if the tooltip is empty, disable the tooltip
-	      if (hasTarget) {
-	        // Don't trigger other elements belongs to other ReactTooltip
-	        var targetArray = this.getTargetArray(this.props.id);
-	        var isMyElement = targetArray.some(function (ele) {
-	          return ele === e.currentTarget;
-	        });
-	        if (!isMyElement || !this.state.show) return;
-	      }
-	      var resetState = function resetState() {
-	        var isVisible = _this7.state.show;
-	        _this7.setState({
-	          show: false
-	        }, function () {
-	          _this7.removeScrollListener();
-	          if (isVisible && afterHide) afterHide();
-	        });
-	      };
-
-	      this.clearTimer();
-	      if (frozen) {
-	        this.setState({ afterUnfreeze: resetState });
-	      } else if (delayHide) {
-	        this.delayHideLoop = setTimeout(resetState, parseInt(delayHide, 10));
-	      } else {
-	        resetState();
-	      }
-	    }
-
-	    /**
-	     * Add scroll eventlistener when tooltip show
-	     * automatically hide the tooltip when scrolling
-	     */
-
-	  }, {
-	    key: 'addScrollListener',
-	    value: function addScrollListener(e) {
-	      var isCaptureMode = this.isCapture(e.currentTarget);
-	      window.addEventListener('scroll', this.hideTooltip, isCaptureMode);
-	    }
-	  }, {
-	    key: 'removeScrollListener',
-	    value: function removeScrollListener() {
-	      window.removeEventListener('scroll', this.hideTooltip);
-	    }
-
-	    // Calculate the position
-
-	  }, {
-	    key: 'updatePosition',
-	    value: function updatePosition() {
-	      var _this8 = this;
-
-	      var _state3 = this.state;
-	      var currentEvent = _state3.currentEvent;
-	      var currentTarget = _state3.currentTarget;
-	      var place = _state3.place;
-	      var effect = _state3.effect;
-	      var offset = _state3.offset;
-
-	      var node = _reactDom2.default.findDOMNode(this);
-	      var result = (0, _getPosition2.default)(currentEvent, currentTarget, node, place, effect, offset);
-
-	      if (result.isNewState) {
-	        // Switch to reverse placement
-	        return this.setState(result.newState, function () {
-	          _this8.updatePosition();
-	        });
-	      }
-	      // Set tooltip position
-	      node.style.left = result.position.left + 'px';
-	      node.style.top = result.position.top + 'px';
-	    }
-
-	    /**
-	     * Set style tag in header
-	     * in this way we can insert default css
-	     */
-
-	  }, {
-	    key: 'setStyleHeader',
-	    value: function setStyleHeader() {
-	      if (!document.getElementsByTagName('head')[0].querySelector('style[id="react-tooltip"]')) {
-	        var tag = document.createElement('style');
-	        tag.id = 'react-tooltip';
-	        tag.innerHTML = _style2.default;
-	        document.getElementsByTagName('head')[0].appendChild(tag);
-	      }
-	    }
-
-	    /**
-	     * CLear all kinds of timeout of interval
-	     */
-
-	  }, {
-	    key: 'clearTimer',
-	    value: function clearTimer() {
-	      clearTimeout(this.delayShowLoop);
-	      clearTimeout(this.delayHideLoop);
-	      clearInterval(this.intervalUpdateContent);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _state4 = this.state;
-	      var placeholder = _state4.placeholder;
-	      var extraClass = _state4.extraClass;
-	      var html = _state4.html;
-	      var ariaProps = _state4.ariaProps;
-	      var disable = _state4.disable;
-	      var isEmptyTip = _state4.isEmptyTip;
-
-	      var tooltipClass = (0, _classnames2.default)('__react_component_tooltip', { 'show': this.state.show && !disable && !isEmptyTip }, { 'frozen': this.props.frozen }, { 'border': this.state.border }, { 'place-top': this.state.place === 'top' }, { 'place-bottom': this.state.place === 'bottom' }, { 'place-left': this.state.place === 'left' }, { 'place-right': this.state.place === 'right' }, { 'type-dark': this.state.type === 'dark' }, { 'type-success': this.state.type === 'success' }, { 'type-warning': this.state.type === 'warning' }, { 'type-error': this.state.type === 'error' }, { 'type-info': this.state.type === 'info' }, { 'type-light': this.state.type === 'light' });
-	      if (html) {
-	        return _react2.default.createElement('div', _extends({ className: tooltipClass + ' ' + extraClass
-	        }, ariaProps, {
-	          'data-id': 'tooltip',
-	          dangerouslySetInnerHTML: { __html: placeholder } }));
-	      } else {
-	        return _react2.default.createElement(
-	          'div',
-	          _extends({ className: tooltipClass + ' ' + extraClass
-	          }, ariaProps, {
-	            'data-id': 'tooltip' }),
-	          placeholder
-	        );
-	      }
-	    }
-	  }]);
-
-	  return ReactTooltip;
-	}(_react.Component), _class2.propTypes = {
-	  children: _react.PropTypes.any,
-	  place: _react.PropTypes.string,
-	  type: _react.PropTypes.string,
-	  effect: _react.PropTypes.string,
-	  offset: _react.PropTypes.object,
-	  multiline: _react.PropTypes.bool,
-	  border: _react.PropTypes.bool,
-	  class: _react.PropTypes.string,
-	  id: _react.PropTypes.string,
-	  html: _react.PropTypes.bool,
-	  delayHide: _react.PropTypes.number,
-	  delayShow: _react.PropTypes.number,
-	  event: _react.PropTypes.string,
-	  eventOff: _react.PropTypes.string,
-	  watchWindow: _react.PropTypes.bool,
-	  isCapture: _react.PropTypes.bool,
-	  globalEventOff: _react.PropTypes.string,
-	  getContent: _react.PropTypes.any,
-	  afterShow: _react.PropTypes.func,
-	  afterHide: _react.PropTypes.func,
-	  disable: _react.PropTypes.bool,
-	  frozen: _react.PropTypes.bool,
-	  onClickOutside: _react.PropTypes.func,
-	  scrollHide: _react.PropTypes.bool,
-	  resizeHide: _react.PropTypes.bool
-	}, _class2.defaultProps = {
-	  resizeHide: true
-	}, _temp)) || _class) || _class) || _class) || _class;
-
-	/* export default not fit for standalone, it will exports {default:...} */
-
-
-	module.exports = ReactTooltip;
-
-/***/ },
-/* 772 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2016 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	/* global define */
-
-	(function () {
-		'use strict';
-
-		var hasOwn = {}.hasOwnProperty;
-
-		function classNames () {
-			var classes = [];
-
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-
-				var argType = typeof arg;
-
-				if (argType === 'string' || argType === 'number') {
-					classes.push(arg);
-				} else if (Array.isArray(arg)) {
-					classes.push(classNames.apply(null, arg));
-				} else if (argType === 'object') {
-					for (var key in arg) {
-						if (hasOwn.call(arg, key) && arg[key]) {
-							classes.push(key);
-						}
-					}
-				}
-			}
-
-			return classes.join(' ');
-		}
-
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if (true) {
-			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	}());
-
-
-/***/ },
-/* 773 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	exports.default = function (target) {
-	  /**
-	   * Hide all tooltip
-	   * @trigger ReactTooltip.hide()
-	   */
-	  target.hide = function (target) {
-	    dispatchGlobalEvent(_constant2.default.GLOBAL.HIDE, { target: target });
-	  };
-
-	  /**
-	   * Rebuild all tooltip
-	   * @trigger ReactTooltip.rebuild()
-	   */
-	  target.rebuild = function () {
-	    dispatchGlobalEvent(_constant2.default.GLOBAL.REBUILD);
-	  };
-
-	  /**
-	   * Show specific tooltip
-	   * @trigger ReactTooltip.show()
-	   */
-	  target.show = function (target) {
-	    dispatchGlobalEvent(_constant2.default.GLOBAL.SHOW, { target: target });
-	  };
-
-	  target.prototype.globalRebuild = function () {
-	    if (this.mount) {
-	      this.unbindListener();
-	      this.bindListener();
-	    }
-	  };
-
-	  target.prototype.globalShow = function (event) {
-	    if (this.mount) {
-	      // Create a fake event, specific show will limit the type to `solid`
-	      // only `float` type cares e.clientX e.clientY
-	      var e = { currentTarget: event.detail.target };
-	      this.showTooltip(e, true);
-	    }
-	  };
-
-	  target.prototype.globalHide = function (event) {
-	    if (this.mount) {
-	      var hasTarget = event && event.detail && event.detail.target && true || false;
-	      this.hideTooltip({ currentTarget: hasTarget && event.detail.target }, hasTarget);
-	    }
-	  };
-	};
-
-	var _constant = __webpack_require__(774);
-
-	var _constant2 = _interopRequireDefault(_constant);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var dispatchGlobalEvent = function dispatchGlobalEvent(eventName, opts) {
-	  // Compatibale with IE
-	  // @see http://stackoverflow.com/questions/26596123/internet-explorer-9-10-11-event-constructor-doesnt-work
-	  var event = void 0;
-
-	  if (typeof window.CustomEvent === 'function') {
-	    event = new window.CustomEvent(eventName, { detail: opts });
-	  } else {
-	    event = document.createEvent('Event');
-	    event.initEvent(eventName, false, true, opts);
-	  }
-
-	  window.dispatchEvent(event);
-	}; /**
-	    * Static methods for react-tooltip
-	    */
-
-/***/ },
-/* 774 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = {
-
-	  GLOBAL: {
-	    HIDE: '__react_tooltip_hide_event',
-	    REBUILD: '__react_tooltip_rebuild_event',
-	    SHOW: '__react_tooltip_show_event'
-	  }
-	};
-
-/***/ },
-/* 775 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	exports.default = function (target) {
-	  target.prototype.bindWindowEvents = function (resizeHide) {
-	    // ReactTooltip.hide
-	    window.removeEventListener(_constant2.default.GLOBAL.HIDE, this.globalHide);
-	    window.addEventListener(_constant2.default.GLOBAL.HIDE, this.globalHide, false);
-
-	    // ReactTooltip.rebuild
-	    window.removeEventListener(_constant2.default.GLOBAL.REBUILD, this.globalRebuild);
-	    window.addEventListener(_constant2.default.GLOBAL.REBUILD, this.globalRebuild, false);
-
-	    // ReactTooltip.show
-	    window.removeEventListener(_constant2.default.GLOBAL.SHOW, this.globalShow);
-	    window.addEventListener(_constant2.default.GLOBAL.SHOW, this.globalShow, false);
-
-	    // Resize
-	    if (resizeHide) {
-	      window.removeEventListener('resize', this.onWindowResize);
-	      window.addEventListener('resize', this.onWindowResize, false);
-	    }
-	  };
-
-	  target.prototype.unbindWindowEvents = function () {
-	    window.removeEventListener(_constant2.default.GLOBAL.HIDE, this.globalHide);
-	    window.removeEventListener(_constant2.default.GLOBAL.REBUILD, this.globalRebuild);
-	    window.removeEventListener(_constant2.default.GLOBAL.SHOW, this.globalShow);
-	    window.removeEventListener('resize', this.onWindowResize);
-	  };
-
-	  /**
-	   * invoked by resize event of window
-	   */
-	  target.prototype.onWindowResize = function () {
-	    if (!this.mount) return;
-	    this.hideTooltip();
-	  };
-	};
-
-	var _constant = __webpack_require__(774);
-
-	var _constant2 = _interopRequireDefault(_constant);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/***/ },
-/* 776 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	exports.default = function (target) {
-	  target.prototype.isCustomEvent = function (ele) {
-	    var event = this.state.event;
-
-	    return event || !!ele.getAttribute('data-event');
-	  };
-
-	  /* Bind listener for custom event */
-	  target.prototype.customBindListener = function (ele) {
-	    var _this = this;
-
-	    var _state = this.state;
-	    var event = _state.event;
-	    var eventOff = _state.eventOff;
-
-	    var dataEvent = ele.getAttribute('data-event') || event;
-	    var dataEventOff = ele.getAttribute('data-event-off') || eventOff;
-
-	    dataEvent.split(' ').forEach(function (event) {
-	      ele.removeEventListener(event, customListener);
-	      customListener = checkStatus.bind(_this, dataEventOff);
-	      ele.addEventListener(event, customListener, false);
-	    });
-	    if (dataEventOff) {
-	      dataEventOff.split(' ').forEach(function (event) {
-	        ele.removeEventListener(event, _this.hideTooltip);
-	        ele.addEventListener(event, _this.hideTooltip, false);
-	      });
-	    }
-	  };
-
-	  /* Unbind listener for custom event */
-	  target.prototype.customUnbindListener = function (ele) {
-	    var _state2 = this.state;
-	    var event = _state2.event;
-	    var eventOff = _state2.eventOff;
-
-	    var dataEvent = event || ele.getAttribute('data-event');
-	    var dataEventOff = eventOff || ele.getAttribute('data-event-off');
-
-	    ele.removeEventListener(dataEvent, customListener);
-	    if (dataEventOff) ele.removeEventListener(dataEventOff, this.hideTooltip);
-	  };
-	};
-
-	/**
-	 * Custom events to control showing and hiding of tooltip
-	 *
-	 * @attributes
-	 * - `event` {String}
-	 * - `eventOff` {String}
-	 */
-
-	var checkStatus = function checkStatus(dataEventOff, e) {
-	  var show = this.state.show;
-	  var id = this.props.id;
-
-	  var dataIsCapture = e.currentTarget.getAttribute('data-iscapture');
-	  var isCapture = dataIsCapture && dataIsCapture === 'true' || this.props.isCapture;
-	  var currentItem = e.currentTarget.getAttribute('currentItem');
-
-	  if (!isCapture) e.stopPropagation();
-	  if (show && currentItem === 'true') {
-	    if (!dataEventOff) this.hideTooltip(e);
-	  } else {
-	    e.currentTarget.setAttribute('currentItem', 'true');
-	    setUntargetItems(e.currentTarget, this.getTargetArray(id));
-	    this.showTooltip(e);
-	  }
-	};
-
-	var setUntargetItems = function setUntargetItems(currentTarget, targetArray) {
-	  for (var i = 0; i < targetArray.length; i++) {
-	    if (currentTarget !== targetArray[i]) {
-	      targetArray[i].setAttribute('currentItem', 'false');
-	    } else {
-	      targetArray[i].setAttribute('currentItem', 'true');
-	    }
-	  }
-	};
-
-	var customListener = void 0;
-
-/***/ },
-/* 777 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	exports.default = function (target) {
-	  target.prototype.isCapture = function (currentTarget) {
-	    var dataIsCapture = currentTarget.getAttribute('data-iscapture');
-	    return dataIsCapture && dataIsCapture === 'true' || this.props.isCapture || false;
-	  };
-	};
-
-/***/ },
-/* 778 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	exports.default = function (e, target, node, place, effect, offset) {
-	  var tipWidth = node.clientWidth;
-	  var tipHeight = node.clientHeight;
-
-	  var _getCurrentOffset = getCurrentOffset(e, target, effect);
-
-	  var mouseX = _getCurrentOffset.mouseX;
-	  var mouseY = _getCurrentOffset.mouseY;
-
-	  var defaultOffset = getDefaultPosition(effect, target.clientWidth, target.clientHeight, tipWidth, tipHeight);
-
-	  var _calculateOffset = calculateOffset(offset);
-
-	  var extraOffset_X = _calculateOffset.extraOffset_X;
-	  var extraOffset_Y = _calculateOffset.extraOffset_Y;
-
-
-	  var windowWidth = window.innerWidth;
-	  var windowHeight = window.innerHeight;
-
-	  var _getParent = getParent(node);
-
-	  var parentTop = _getParent.parentTop;
-	  var parentLeft = _getParent.parentLeft;
-
-	  // Get the edge offset of the tooltip
-
-	  var getTipOffsetLeft = function getTipOffsetLeft(place) {
-	    var offset_X = defaultOffset[place].l;
-	    return mouseX + offset_X + extraOffset_X;
-	  };
-	  var getTipOffsetRight = function getTipOffsetRight(place) {
-	    var offset_X = defaultOffset[place].r;
-	    return mouseX + offset_X + extraOffset_X;
-	  };
-	  var getTipOffsetTop = function getTipOffsetTop(place) {
-	    var offset_Y = defaultOffset[place].t;
-	    return mouseY + offset_Y + extraOffset_Y;
-	  };
-	  var getTipOffsetBottom = function getTipOffsetBottom(place) {
-	    var offset_Y = defaultOffset[place].b;
-	    return mouseY + offset_Y + extraOffset_Y;
-	  };
-
-	  // Judge if the tooltip has over the window(screen)
-	  var outsideVertical = function outsideVertical() {
-	    var result = false;
-	    var newPlace = void 0;
-	    if (getTipOffsetTop('left') < 0 && getTipOffsetBottom('left') <= windowHeight && getTipOffsetBottom('bottom') <= windowHeight) {
-	      result = true;
-	      newPlace = 'bottom';
-	    } else if (getTipOffsetBottom('left') > windowHeight && getTipOffsetTop('left') >= 0 && getTipOffsetTop('top') >= 0) {
-	      result = true;
-	      newPlace = 'top';
-	    }
-	    return { result: result, newPlace: newPlace };
-	  };
-	  var outsideLeft = function outsideLeft() {
-	    var _outsideVertical = outsideVertical();
-
-	    var result = _outsideVertical.result;
-	    var newPlace = _outsideVertical.newPlace; // Deal with vertical as first priority
-
-	    if (result && outsideHorizontal().result) {
-	      return { result: false }; // No need to change, if change to vertical will out of space
-	    }
-	    if (!result && getTipOffsetLeft('left') < 0 && getTipOffsetRight('right') <= windowWidth) {
-	      result = true; // If vertical ok, but let out of side and right won't out of side
-	      newPlace = 'right';
-	    }
-	    return { result: result, newPlace: newPlace };
-	  };
-	  var outsideRight = function outsideRight() {
-	    var _outsideVertical2 = outsideVertical();
-
-	    var result = _outsideVertical2.result;
-	    var newPlace = _outsideVertical2.newPlace;
-
-	    if (result && outsideHorizontal().result) {
-	      return { result: false }; // No need to change, if change to vertical will out of space
-	    }
-	    if (!result && getTipOffsetRight('right') > windowWidth && getTipOffsetLeft('left') >= 0) {
-	      result = true;
-	      newPlace = 'left';
-	    }
-	    return { result: result, newPlace: newPlace };
-	  };
-
-	  var outsideHorizontal = function outsideHorizontal() {
-	    var result = false;
-	    var newPlace = void 0;
-	    if (getTipOffsetLeft('top') < 0 && getTipOffsetRight('top') <= windowWidth && getTipOffsetRight('right') <= windowWidth) {
-	      result = true;
-	      newPlace = 'right';
-	    } else if (getTipOffsetRight('top') > windowWidth && getTipOffsetLeft('top') >= 0 && getTipOffsetLeft('left') >= 0) {
-	      result = true;
-	      newPlace = 'left';
-	    }
-	    return { result: result, newPlace: newPlace };
-	  };
-	  var outsideTop = function outsideTop() {
-	    var _outsideHorizontal = outsideHorizontal();
-
-	    var result = _outsideHorizontal.result;
-	    var newPlace = _outsideHorizontal.newPlace;
-
-	    if (result && outsideVertical().result) {
-	      return { result: false };
-	    }
-	    if (!result && getTipOffsetTop('top') < 0 && getTipOffsetBottom('bottom') <= windowHeight) {
-	      result = true;
-	      newPlace = 'bottom';
-	    }
-	    return { result: result, newPlace: newPlace };
-	  };
-	  var outsideBottom = function outsideBottom() {
-	    var _outsideHorizontal2 = outsideHorizontal();
-
-	    var result = _outsideHorizontal2.result;
-	    var newPlace = _outsideHorizontal2.newPlace;
-
-	    if (result && outsideVertical().result) {
-	      return { result: false };
-	    }
-	    if (!result && getTipOffsetBottom('bottom') > windowHeight && getTipOffsetTop('top') >= 0) {
-	      result = true;
-	      newPlace = 'top';
-	    }
-	    return { result: result, newPlace: newPlace };
-	  };
-
-	  // Return new state to change the placement to the reverse if possible
-	  var outsideLeftResult = outsideLeft();
-	  var outsideRightResult = outsideRight();
-	  var outsideTopResult = outsideTop();
-	  var outsideBottomResult = outsideBottom();
-
-	  if (place === 'left' && outsideLeftResult.result) {
-	    return {
-	      isNewState: true,
-	      newState: { place: outsideLeftResult.newPlace }
-	    };
-	  } else if (place === 'right' && outsideRightResult.result) {
-	    return {
-	      isNewState: true,
-	      newState: { place: outsideRightResult.newPlace }
-	    };
-	  } else if (place === 'top' && outsideTopResult.result) {
-	    return {
-	      isNewState: true,
-	      newState: { place: outsideTopResult.newPlace }
-	    };
-	  } else if (place === 'bottom' && outsideBottomResult.result) {
-	    return {
-	      isNewState: true,
-	      newState: { place: outsideBottomResult.newPlace }
-	    };
-	  }
-
-	  // Return tooltip offset position
-	  return {
-	    isNewState: false,
-	    position: {
-	      left: parseInt(getTipOffsetLeft(place) - parentLeft, 10),
-	      top: parseInt(getTipOffsetTop(place) - parentTop, 10)
-	    }
-	  };
-	};
-
-	// Get current mouse offset
-	var getCurrentOffset = function getCurrentOffset(e, currentTarget, effect) {
-	  var boundingClientRect = currentTarget.getBoundingClientRect();
-	  var targetTop = boundingClientRect.top;
-	  var targetLeft = boundingClientRect.left;
-	  var targetWidth = currentTarget.clientWidth;
-	  var targetHeight = currentTarget.clientHeight;
-
-	  if (effect === 'float') {
-	    return {
-	      mouseX: e.clientX,
-	      mouseY: e.clientY
-	    };
-	  }
-	  return {
-	    mouseX: targetLeft + targetWidth / 2,
-	    mouseY: targetTop + targetHeight / 2
-	  };
-	};
-
-	// List all possibility of tooltip final offset
-	// This is useful in judging if it is necessary for tooltip to switch position when out of window
-	/**
-	 * Calculate the position of tooltip
-	 *
-	 * @params
-	 * - `e` {Event} the event of current mouse
-	 * - `target` {Element} the currentTarget of the event
-	 * - `node` {DOM} the react-tooltip object
-	 * - `place` {String} top / right / bottom / left
-	 * - `effect` {String} float / solid
-	 * - `offset` {Object} the offset to default position
-	 *
-	 * @return {Object
-	 * - `isNewState` {Bool} required
-	 * - `newState` {Object}
-	 * - `position` {OBject} {left: {Number}, top: {Number}}
-	 */
-	var getDefaultPosition = function getDefaultPosition(effect, targetWidth, targetHeight, tipWidth, tipHeight) {
-	  var top = void 0;
-	  var right = void 0;
-	  var bottom = void 0;
-	  var left = void 0;
-	  var disToMouse = 3;
-	  var triangleHeight = 2;
-	  var cursorHeight = 12; // Optimize for float bottom only, cause the cursor will hide the tooltip
-
-	  if (effect === 'float') {
-	    top = {
-	      l: -(tipWidth / 2),
-	      r: tipWidth / 2,
-	      t: -(tipHeight + disToMouse + triangleHeight),
-	      b: -disToMouse
-	    };
-	    bottom = {
-	      l: -(tipWidth / 2),
-	      r: tipWidth / 2,
-	      t: disToMouse + cursorHeight,
-	      b: tipHeight + disToMouse + triangleHeight + cursorHeight
-	    };
-	    left = {
-	      l: -(tipWidth + disToMouse + triangleHeight),
-	      r: -disToMouse,
-	      t: -(tipHeight / 2),
-	      b: tipHeight / 2
-	    };
-	    right = {
-	      l: disToMouse,
-	      r: tipWidth + disToMouse + triangleHeight,
-	      t: -(tipHeight / 2),
-	      b: tipHeight / 2
-	    };
-	  } else if (effect === 'solid') {
-	    top = {
-	      l: -(tipWidth / 2),
-	      r: tipWidth / 2,
-	      t: -(targetHeight / 2 + tipHeight + triangleHeight),
-	      b: -(targetHeight / 2)
-	    };
-	    bottom = {
-	      l: -(tipWidth / 2),
-	      r: tipWidth / 2,
-	      t: targetHeight / 2,
-	      b: targetHeight / 2 + tipHeight + triangleHeight
-	    };
-	    left = {
-	      l: -(tipWidth + targetWidth / 2 + triangleHeight),
-	      r: -(targetWidth / 2),
-	      t: -(tipHeight / 2),
-	      b: tipHeight / 2
-	    };
-	    right = {
-	      l: targetWidth / 2,
-	      r: tipWidth + targetWidth / 2 + triangleHeight,
-	      t: -(tipHeight / 2),
-	      b: tipHeight / 2
-	    };
-	  }
-
-	  return { top: top, bottom: bottom, left: left, right: right };
-	};
-
-	// Consider additional offset into position calculation
-	var calculateOffset = function calculateOffset(offset) {
-	  var extraOffset_X = 0;
-	  var extraOffset_Y = 0;
-
-	  if (Object.prototype.toString.apply(offset) === '[object String]') {
-	    offset = JSON.parse(offset.toString().replace(/\'/g, '\"'));
-	  }
-	  for (var key in offset) {
-	    if (key === 'top') {
-	      extraOffset_Y -= parseInt(offset[key], 10);
-	    } else if (key === 'bottom') {
-	      extraOffset_Y += parseInt(offset[key], 10);
-	    } else if (key === 'left') {
-	      extraOffset_X -= parseInt(offset[key], 10);
-	    } else if (key === 'right') {
-	      extraOffset_X += parseInt(offset[key], 10);
-	    }
-	  }
-
-	  return { extraOffset_X: extraOffset_X, extraOffset_Y: extraOffset_Y };
-	};
-
-	// Get the offset of the parent elements
-	var getParent = function getParent(currentTarget) {
-	  var currentParent = currentTarget;
-	  while (currentParent) {
-	    if (window.getComputedStyle(currentParent).getPropertyValue('transform') !== 'none') break;
-	    currentParent = currentParent.parentElement;
-	  }
-
-	  var parentTop = currentParent && currentParent.getBoundingClientRect().top || 0;
-	  var parentLeft = currentParent && currentParent.getBoundingClientRect().left || 0;
-
-	  return { parentTop: parentTop, parentLeft: parentLeft };
-	};
-
-/***/ },
-/* 779 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	exports.default = function (tip, children, getContent, multiline) {
-	  if (children) return children;
-	  if (getContent !== undefined && getContent !== null) return getContent; // getContent can be 0, '', etc.
-	  if (getContent === null) return null; // Tip not exist and childern is null or undefined
-
-	  var regexp = /<br\s*\/?>/;
-	  if (!multiline || multiline === 'false' || !regexp.test(tip)) {
-	    // No trim(), so that user can keep their input
-	    return tip;
-	  }
-
-	  // Multiline tooltip content
-	  return tip.split(regexp).map(function (d, i) {
-	    return _react2.default.createElement(
-	      'span',
-	      { key: i, className: 'multi-line' },
-	      d
-	    );
-	  });
-	};
-
-	var _react = __webpack_require__(138);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/***/ },
-/* 780 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.parseAria = parseAria;
-	/**
-	 * Support aria- and role in ReactTooltip
-	 *
-	 * @params props {Object}
-	 * @return {Object}
-	 */
-	function parseAria(props) {
-	  var ariaObj = {};
-	  Object.keys(props).filter(function (prop) {
-	    // aria-xxx and role is acceptable
-	    return (/(^aria-\w+$|^role$)/.test(prop)
-	    );
-	  }).forEach(function (prop) {
-	    ariaObj[prop] = props[prop];
-	  });
-
-	  return ariaObj;
-	}
-
-/***/ },
-/* 781 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = '.__react_component_tooltip{border-radius:3px;display:inline-block;font-size:13px;left:-999em;opacity:0;padding:8px 21px;position:fixed;pointer-events:none;transition:opacity 0.3s ease-out;top:-999em;visibility:hidden;z-index:999}.__react_component_tooltip:before,.__react_component_tooltip:after{content:"";width:0;height:0;position:absolute}.__react_component_tooltip.show{opacity:0.9;margin-top:0px;margin-left:0px;visibility:visible}.__react_component_tooltip.frozen{pointer-events:auto}.__react_component_tooltip.type-dark{color:#fff;background-color:#222}.__react_component_tooltip.type-dark.place-top:after{border-top-color:#222;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-dark.place-bottom:after{border-bottom-color:#222;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-dark.place-left:after{border-left-color:#222;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-dark.place-right:after{border-right-color:#222;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-dark.border{border:1px solid #fff}.__react_component_tooltip.type-dark.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-dark.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-dark.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-dark.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-success{color:#fff;background-color:#8DC572}.__react_component_tooltip.type-success.place-top:after{border-top-color:#8DC572;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-success.place-bottom:after{border-bottom-color:#8DC572;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-success.place-left:after{border-left-color:#8DC572;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-success.place-right:after{border-right-color:#8DC572;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-success.border{border:1px solid #fff}.__react_component_tooltip.type-success.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-success.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-success.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-success.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-warning{color:#fff;background-color:#F0AD4E}.__react_component_tooltip.type-warning.place-top:after{border-top-color:#F0AD4E;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-warning.place-bottom:after{border-bottom-color:#F0AD4E;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-warning.place-left:after{border-left-color:#F0AD4E;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-warning.place-right:after{border-right-color:#F0AD4E;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-warning.border{border:1px solid #fff}.__react_component_tooltip.type-warning.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-warning.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-warning.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-warning.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-error{color:#fff;background-color:#BE6464}.__react_component_tooltip.type-error.place-top:after{border-top-color:#BE6464;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-error.place-bottom:after{border-bottom-color:#BE6464;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-error.place-left:after{border-left-color:#BE6464;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-error.place-right:after{border-right-color:#BE6464;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-error.border{border:1px solid #fff}.__react_component_tooltip.type-error.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-error.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-error.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-error.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-info{color:#fff;background-color:#337AB7}.__react_component_tooltip.type-info.place-top:after{border-top-color:#337AB7;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-info.place-bottom:after{border-bottom-color:#337AB7;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-info.place-left:after{border-left-color:#337AB7;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-info.place-right:after{border-right-color:#337AB7;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-info.border{border:1px solid #fff}.__react_component_tooltip.type-info.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-info.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-info.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-info.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-light{color:#222;background-color:#fff}.__react_component_tooltip.type-light.place-top:after{border-top-color:#fff;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-light.place-bottom:after{border-bottom-color:#fff;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-light.place-left:after{border-left-color:#fff;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-light.place-right:after{border-right-color:#fff;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-light.border{border:1px solid #222}.__react_component_tooltip.type-light.border.place-top:before{border-top:8px solid #222}.__react_component_tooltip.type-light.border.place-bottom:before{border-bottom:8px solid #222}.__react_component_tooltip.type-light.border.place-left:before{border-left:8px solid #222}.__react_component_tooltip.type-light.border.place-right:before{border-right:8px solid #222}.__react_component_tooltip.place-top{margin-top:-10px}.__react_component_tooltip.place-top:before{border-left:10px solid transparent;border-right:10px solid transparent;bottom:-8px;left:50%;margin-left:-10px}.__react_component_tooltip.place-top:after{border-left:8px solid transparent;border-right:8px solid transparent;bottom:-6px;left:50%;margin-left:-8px}.__react_component_tooltip.place-bottom{margin-top:10px}.__react_component_tooltip.place-bottom:before{border-left:10px solid transparent;border-right:10px solid transparent;top:-8px;left:50%;margin-left:-10px}.__react_component_tooltip.place-bottom:after{border-left:8px solid transparent;border-right:8px solid transparent;top:-6px;left:50%;margin-left:-8px}.__react_component_tooltip.place-left{margin-left:-10px}.__react_component_tooltip.place-left:before{border-top:6px solid transparent;border-bottom:6px solid transparent;right:-8px;top:50%;margin-top:-5px}.__react_component_tooltip.place-left:after{border-top:5px solid transparent;border-bottom:5px solid transparent;right:-6px;top:50%;margin-top:-4px}.__react_component_tooltip.place-right{margin-left:10px}.__react_component_tooltip.place-right:before{border-top:6px solid transparent;border-bottom:6px solid transparent;left:-8px;top:50%;margin-top:-5px}.__react_component_tooltip.place-right:after{border-top:5px solid transparent;border-bottom:5px solid transparent;left:-6px;top:50%;margin-top:-4px}.__react_component_tooltip .multi-line{display:block;padding:2px 0px;text-align:center}';
-
-/***/ },
-/* 782 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(783);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(638)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./TooltipStateManager.less", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./TooltipStateManager.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 783 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(637)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".gxaDisabled {\n  display: none !important;\n}\n.gxaFadeBackgroundForOpenTooltip {\n  opacity: 0.5;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 784 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(138);
-	var Slider = __webpack_require__(39);
-	__webpack_require__(785);
-	__webpack_require__(787);
-	var Button = __webpack_require__(389);
-	var Glyphicon = __webpack_require__(395);
-
-	var CoexpressionOption = React.createClass({
-	    displayName: "CoexpressionOption",
-
-	    propTypes: {
-	        geneName: React.PropTypes.string.isRequired,
-	        numCoexpressionsVisible: React.PropTypes.number.isRequired,
-	        numCoexpressionsAvailable: React.PropTypes.number.isRequired,
-	        showCoexpressionsCallback: React.PropTypes.func.isRequired
-	    },
-	    getInitialState: function getInitialState() {
-	        return { visible: 0 };
-	    },
-	    _chooseValue: function _chooseValue(amount) {
-	        this.setState({ visible: amount });
-	        this.props.showCoexpressionsCallback(amount);
-	    },
-
-	    _turnOnWithDefaultValue: function _turnOnWithDefaultValue() {
-	        this._chooseValue(10);
-	    },
-
-	    _showOfferToDisplay: function _showOfferToDisplay() {
-	        return React.createElement(
-	            Button,
-	            { bsSize: "small", onClick: this._turnOnWithDefaultValue },
-	            React.createElement(Glyphicon, { glyph: "plus" }),
-	            React.createElement(
-	                "span",
-	                { style: { verticalAlign: "middle" } },
-	                " Add similarly expressed genes"
-	            )
-	        );
-	    },
-
-	    _showSlider: function _showSlider() {
-	        var marks = {
-	            0: "off",
-	            10: "10"
-	        };
-	        marks[this.props.numCoexpressionsAvailable] = this.props.numCoexpressionsAvailable;
-	        return React.createElement(
-	            "div",
-	            null,
-	            React.createElement(
-	                "p",
-	                null,
-	                "Display genes with similar expressions to " + this.props.geneName + ":"
-	            ),
-	            React.createElement(
-	                "div",
-	                { className: "gxaSlider" },
-	                React.createElement(Slider, { min: 0, max: this.props.numCoexpressionsAvailable, onAfterChange: this._chooseValue,
-	                    marks: marks, included: false, defaultValue: 10 })
-	            )
-	        );
-	    },
-
-	    render: function render() {
-	        return React.createElement(
-	            "div",
-	            { className: "gxaDisplayCoexpressionOffer" },
-	            this.props.numCoexpressionsAvailable ? this.props.numCoexpressionsVisible ? this._showSlider() : this._showOfferToDisplay() : React.createElement(
-	                "span",
-	                null,
-	                "No genes with similar expressions to " + this.props.geneName + " available for display"
-	            )
-	        );
-	    }
-	});
-	module.exports = CoexpressionOption;
-
-/***/ },
-/* 785 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(786);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(638)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./CoexpressionOption.less", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./CoexpressionOption.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 786 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(637)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".gxaDisplayCoexpressionOffer {\n  margin-top: 30px;\n}\n.gxaDisplayCoexpressionOffer .gxaSlider {\n  width: 250px;\n  margin: 15px;\n  padding-bottom: 20px;\n}\n.gxaDisplayCoexpressionOffer p {\n  font-size: 93%;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 787 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(788);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(638)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../css-loader/index.js!./index.css", function() {
-				var newContent = require("!!./../../css-loader/index.js!./index.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 788 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(637)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".rc-slider {\n  position: relative;\n  height: 4px;\n  width: 100%;\n  border-radius: 6px;\n  background-color: #e9e9e9;\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n.rc-slider * {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n.rc-slider-track {\n  position: absolute;\n  left: 0;\n  height: 4px;\n  border-radius: 6px;\n  background-color: #abe2fb;\n}\n.rc-slider-handle {\n  position: absolute;\n  margin-left: -7px;\n  margin-top: -5px;\n  width: 14px;\n  height: 14px;\n  cursor: pointer;\n  border-radius: 50%;\n  border: solid 2px #96dbfa;\n  background-color: #fff;\n}\n.rc-slider-handle:hover {\n  border-color: #57c5f7;\n}\n.rc-slider-handle-active:active {\n  border-color: #57c5f7;\n  box-shadow: 0 0 5px #57c5f7;\n}\n.rc-slider-mark {\n  position: absolute;\n  top: 10px;\n  left: 0;\n  width: 100%;\n  font-size: 12px;\n}\n.rc-slider-mark-text {\n  position: absolute;\n  display: inline-block;\n  vertical-align: middle;\n  text-align: center;\n  cursor: pointer;\n  color: #999;\n}\n.rc-slider-mark-text-active {\n  color: #666;\n}\n.rc-slider-step {\n  position: absolute;\n  width: 100%;\n  height: 4px;\n  background: transparent;\n}\n.rc-slider-dot {\n  position: absolute;\n  bottom: -2px;\n  margin-left: -4px;\n  width: 8px;\n  height: 8px;\n  border: 2px solid #e9e9e9;\n  background-color: #fff;\n  cursor: pointer;\n  border-radius: 50%;\n  vertical-align: middle;\n}\n.rc-slider-dot:first-child {\n  margin-left: -4px;\n}\n.rc-slider-dot:last-child {\n  margin-left: -4px;\n}\n.rc-slider-dot-active {\n  border-color: #96dbfa;\n}\n.rc-slider-disabled {\n  background-color: #e9e9e9;\n}\n.rc-slider-disabled .rc-slider-track {\n  background-color: #ccc;\n}\n.rc-slider-disabled .rc-slider-handle,\n.rc-slider-disabled .rc-slider-dot {\n  border-color: #ccc;\n  background-color: #fff;\n  cursor: not-allowed;\n}\n.rc-slider-disabled .rc-slider-mark-text,\n.rc-slider-disabled .rc-slider-dot {\n  cursor: not-allowed !important;\n}\n.rc-slider-vertical {\n  width: 4px;\n  height: 100%;\n}\n.rc-slider-vertical .rc-slider-track {\n  bottom: 0;\n  width: 4px;\n}\n.rc-slider-vertical .rc-slider-handle {\n  position: absolute;\n  margin-left: -5px;\n  margin-bottom: -7px;\n}\n.rc-slider-vertical .rc-slider-mark {\n  top: 0;\n  left: 10px;\n  height: 100%;\n}\n.rc-slider-vertical .rc-slider-step {\n  height: 100%;\n  width: 4px;\n}\n.rc-slider-vertical .rc-slider-dot {\n  left: 2px;\n  margin-bottom: -4px;\n}\n.rc-slider-vertical .rc-slider-dot:first-child {\n  margin-bottom: -4px;\n}\n.rc-slider-vertical .rc-slider-dot:last-child {\n  margin-bottom: -4px;\n}\n.rc-slider-tooltip-zoom-down-enter,\n.rc-slider-tooltip-zoom-down-appear {\n  -webkit-animation-duration: .3s;\n          animation-duration: .3s;\n  -webkit-animation-fill-mode: both;\n          animation-fill-mode: both;\n  display: block !important;\n  -webkit-animation-play-state: paused;\n          animation-play-state: paused;\n}\n.rc-slider-tooltip-zoom-down-leave {\n  -webkit-animation-duration: .3s;\n          animation-duration: .3s;\n  -webkit-animation-fill-mode: both;\n          animation-fill-mode: both;\n  display: block !important;\n  -webkit-animation-play-state: paused;\n          animation-play-state: paused;\n}\n.rc-slider-tooltip-zoom-down-enter.rc-slider-tooltip-zoom-down-enter-active,\n.rc-slider-tooltip-zoom-down-appear.rc-slider-tooltip-zoom-down-appear-active {\n  -webkit-animation-name: rcSliderTooltipZoomDownIn;\n          animation-name: rcSliderTooltipZoomDownIn;\n  -webkit-animation-play-state: running;\n          animation-play-state: running;\n}\n.rc-slider-tooltip-zoom-down-leave.rc-slider-tooltip-zoom-down-leave-active {\n  -webkit-animation-name: rcSliderTooltipZoomDownOut;\n          animation-name: rcSliderTooltipZoomDownOut;\n  -webkit-animation-play-state: running;\n          animation-play-state: running;\n}\n.rc-slider-tooltip-zoom-down-enter,\n.rc-slider-tooltip-zoom-down-appear {\n  -webkit-transform: scale(0, 0);\n          transform: scale(0, 0);\n  -webkit-animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);\n          animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);\n}\n.rc-slider-tooltip-zoom-down-leave {\n  -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);\n          animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);\n}\n@-webkit-keyframes rcSliderTooltipZoomDownIn {\n  0% {\n    opacity: 0;\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(0, 0);\n            transform: scale(0, 0);\n  }\n  100% {\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(1, 1);\n            transform: scale(1, 1);\n  }\n}\n@keyframes rcSliderTooltipZoomDownIn {\n  0% {\n    opacity: 0;\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(0, 0);\n            transform: scale(0, 0);\n  }\n  100% {\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(1, 1);\n            transform: scale(1, 1);\n  }\n}\n@-webkit-keyframes rcSliderTooltipZoomDownOut {\n  0% {\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(1, 1);\n            transform: scale(1, 1);\n  }\n  100% {\n    opacity: 0;\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(0, 0);\n            transform: scale(0, 0);\n  }\n}\n@keyframes rcSliderTooltipZoomDownOut {\n  0% {\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(1, 1);\n            transform: scale(1, 1);\n  }\n  100% {\n    opacity: 0;\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(0, 0);\n            transform: scale(0, 0);\n  }\n}\n.rc-tooltip {\n  position: absolute;\n  left: -9999px;\n  top: -9999px;\n  visibility: visible;\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n.rc-tooltip * {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n.rc-tooltip-hidden {\n  display: none;\n}\n.rc-tooltip-placement-top {\n  padding: 4px 0 8px 0;\n}\n.rc-tooltip-inner {\n  padding: 6px 2px;\n  min-width: 24px;\n  height: 24px;\n  font-size: 12px;\n  line-height: 1;\n  color: #fff;\n  text-align: center;\n  text-decoration: none;\n  background-color: #6c6c6c;\n  border-radius: 6px;\n  box-shadow: 0 0 4px #d9d9d9;\n}\n.rc-tooltip-arrow {\n  position: absolute;\n  width: 0;\n  height: 0;\n  border-color: transparent;\n  border-style: solid;\n}\n.rc-tooltip-placement-top .rc-tooltip-arrow {\n  bottom: 4px;\n  left: 50%;\n  margin-left: -4px;\n  border-width: 4px 4px 0;\n  border-top-color: #6c6c6c;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 789 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(790);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(638)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./SeriesLegend.less", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./SeriesLegend.less");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 790 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(637)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".gxaHeatmapLegend {\n  color: #606060;\n  margin-left: 180px;\n  border: 0 solid olive;\n}\n.gxaHeatmapLegend .legend-item {\n  display: inline-block;\n  margin-left: 8px;\n  padding: 4px;\n  vertical-align: middle;\n  cursor: default;\n}\n.gxaHeatmapLegend .legend-item.legend-item-off {\n  color: #ccc;\n}\n.gxaHeatmapLegend .legend-item.legend-item-off div {\n  background-color: #f7f7f7;\n}\n.gxaHeatmapLegend .legend-item .legend-rectangle {\n  width: 12px;\n  height: 12px;\n  border: 1px rgba(0, 0, 0, 0.2) solid;\n  display: inline-block;\n  margin-right: 4px;\n  vertical-align: middle;\n}\n.gxaHeatmapLegend .legend-item .icon-generic:before {\n  font-size: 180%;\n  color: #7e7e7e;\n}\n.gxaHeatmapLegend .legend-item:hover .icon-generic:before {\n  color: #353535;\n}\n@font-face {\n  font-family: 'EBI-Generic';\n  src: url('https://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.eot');\n  src: url('https://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.eot?#iefix') format('embedded-opentype'), url('https://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.woff') format('woff'), local('\\263A'), url('https://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.svg#EBI-Generic') format('svg'), url('https://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.ttf') format('truetype');\n  font-weight: normal;\n  font-style: normal;\n}\n.icon-generic:before {\n  font-family: 'EBI-Generic';\n  font-size: 100%;\n  color: #BBB;\n  content: attr(data-icon);\n  margin: 0 0 0 0;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 791 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	//*------------------------------------------------------------------*
-
-	/*
-	All functions in this module accept and return a following format of data:
-	{
-	  dataSeries : [info: {...: String}, data: [Point]}]
-	  xAxisCategories: [X axis label]
-	  yAxisCategories: [Y axis label]
-	}
-	*/
-
-	//*------------------------------------------------------------------*
-
-	var orderHeatmapData = function orderHeatmapData(ordering, data) {
-	  var permuteX = function permuteX(x) {
-	    return ordering.columns.indexOf(x);
-	  };
-
-	  var permuteY = function permuteY(y) {
-	    return ordering.rows.indexOf(y);
-	  };
-
-	  var permutePoint = function permutePoint(point) {
-	    return {
-	      x: permuteX(point.x),
-	      y: permuteY(point.y),
-	      value: point.value,
-	      info: point.info
-	    };
-	  };
-
-	  var permuteArray = function permuteArray(arr, permute) {
-	    return arr.map(function (el, ix) {
-	      return [el, permute(ix)];
-	    }).sort(function (l, r) {
-	      return l[1] - r[1];
-	    }).map(function (el) {
-	      return el[0];
-	    });
-	  };
-
-	  return {
-	    dataSeries: data.dataSeries.map(function (series) {
-	      return {
-	        info: series.info,
-	        data: series.data.map(permutePoint)
-	      };
-	    }),
-	    xAxisCategories: permuteArray(data.xAxisCategories, permuteX),
-	    yAxisCategories: permuteArray(data.yAxisCategories, permuteY)
-	  };
-	};
-
-	var _axisElementsForFilteredDataSeries = function _axisElementsForFilteredDataSeries(axis, conditionPerSeries, conditionPerPoint, dataSeries) {
-	  return dataSeries.filter(conditionPerSeries).map(function (e) {
-	    return e.data;
-	  }).reduce(function (l, r) {
-	    return l.concat(r);
-	  }, []).filter(conditionPerPoint).map(function (e) {
-	    return e[axis];
-	  }).filter(function (e, ix, self) {
-	    return self.indexOf(e) === ix;
-	  }).sort(function (l, r) {
-	    return l - r;
-	  });
-	};
-
-	var _filterHeatmapData = function _filterHeatmapData(keepSeries, keepPoint, data) {
-	  var allXs = _axisElementsForFilteredDataSeries("x", keepSeries, keepPoint, data.dataSeries);
-	  var allYs = _axisElementsForFilteredDataSeries("y", keepSeries, keepPoint, data.dataSeries);
-
-	  var newDataSeries = data.dataSeries.map(function (series, ix) {
-	    return keepSeries(series, ix) ? series.data.filter(keepPoint) : [];
-	  }).map(function (series) {
-	    return series.map(function (point) {
-	      return {
-	        x: allXs.indexOf(point.x),
-	        y: allYs.indexOf(point.y),
-	        value: point.value,
-	        info: point.info
-	      };
-	    }).filter(function (point) {
-	      return point.x > -1 && point.y > -1;
-	    });
-	  });
-
-	  return {
-	    dataSeries: data.dataSeries.map(function (e, ix) {
-	      return {
-	        info: e.info,
-	        data: newDataSeries[ix]
-	      };
-	    }),
-	    xAxisCategories: data.xAxisCategories.filter(function (e, ix) {
-	      return allXs.indexOf(ix) > -1;
-	    }),
-	    yAxisCategories: data.yAxisCategories.filter(function (e, ix) {
-	      return allYs.indexOf(ix) > -1;
-	    })
-	  };
-	};
-
-	var filterHeatmapData = function filterHeatmapData(keepSeries, keepRow, keepColumn, data) {
-	  return _filterHeatmapData(keepSeries, function (point) {
-	    return keepRow(data.yAxisCategories[point.y]) && keepColumn(data.xAxisCategories[point.x]);
-	  }, data);
-	};
-
-	var _calculateInserts = function _calculateInserts(fullColumns, originalColumns) {
-	  var result = [];
-	  var fullColumnsCursor = 0;
-	  var originalColumnsCursor = 0;
-	  while (fullColumnsCursor < fullColumns.length && originalColumnsCursor < originalColumns.length) {
-	    if (fullColumns.length > fullColumnsCursor && originalColumns.length > originalColumnsCursor && fullColumns[fullColumnsCursor] == originalColumns[originalColumnsCursor]) {
-	      result.push("");
-	      fullColumnsCursor++;
-	      originalColumnsCursor++;
-	    } else if (fullColumns.length > fullColumnsCursor) {
-	      result.push(fullColumns[fullColumnsCursor]);
-	      fullColumnsCursor++;
-	    } else if (originalColumns[originalColumnsCursor].length > originalColumnsCursor) {
-	      result.push("");
-	      originalColumnsCursor++;
-	    }
-	  }
-	  return result;
-	};
-
-	var _indicesForInserts = function _indicesForInserts(inserts) {
-	  var i = -1;
-	  return inserts.map(function (e) {
-	    !e && i++;
-	    return i;
-	  });
-	};
-
-	var insertEmptyColumns = function insertEmptyColumns(newColumns, data) {
-	  var fullColumns = newColumns.concat(data.xAxisCategories.filter(function (originalColumn) {
-	    return newColumns.findIndex(function (e) {
-	      return e.label == originalColumn.label;
-	    }) == -1;
-	  }));
-	  var insertIndices = _indicesForInserts(_calculateInserts(fullColumns.map(function (e) {
-	    return e.label;
-	  }), data.xAxisCategories.map(function (e) {
-	    return e.label;
-	  })));
-	  return {
-	    dataSeries: data.dataSeries.map(function (e) {
-	      return {
-	        info: e.info,
-	        data: e.data.map(function (point) {
-	          return Object.assign({}, point, { x: insertIndices.indexOf(point.x)
-	          });
-	        })
-	      };
-	    }),
-	    xAxisCategories: fullColumns,
-	    yAxisCategories: data.yAxisCategories
-	  };
-	};
-
-	exports.insertEmptyColumns = insertEmptyColumns;
-	exports.filterHeatmapData = filterHeatmapData;
-	exports.order = orderHeatmapData;
-
-	exports.manipulate = function (args, data) {
-	  return insertEmptyColumns(args.allowEmptyColumns ? orderHeatmapData(args.ordering, data).xAxisCategories : [], filterHeatmapData(args.keepSeries, args.keepRow, args.keepColumn, orderHeatmapData(args.ordering, data)));
-	};
-
-/***/ },
-/* 792 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(793);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(638)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./HighchartsHeatmapContainer.css", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./HighchartsHeatmapContainer.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 793 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(637)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".gxaInnerHeatmap {\n    position: relative;\n    overflow: hidden;\n}\n\n.gxaAside {\n    float: left;\n}\n\n.gxaInnerHeatmap:after {\n    clear: both;\n    content: \".\";\n    display: block;\n    visibility: hidden;\n}\n", ""]);
-
-	// exports
-
-
-/***/ },
-/* 794 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	module.exports = __webpack_require__(795);
-
-/***/ },
-/* 795 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = __webpack_require__(138);
 	var validate = __webpack_require__(606);
-	var Anatomogram = __webpack_require__(796);
-	var getSvgsForSpecies = __webpack_require__(800).GetSvgsForSpecies;
+	var Anatomogram = __webpack_require__(612);
+	var getSvgsForSpecies = __webpack_require__(616).GetSvgsForSpecies;
 	var EventEmitter = __webpack_require__(608);
-	__webpack_require__(848);
+	__webpack_require__(672);
 
 	//*------------------------------------------------------------------*
 
@@ -12436,7 +1424,7 @@ webpackJsonp_name_([1],[
 	module.exports = { "create": createAnatomogram, "wrapComponent": wrapComponentWithAnatomogram };
 
 /***/ },
-/* 796 */
+/* 612 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -12444,8 +1432,8 @@ webpackJsonp_name_([1],[
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var React = __webpack_require__(138);
-	var AnatomogramImage = __webpack_require__(797);
-	var SelectionIcon = __webpack_require__(799);
+	var AnatomogramImage = __webpack_require__(613);
+	var SelectionIcon = __webpack_require__(615);
 
 	var Anatomogram = React.createClass({
 	    displayName: "Anatomogram",
@@ -12523,7 +1511,7 @@ webpackJsonp_name_([1],[
 	module.exports = Anatomogram;
 
 /***/ },
-/* 797 */
+/* 613 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -12532,7 +1520,7 @@ webpackJsonp_name_([1],[
 
 	var React = __webpack_require__(138);
 	var ReactDOM = __webpack_require__(299);
-	var Snap = __webpack_require__(798);
+	var Snap = __webpack_require__(614);
 
 	//http://stackoverflow.com/questions/3115982/how-to-check-if-two-arrays-are-equal-with-javascript
 	var ArraysEqual = function ArraysEqual(a, b) {
@@ -12808,7 +1796,7 @@ webpackJsonp_name_([1],[
 	module.exports = AnatomogramImage;
 
 /***/ },
-/* 798 */
+/* 614 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_LOCAL_MODULE_0__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*** IMPORTS FROM imports-loader ***/
@@ -20989,14 +9977,14 @@ webpackJsonp_name_([1],[
 	}.call(window));
 
 /***/ },
-/* 799 */
+/* 615 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	var React = __webpack_require__(138);
-	var ResolvePathToIcon = __webpack_require__(800).ResolvePathToIcon;
-	__webpack_require__(846);
+	var ResolvePathToIcon = __webpack_require__(616).ResolvePathToIcon;
+	__webpack_require__(668);
 
 	var SelectionIcon = React.createClass({
 	    displayName: "SelectionIcon",
@@ -21020,22 +10008,22 @@ webpackJsonp_name_([1],[
 	module.exports = SelectionIcon;
 
 /***/ },
-/* 800 */
+/* 616 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	var Url = __webpack_require__(617);
 	var Path = __webpack_require__(622);
-	var SvgsForSpecies = __webpack_require__(801);
-	var IdsForSvgs = __webpack_require__(802);
+	var SvgsForSpecies = __webpack_require__(623);
+	var IdsForSvgs = __webpack_require__(624);
 
 	var ResolvePathToIcon = function ResolvePathToIcon(pathToFolderWithBundledResources, type, selected) {
-	    return Url.resolve(pathToFolderWithBundledResources, Path.basename(__webpack_require__(803)("./" + type + "_" + (selected ? "" : "un") + "selected.png")));
+	    return Url.resolve(pathToFolderWithBundledResources, Path.basename(__webpack_require__(625)("./" + type + "_" + (selected ? "" : "un") + "selected.png")));
 	};
 
 	var ResolvePathToSvg = function ResolvePathToSvg(pathToFolderWithBundledResources, svg) {
-	    return Url.resolve(pathToFolderWithBundledResources, Path.basename(__webpack_require__(814)("./" + svg)));
+	    return Url.resolve(pathToFolderWithBundledResources, Path.basename(__webpack_require__(636)("./" + svg)));
 	};
 
 	var GetSvgsForSpecies = function GetSvgsForSpecies(pathToFolderWithBundledResources, species) {
@@ -21062,7 +10050,1652 @@ webpackJsonp_name_([1],[
 	module.exports = { GetSvgsForSpecies: GetSvgsForSpecies, ResolvePathToIcon: ResolvePathToIcon };
 
 /***/ },
-/* 801 */
+/* 617 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	var punycode = __webpack_require__(618);
+
+	exports.parse = urlParse;
+	exports.resolve = urlResolve;
+	exports.resolveObject = urlResolveObject;
+	exports.format = urlFormat;
+
+	exports.Url = Url;
+
+	function Url() {
+	  this.protocol = null;
+	  this.slashes = null;
+	  this.auth = null;
+	  this.host = null;
+	  this.port = null;
+	  this.hostname = null;
+	  this.hash = null;
+	  this.search = null;
+	  this.query = null;
+	  this.pathname = null;
+	  this.path = null;
+	  this.href = null;
+	}
+
+	// Reference: RFC 3986, RFC 1808, RFC 2396
+
+	// define these here so at least they only have to be
+	// compiled once on the first module load.
+	var protocolPattern = /^([a-z0-9.+-]+:)/i,
+	    portPattern = /:[0-9]*$/,
+
+	    // RFC 2396: characters reserved for delimiting URLs.
+	    // We actually just auto-escape these.
+	    delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
+
+	    // RFC 2396: characters not allowed for various reasons.
+	    unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
+
+	    // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
+	    autoEscape = ['\''].concat(unwise),
+	    // Characters that are never ever allowed in a hostname.
+	    // Note that any invalid chars are also handled, but these
+	    // are the ones that are *expected* to be seen, so we fast-path
+	    // them.
+	    nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
+	    hostEndingChars = ['/', '?', '#'],
+	    hostnameMaxLen = 255,
+	    hostnamePartPattern = /^[a-z0-9A-Z_-]{0,63}$/,
+	    hostnamePartStart = /^([a-z0-9A-Z_-]{0,63})(.*)$/,
+	    // protocols that can allow "unsafe" and "unwise" chars.
+	    unsafeProtocol = {
+	      'javascript': true,
+	      'javascript:': true
+	    },
+	    // protocols that never have a hostname.
+	    hostlessProtocol = {
+	      'javascript': true,
+	      'javascript:': true
+	    },
+	    // protocols that always contain a // bit.
+	    slashedProtocol = {
+	      'http': true,
+	      'https': true,
+	      'ftp': true,
+	      'gopher': true,
+	      'file': true,
+	      'http:': true,
+	      'https:': true,
+	      'ftp:': true,
+	      'gopher:': true,
+	      'file:': true
+	    },
+	    querystring = __webpack_require__(619);
+
+	function urlParse(url, parseQueryString, slashesDenoteHost) {
+	  if (url && isObject(url) && url instanceof Url) return url;
+
+	  var u = new Url;
+	  u.parse(url, parseQueryString, slashesDenoteHost);
+	  return u;
+	}
+
+	Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
+	  if (!isString(url)) {
+	    throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
+	  }
+
+	  var rest = url;
+
+	  // trim before proceeding.
+	  // This is to support parse stuff like "  http://foo.com  \n"
+	  rest = rest.trim();
+
+	  var proto = protocolPattern.exec(rest);
+	  if (proto) {
+	    proto = proto[0];
+	    var lowerProto = proto.toLowerCase();
+	    this.protocol = lowerProto;
+	    rest = rest.substr(proto.length);
+	  }
+
+	  // figure out if it's got a host
+	  // user@server is *always* interpreted as a hostname, and url
+	  // resolution will treat //foo/bar as host=foo,path=bar because that's
+	  // how the browser resolves relative URLs.
+	  if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
+	    var slashes = rest.substr(0, 2) === '//';
+	    if (slashes && !(proto && hostlessProtocol[proto])) {
+	      rest = rest.substr(2);
+	      this.slashes = true;
+	    }
+	  }
+
+	  if (!hostlessProtocol[proto] &&
+	      (slashes || (proto && !slashedProtocol[proto]))) {
+
+	    // there's a hostname.
+	    // the first instance of /, ?, ;, or # ends the host.
+	    //
+	    // If there is an @ in the hostname, then non-host chars *are* allowed
+	    // to the left of the last @ sign, unless some host-ending character
+	    // comes *before* the @-sign.
+	    // URLs are obnoxious.
+	    //
+	    // ex:
+	    // http://a@b@c/ => user:a@b host:c
+	    // http://a@b?@c => user:a host:c path:/?@c
+
+	    // v0.12 TODO(isaacs): This is not quite how Chrome does things.
+	    // Review our test case against browsers more comprehensively.
+
+	    // find the first instance of any hostEndingChars
+	    var hostEnd = -1;
+	    for (var i = 0; i < hostEndingChars.length; i++) {
+	      var hec = rest.indexOf(hostEndingChars[i]);
+	      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
+	        hostEnd = hec;
+	    }
+
+	    // at this point, either we have an explicit point where the
+	    // auth portion cannot go past, or the last @ char is the decider.
+	    var auth, atSign;
+	    if (hostEnd === -1) {
+	      // atSign can be anywhere.
+	      atSign = rest.lastIndexOf('@');
+	    } else {
+	      // atSign must be in auth portion.
+	      // http://a@b/c@d => host:b auth:a path:/c@d
+	      atSign = rest.lastIndexOf('@', hostEnd);
+	    }
+
+	    // Now we have a portion which is definitely the auth.
+	    // Pull that off.
+	    if (atSign !== -1) {
+	      auth = rest.slice(0, atSign);
+	      rest = rest.slice(atSign + 1);
+	      this.auth = decodeURIComponent(auth);
+	    }
+
+	    // the host is the remaining to the left of the first non-host char
+	    hostEnd = -1;
+	    for (var i = 0; i < nonHostChars.length; i++) {
+	      var hec = rest.indexOf(nonHostChars[i]);
+	      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
+	        hostEnd = hec;
+	    }
+	    // if we still have not hit it, then the entire thing is a host.
+	    if (hostEnd === -1)
+	      hostEnd = rest.length;
+
+	    this.host = rest.slice(0, hostEnd);
+	    rest = rest.slice(hostEnd);
+
+	    // pull out port.
+	    this.parseHost();
+
+	    // we've indicated that there is a hostname,
+	    // so even if it's empty, it has to be present.
+	    this.hostname = this.hostname || '';
+
+	    // if hostname begins with [ and ends with ]
+	    // assume that it's an IPv6 address.
+	    var ipv6Hostname = this.hostname[0] === '[' &&
+	        this.hostname[this.hostname.length - 1] === ']';
+
+	    // validate a little.
+	    if (!ipv6Hostname) {
+	      var hostparts = this.hostname.split(/\./);
+	      for (var i = 0, l = hostparts.length; i < l; i++) {
+	        var part = hostparts[i];
+	        if (!part) continue;
+	        if (!part.match(hostnamePartPattern)) {
+	          var newpart = '';
+	          for (var j = 0, k = part.length; j < k; j++) {
+	            if (part.charCodeAt(j) > 127) {
+	              // we replace non-ASCII char with a temporary placeholder
+	              // we need this to make sure size of hostname is not
+	              // broken by replacing non-ASCII by nothing
+	              newpart += 'x';
+	            } else {
+	              newpart += part[j];
+	            }
+	          }
+	          // we test again with ASCII char only
+	          if (!newpart.match(hostnamePartPattern)) {
+	            var validParts = hostparts.slice(0, i);
+	            var notHost = hostparts.slice(i + 1);
+	            var bit = part.match(hostnamePartStart);
+	            if (bit) {
+	              validParts.push(bit[1]);
+	              notHost.unshift(bit[2]);
+	            }
+	            if (notHost.length) {
+	              rest = '/' + notHost.join('.') + rest;
+	            }
+	            this.hostname = validParts.join('.');
+	            break;
+	          }
+	        }
+	      }
+	    }
+
+	    if (this.hostname.length > hostnameMaxLen) {
+	      this.hostname = '';
+	    } else {
+	      // hostnames are always lower case.
+	      this.hostname = this.hostname.toLowerCase();
+	    }
+
+	    if (!ipv6Hostname) {
+	      // IDNA Support: Returns a puny coded representation of "domain".
+	      // It only converts the part of the domain name that
+	      // has non ASCII characters. I.e. it dosent matter if
+	      // you call it with a domain that already is in ASCII.
+	      var domainArray = this.hostname.split('.');
+	      var newOut = [];
+	      for (var i = 0; i < domainArray.length; ++i) {
+	        var s = domainArray[i];
+	        newOut.push(s.match(/[^A-Za-z0-9_-]/) ?
+	            'xn--' + punycode.encode(s) : s);
+	      }
+	      this.hostname = newOut.join('.');
+	    }
+
+	    var p = this.port ? ':' + this.port : '';
+	    var h = this.hostname || '';
+	    this.host = h + p;
+	    this.href += this.host;
+
+	    // strip [ and ] from the hostname
+	    // the host field still retains them, though
+	    if (ipv6Hostname) {
+	      this.hostname = this.hostname.substr(1, this.hostname.length - 2);
+	      if (rest[0] !== '/') {
+	        rest = '/' + rest;
+	      }
+	    }
+	  }
+
+	  // now rest is set to the post-host stuff.
+	  // chop off any delim chars.
+	  if (!unsafeProtocol[lowerProto]) {
+
+	    // First, make 100% sure that any "autoEscape" chars get
+	    // escaped, even if encodeURIComponent doesn't think they
+	    // need to be.
+	    for (var i = 0, l = autoEscape.length; i < l; i++) {
+	      var ae = autoEscape[i];
+	      var esc = encodeURIComponent(ae);
+	      if (esc === ae) {
+	        esc = escape(ae);
+	      }
+	      rest = rest.split(ae).join(esc);
+	    }
+	  }
+
+
+	  // chop off from the tail first.
+	  var hash = rest.indexOf('#');
+	  if (hash !== -1) {
+	    // got a fragment string.
+	    this.hash = rest.substr(hash);
+	    rest = rest.slice(0, hash);
+	  }
+	  var qm = rest.indexOf('?');
+	  if (qm !== -1) {
+	    this.search = rest.substr(qm);
+	    this.query = rest.substr(qm + 1);
+	    if (parseQueryString) {
+	      this.query = querystring.parse(this.query);
+	    }
+	    rest = rest.slice(0, qm);
+	  } else if (parseQueryString) {
+	    // no query string, but parseQueryString still requested
+	    this.search = '';
+	    this.query = {};
+	  }
+	  if (rest) this.pathname = rest;
+	  if (slashedProtocol[lowerProto] &&
+	      this.hostname && !this.pathname) {
+	    this.pathname = '/';
+	  }
+
+	  //to support http.request
+	  if (this.pathname || this.search) {
+	    var p = this.pathname || '';
+	    var s = this.search || '';
+	    this.path = p + s;
+	  }
+
+	  // finally, reconstruct the href based on what has been validated.
+	  this.href = this.format();
+	  return this;
+	};
+
+	// format a parsed object into a url string
+	function urlFormat(obj) {
+	  // ensure it's an object, and not a string url.
+	  // If it's an obj, this is a no-op.
+	  // this way, you can call url_format() on strings
+	  // to clean up potentially wonky urls.
+	  if (isString(obj)) obj = urlParse(obj);
+	  if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
+	  return obj.format();
+	}
+
+	Url.prototype.format = function() {
+	  var auth = this.auth || '';
+	  if (auth) {
+	    auth = encodeURIComponent(auth);
+	    auth = auth.replace(/%3A/i, ':');
+	    auth += '@';
+	  }
+
+	  var protocol = this.protocol || '',
+	      pathname = this.pathname || '',
+	      hash = this.hash || '',
+	      host = false,
+	      query = '';
+
+	  if (this.host) {
+	    host = auth + this.host;
+	  } else if (this.hostname) {
+	    host = auth + (this.hostname.indexOf(':') === -1 ?
+	        this.hostname :
+	        '[' + this.hostname + ']');
+	    if (this.port) {
+	      host += ':' + this.port;
+	    }
+	  }
+
+	  if (this.query &&
+	      isObject(this.query) &&
+	      Object.keys(this.query).length) {
+	    query = querystring.stringify(this.query);
+	  }
+
+	  var search = this.search || (query && ('?' + query)) || '';
+
+	  if (protocol && protocol.substr(-1) !== ':') protocol += ':';
+
+	  // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
+	  // unless they had them to begin with.
+	  if (this.slashes ||
+	      (!protocol || slashedProtocol[protocol]) && host !== false) {
+	    host = '//' + (host || '');
+	    if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
+	  } else if (!host) {
+	    host = '';
+	  }
+
+	  if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
+	  if (search && search.charAt(0) !== '?') search = '?' + search;
+
+	  pathname = pathname.replace(/[?#]/g, function(match) {
+	    return encodeURIComponent(match);
+	  });
+	  search = search.replace('#', '%23');
+
+	  return protocol + host + pathname + search + hash;
+	};
+
+	function urlResolve(source, relative) {
+	  return urlParse(source, false, true).resolve(relative);
+	}
+
+	Url.prototype.resolve = function(relative) {
+	  return this.resolveObject(urlParse(relative, false, true)).format();
+	};
+
+	function urlResolveObject(source, relative) {
+	  if (!source) return relative;
+	  return urlParse(source, false, true).resolveObject(relative);
+	}
+
+	Url.prototype.resolveObject = function(relative) {
+	  if (isString(relative)) {
+	    var rel = new Url();
+	    rel.parse(relative, false, true);
+	    relative = rel;
+	  }
+
+	  var result = new Url();
+	  Object.keys(this).forEach(function(k) {
+	    result[k] = this[k];
+	  }, this);
+
+	  // hash is always overridden, no matter what.
+	  // even href="" will remove it.
+	  result.hash = relative.hash;
+
+	  // if the relative url is empty, then there's nothing left to do here.
+	  if (relative.href === '') {
+	    result.href = result.format();
+	    return result;
+	  }
+
+	  // hrefs like //foo/bar always cut to the protocol.
+	  if (relative.slashes && !relative.protocol) {
+	    // take everything except the protocol from relative
+	    Object.keys(relative).forEach(function(k) {
+	      if (k !== 'protocol')
+	        result[k] = relative[k];
+	    });
+
+	    //urlParse appends trailing / to urls like http://www.example.com
+	    if (slashedProtocol[result.protocol] &&
+	        result.hostname && !result.pathname) {
+	      result.path = result.pathname = '/';
+	    }
+
+	    result.href = result.format();
+	    return result;
+	  }
+
+	  if (relative.protocol && relative.protocol !== result.protocol) {
+	    // if it's a known url protocol, then changing
+	    // the protocol does weird things
+	    // first, if it's not file:, then we MUST have a host,
+	    // and if there was a path
+	    // to begin with, then we MUST have a path.
+	    // if it is file:, then the host is dropped,
+	    // because that's known to be hostless.
+	    // anything else is assumed to be absolute.
+	    if (!slashedProtocol[relative.protocol]) {
+	      Object.keys(relative).forEach(function(k) {
+	        result[k] = relative[k];
+	      });
+	      result.href = result.format();
+	      return result;
+	    }
+
+	    result.protocol = relative.protocol;
+	    if (!relative.host && !hostlessProtocol[relative.protocol]) {
+	      var relPath = (relative.pathname || '').split('/');
+	      while (relPath.length && !(relative.host = relPath.shift()));
+	      if (!relative.host) relative.host = '';
+	      if (!relative.hostname) relative.hostname = '';
+	      if (relPath[0] !== '') relPath.unshift('');
+	      if (relPath.length < 2) relPath.unshift('');
+	      result.pathname = relPath.join('/');
+	    } else {
+	      result.pathname = relative.pathname;
+	    }
+	    result.search = relative.search;
+	    result.query = relative.query;
+	    result.host = relative.host || '';
+	    result.auth = relative.auth;
+	    result.hostname = relative.hostname || relative.host;
+	    result.port = relative.port;
+	    // to support http.request
+	    if (result.pathname || result.search) {
+	      var p = result.pathname || '';
+	      var s = result.search || '';
+	      result.path = p + s;
+	    }
+	    result.slashes = result.slashes || relative.slashes;
+	    result.href = result.format();
+	    return result;
+	  }
+
+	  var isSourceAbs = (result.pathname && result.pathname.charAt(0) === '/'),
+	      isRelAbs = (
+	          relative.host ||
+	          relative.pathname && relative.pathname.charAt(0) === '/'
+	      ),
+	      mustEndAbs = (isRelAbs || isSourceAbs ||
+	                    (result.host && relative.pathname)),
+	      removeAllDots = mustEndAbs,
+	      srcPath = result.pathname && result.pathname.split('/') || [],
+	      relPath = relative.pathname && relative.pathname.split('/') || [],
+	      psychotic = result.protocol && !slashedProtocol[result.protocol];
+
+	  // if the url is a non-slashed url, then relative
+	  // links like ../.. should be able
+	  // to crawl up to the hostname, as well.  This is strange.
+	  // result.protocol has already been set by now.
+	  // Later on, put the first path part into the host field.
+	  if (psychotic) {
+	    result.hostname = '';
+	    result.port = null;
+	    if (result.host) {
+	      if (srcPath[0] === '') srcPath[0] = result.host;
+	      else srcPath.unshift(result.host);
+	    }
+	    result.host = '';
+	    if (relative.protocol) {
+	      relative.hostname = null;
+	      relative.port = null;
+	      if (relative.host) {
+	        if (relPath[0] === '') relPath[0] = relative.host;
+	        else relPath.unshift(relative.host);
+	      }
+	      relative.host = null;
+	    }
+	    mustEndAbs = mustEndAbs && (relPath[0] === '' || srcPath[0] === '');
+	  }
+
+	  if (isRelAbs) {
+	    // it's absolute.
+	    result.host = (relative.host || relative.host === '') ?
+	                  relative.host : result.host;
+	    result.hostname = (relative.hostname || relative.hostname === '') ?
+	                      relative.hostname : result.hostname;
+	    result.search = relative.search;
+	    result.query = relative.query;
+	    srcPath = relPath;
+	    // fall through to the dot-handling below.
+	  } else if (relPath.length) {
+	    // it's relative
+	    // throw away the existing file, and take the new path instead.
+	    if (!srcPath) srcPath = [];
+	    srcPath.pop();
+	    srcPath = srcPath.concat(relPath);
+	    result.search = relative.search;
+	    result.query = relative.query;
+	  } else if (!isNullOrUndefined(relative.search)) {
+	    // just pull out the search.
+	    // like href='?foo'.
+	    // Put this after the other two cases because it simplifies the booleans
+	    if (psychotic) {
+	      result.hostname = result.host = srcPath.shift();
+	      //occationaly the auth can get stuck only in host
+	      //this especialy happens in cases like
+	      //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+	      var authInHost = result.host && result.host.indexOf('@') > 0 ?
+	                       result.host.split('@') : false;
+	      if (authInHost) {
+	        result.auth = authInHost.shift();
+	        result.host = result.hostname = authInHost.shift();
+	      }
+	    }
+	    result.search = relative.search;
+	    result.query = relative.query;
+	    //to support http.request
+	    if (!isNull(result.pathname) || !isNull(result.search)) {
+	      result.path = (result.pathname ? result.pathname : '') +
+	                    (result.search ? result.search : '');
+	    }
+	    result.href = result.format();
+	    return result;
+	  }
+
+	  if (!srcPath.length) {
+	    // no path at all.  easy.
+	    // we've already handled the other stuff above.
+	    result.pathname = null;
+	    //to support http.request
+	    if (result.search) {
+	      result.path = '/' + result.search;
+	    } else {
+	      result.path = null;
+	    }
+	    result.href = result.format();
+	    return result;
+	  }
+
+	  // if a url ENDs in . or .., then it must get a trailing slash.
+	  // however, if it ends in anything else non-slashy,
+	  // then it must NOT get a trailing slash.
+	  var last = srcPath.slice(-1)[0];
+	  var hasTrailingSlash = (
+	      (result.host || relative.host) && (last === '.' || last === '..') ||
+	      last === '');
+
+	  // strip single dots, resolve double dots to parent dir
+	  // if the path tries to go above the root, `up` ends up > 0
+	  var up = 0;
+	  for (var i = srcPath.length; i >= 0; i--) {
+	    last = srcPath[i];
+	    if (last == '.') {
+	      srcPath.splice(i, 1);
+	    } else if (last === '..') {
+	      srcPath.splice(i, 1);
+	      up++;
+	    } else if (up) {
+	      srcPath.splice(i, 1);
+	      up--;
+	    }
+	  }
+
+	  // if the path is allowed to go above the root, restore leading ..s
+	  if (!mustEndAbs && !removeAllDots) {
+	    for (; up--; up) {
+	      srcPath.unshift('..');
+	    }
+	  }
+
+	  if (mustEndAbs && srcPath[0] !== '' &&
+	      (!srcPath[0] || srcPath[0].charAt(0) !== '/')) {
+	    srcPath.unshift('');
+	  }
+
+	  if (hasTrailingSlash && (srcPath.join('/').substr(-1) !== '/')) {
+	    srcPath.push('');
+	  }
+
+	  var isAbsolute = srcPath[0] === '' ||
+	      (srcPath[0] && srcPath[0].charAt(0) === '/');
+
+	  // put the host back
+	  if (psychotic) {
+	    result.hostname = result.host = isAbsolute ? '' :
+	                                    srcPath.length ? srcPath.shift() : '';
+	    //occationaly the auth can get stuck only in host
+	    //this especialy happens in cases like
+	    //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+	    var authInHost = result.host && result.host.indexOf('@') > 0 ?
+	                     result.host.split('@') : false;
+	    if (authInHost) {
+	      result.auth = authInHost.shift();
+	      result.host = result.hostname = authInHost.shift();
+	    }
+	  }
+
+	  mustEndAbs = mustEndAbs || (result.host && srcPath.length);
+
+	  if (mustEndAbs && !isAbsolute) {
+	    srcPath.unshift('');
+	  }
+
+	  if (!srcPath.length) {
+	    result.pathname = null;
+	    result.path = null;
+	  } else {
+	    result.pathname = srcPath.join('/');
+	  }
+
+	  //to support request.http
+	  if (!isNull(result.pathname) || !isNull(result.search)) {
+	    result.path = (result.pathname ? result.pathname : '') +
+	                  (result.search ? result.search : '');
+	  }
+	  result.auth = relative.auth || result.auth;
+	  result.slashes = result.slashes || relative.slashes;
+	  result.href = result.format();
+	  return result;
+	};
+
+	Url.prototype.parseHost = function() {
+	  var host = this.host;
+	  var port = portPattern.exec(host);
+	  if (port) {
+	    port = port[0];
+	    if (port !== ':') {
+	      this.port = port.substr(1);
+	    }
+	    host = host.substr(0, host.length - port.length);
+	  }
+	  if (host) this.hostname = host;
+	};
+
+	function isString(arg) {
+	  return typeof arg === "string";
+	}
+
+	function isObject(arg) {
+	  return typeof arg === 'object' && arg !== null;
+	}
+
+	function isNull(arg) {
+	  return arg === null;
+	}
+	function isNullOrUndefined(arg) {
+	  return  arg == null;
+	}
+
+
+/***/ },
+/* 618 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! https://mths.be/punycode v1.3.2 by @mathias */
+	;(function(root) {
+
+		/** Detect free variables */
+		var freeExports = typeof exports == 'object' && exports &&
+			!exports.nodeType && exports;
+		var freeModule = typeof module == 'object' && module &&
+			!module.nodeType && module;
+		var freeGlobal = typeof global == 'object' && global;
+		if (
+			freeGlobal.global === freeGlobal ||
+			freeGlobal.window === freeGlobal ||
+			freeGlobal.self === freeGlobal
+		) {
+			root = freeGlobal;
+		}
+
+		/**
+		 * The `punycode` object.
+		 * @name punycode
+		 * @type Object
+		 */
+		var punycode,
+
+		/** Highest positive signed 32-bit float value */
+		maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
+
+		/** Bootstring parameters */
+		base = 36,
+		tMin = 1,
+		tMax = 26,
+		skew = 38,
+		damp = 700,
+		initialBias = 72,
+		initialN = 128, // 0x80
+		delimiter = '-', // '\x2D'
+
+		/** Regular expressions */
+		regexPunycode = /^xn--/,
+		regexNonASCII = /[^\x20-\x7E]/, // unprintable ASCII chars + non-ASCII chars
+		regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g, // RFC 3490 separators
+
+		/** Error messages */
+		errors = {
+			'overflow': 'Overflow: input needs wider integers to process',
+			'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+			'invalid-input': 'Invalid input'
+		},
+
+		/** Convenience shortcuts */
+		baseMinusTMin = base - tMin,
+		floor = Math.floor,
+		stringFromCharCode = String.fromCharCode,
+
+		/** Temporary variable */
+		key;
+
+		/*--------------------------------------------------------------------------*/
+
+		/**
+		 * A generic error utility function.
+		 * @private
+		 * @param {String} type The error type.
+		 * @returns {Error} Throws a `RangeError` with the applicable error message.
+		 */
+		function error(type) {
+			throw RangeError(errors[type]);
+		}
+
+		/**
+		 * A generic `Array#map` utility function.
+		 * @private
+		 * @param {Array} array The array to iterate over.
+		 * @param {Function} callback The function that gets called for every array
+		 * item.
+		 * @returns {Array} A new array of values returned by the callback function.
+		 */
+		function map(array, fn) {
+			var length = array.length;
+			var result = [];
+			while (length--) {
+				result[length] = fn(array[length]);
+			}
+			return result;
+		}
+
+		/**
+		 * A simple `Array#map`-like wrapper to work with domain name strings or email
+		 * addresses.
+		 * @private
+		 * @param {String} domain The domain name or email address.
+		 * @param {Function} callback The function that gets called for every
+		 * character.
+		 * @returns {Array} A new string of characters returned by the callback
+		 * function.
+		 */
+		function mapDomain(string, fn) {
+			var parts = string.split('@');
+			var result = '';
+			if (parts.length > 1) {
+				// In email addresses, only the domain name should be punycoded. Leave
+				// the local part (i.e. everything up to `@`) intact.
+				result = parts[0] + '@';
+				string = parts[1];
+			}
+			// Avoid `split(regex)` for IE8 compatibility. See #17.
+			string = string.replace(regexSeparators, '\x2E');
+			var labels = string.split('.');
+			var encoded = map(labels, fn).join('.');
+			return result + encoded;
+		}
+
+		/**
+		 * Creates an array containing the numeric code points of each Unicode
+		 * character in the string. While JavaScript uses UCS-2 internally,
+		 * this function will convert a pair of surrogate halves (each of which
+		 * UCS-2 exposes as separate characters) into a single code point,
+		 * matching UTF-16.
+		 * @see `punycode.ucs2.encode`
+		 * @see <https://mathiasbynens.be/notes/javascript-encoding>
+		 * @memberOf punycode.ucs2
+		 * @name decode
+		 * @param {String} string The Unicode input string (UCS-2).
+		 * @returns {Array} The new array of code points.
+		 */
+		function ucs2decode(string) {
+			var output = [],
+			    counter = 0,
+			    length = string.length,
+			    value,
+			    extra;
+			while (counter < length) {
+				value = string.charCodeAt(counter++);
+				if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+					// high surrogate, and there is a next character
+					extra = string.charCodeAt(counter++);
+					if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+						output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+					} else {
+						// unmatched surrogate; only append this code unit, in case the next
+						// code unit is the high surrogate of a surrogate pair
+						output.push(value);
+						counter--;
+					}
+				} else {
+					output.push(value);
+				}
+			}
+			return output;
+		}
+
+		/**
+		 * Creates a string based on an array of numeric code points.
+		 * @see `punycode.ucs2.decode`
+		 * @memberOf punycode.ucs2
+		 * @name encode
+		 * @param {Array} codePoints The array of numeric code points.
+		 * @returns {String} The new Unicode string (UCS-2).
+		 */
+		function ucs2encode(array) {
+			return map(array, function(value) {
+				var output = '';
+				if (value > 0xFFFF) {
+					value -= 0x10000;
+					output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+					value = 0xDC00 | value & 0x3FF;
+				}
+				output += stringFromCharCode(value);
+				return output;
+			}).join('');
+		}
+
+		/**
+		 * Converts a basic code point into a digit/integer.
+		 * @see `digitToBasic()`
+		 * @private
+		 * @param {Number} codePoint The basic numeric code point value.
+		 * @returns {Number} The numeric value of a basic code point (for use in
+		 * representing integers) in the range `0` to `base - 1`, or `base` if
+		 * the code point does not represent a value.
+		 */
+		function basicToDigit(codePoint) {
+			if (codePoint - 48 < 10) {
+				return codePoint - 22;
+			}
+			if (codePoint - 65 < 26) {
+				return codePoint - 65;
+			}
+			if (codePoint - 97 < 26) {
+				return codePoint - 97;
+			}
+			return base;
+		}
+
+		/**
+		 * Converts a digit/integer into a basic code point.
+		 * @see `basicToDigit()`
+		 * @private
+		 * @param {Number} digit The numeric value of a basic code point.
+		 * @returns {Number} The basic code point whose value (when used for
+		 * representing integers) is `digit`, which needs to be in the range
+		 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+		 * used; else, the lowercase form is used. The behavior is undefined
+		 * if `flag` is non-zero and `digit` has no uppercase form.
+		 */
+		function digitToBasic(digit, flag) {
+			//  0..25 map to ASCII a..z or A..Z
+			// 26..35 map to ASCII 0..9
+			return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+		}
+
+		/**
+		 * Bias adaptation function as per section 3.4 of RFC 3492.
+		 * http://tools.ietf.org/html/rfc3492#section-3.4
+		 * @private
+		 */
+		function adapt(delta, numPoints, firstTime) {
+			var k = 0;
+			delta = firstTime ? floor(delta / damp) : delta >> 1;
+			delta += floor(delta / numPoints);
+			for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
+				delta = floor(delta / baseMinusTMin);
+			}
+			return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+		}
+
+		/**
+		 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
+		 * symbols.
+		 * @memberOf punycode
+		 * @param {String} input The Punycode string of ASCII-only symbols.
+		 * @returns {String} The resulting string of Unicode symbols.
+		 */
+		function decode(input) {
+			// Don't use UCS-2
+			var output = [],
+			    inputLength = input.length,
+			    out,
+			    i = 0,
+			    n = initialN,
+			    bias = initialBias,
+			    basic,
+			    j,
+			    index,
+			    oldi,
+			    w,
+			    k,
+			    digit,
+			    t,
+			    /** Cached calculation results */
+			    baseMinusT;
+
+			// Handle the basic code points: let `basic` be the number of input code
+			// points before the last delimiter, or `0` if there is none, then copy
+			// the first basic code points to the output.
+
+			basic = input.lastIndexOf(delimiter);
+			if (basic < 0) {
+				basic = 0;
+			}
+
+			for (j = 0; j < basic; ++j) {
+				// if it's not a basic code point
+				if (input.charCodeAt(j) >= 0x80) {
+					error('not-basic');
+				}
+				output.push(input.charCodeAt(j));
+			}
+
+			// Main decoding loop: start just after the last delimiter if any basic code
+			// points were copied; start at the beginning otherwise.
+
+			for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
+
+				// `index` is the index of the next character to be consumed.
+				// Decode a generalized variable-length integer into `delta`,
+				// which gets added to `i`. The overflow checking is easier
+				// if we increase `i` as we go, then subtract off its starting
+				// value at the end to obtain `delta`.
+				for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
+
+					if (index >= inputLength) {
+						error('invalid-input');
+					}
+
+					digit = basicToDigit(input.charCodeAt(index++));
+
+					if (digit >= base || digit > floor((maxInt - i) / w)) {
+						error('overflow');
+					}
+
+					i += digit * w;
+					t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+
+					if (digit < t) {
+						break;
+					}
+
+					baseMinusT = base - t;
+					if (w > floor(maxInt / baseMinusT)) {
+						error('overflow');
+					}
+
+					w *= baseMinusT;
+
+				}
+
+				out = output.length + 1;
+				bias = adapt(i - oldi, out, oldi == 0);
+
+				// `i` was supposed to wrap around from `out` to `0`,
+				// incrementing `n` each time, so we'll fix that now:
+				if (floor(i / out) > maxInt - n) {
+					error('overflow');
+				}
+
+				n += floor(i / out);
+				i %= out;
+
+				// Insert `n` at position `i` of the output
+				output.splice(i++, 0, n);
+
+			}
+
+			return ucs2encode(output);
+		}
+
+		/**
+		 * Converts a string of Unicode symbols (e.g. a domain name label) to a
+		 * Punycode string of ASCII-only symbols.
+		 * @memberOf punycode
+		 * @param {String} input The string of Unicode symbols.
+		 * @returns {String} The resulting Punycode string of ASCII-only symbols.
+		 */
+		function encode(input) {
+			var n,
+			    delta,
+			    handledCPCount,
+			    basicLength,
+			    bias,
+			    j,
+			    m,
+			    q,
+			    k,
+			    t,
+			    currentValue,
+			    output = [],
+			    /** `inputLength` will hold the number of code points in `input`. */
+			    inputLength,
+			    /** Cached calculation results */
+			    handledCPCountPlusOne,
+			    baseMinusT,
+			    qMinusT;
+
+			// Convert the input in UCS-2 to Unicode
+			input = ucs2decode(input);
+
+			// Cache the length
+			inputLength = input.length;
+
+			// Initialize the state
+			n = initialN;
+			delta = 0;
+			bias = initialBias;
+
+			// Handle the basic code points
+			for (j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+				if (currentValue < 0x80) {
+					output.push(stringFromCharCode(currentValue));
+				}
+			}
+
+			handledCPCount = basicLength = output.length;
+
+			// `handledCPCount` is the number of code points that have been handled;
+			// `basicLength` is the number of basic code points.
+
+			// Finish the basic string - if it is not empty - with a delimiter
+			if (basicLength) {
+				output.push(delimiter);
+			}
+
+			// Main encoding loop:
+			while (handledCPCount < inputLength) {
+
+				// All non-basic code points < n have been handled already. Find the next
+				// larger one:
+				for (m = maxInt, j = 0; j < inputLength; ++j) {
+					currentValue = input[j];
+					if (currentValue >= n && currentValue < m) {
+						m = currentValue;
+					}
+				}
+
+				// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+				// but guard against overflow
+				handledCPCountPlusOne = handledCPCount + 1;
+				if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+					error('overflow');
+				}
+
+				delta += (m - n) * handledCPCountPlusOne;
+				n = m;
+
+				for (j = 0; j < inputLength; ++j) {
+					currentValue = input[j];
+
+					if (currentValue < n && ++delta > maxInt) {
+						error('overflow');
+					}
+
+					if (currentValue == n) {
+						// Represent delta as a generalized variable-length integer
+						for (q = delta, k = base; /* no condition */; k += base) {
+							t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+							if (q < t) {
+								break;
+							}
+							qMinusT = q - t;
+							baseMinusT = base - t;
+							output.push(
+								stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+							);
+							q = floor(qMinusT / baseMinusT);
+						}
+
+						output.push(stringFromCharCode(digitToBasic(q, 0)));
+						bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+						delta = 0;
+						++handledCPCount;
+					}
+				}
+
+				++delta;
+				++n;
+
+			}
+			return output.join('');
+		}
+
+		/**
+		 * Converts a Punycode string representing a domain name or an email address
+		 * to Unicode. Only the Punycoded parts of the input will be converted, i.e.
+		 * it doesn't matter if you call it on a string that has already been
+		 * converted to Unicode.
+		 * @memberOf punycode
+		 * @param {String} input The Punycoded domain name or email address to
+		 * convert to Unicode.
+		 * @returns {String} The Unicode representation of the given Punycode
+		 * string.
+		 */
+		function toUnicode(input) {
+			return mapDomain(input, function(string) {
+				return regexPunycode.test(string)
+					? decode(string.slice(4).toLowerCase())
+					: string;
+			});
+		}
+
+		/**
+		 * Converts a Unicode string representing a domain name or an email address to
+		 * Punycode. Only the non-ASCII parts of the domain name will be converted,
+		 * i.e. it doesn't matter if you call it with a domain that's already in
+		 * ASCII.
+		 * @memberOf punycode
+		 * @param {String} input The domain name or email address to convert, as a
+		 * Unicode string.
+		 * @returns {String} The Punycode representation of the given domain name or
+		 * email address.
+		 */
+		function toASCII(input) {
+			return mapDomain(input, function(string) {
+				return regexNonASCII.test(string)
+					? 'xn--' + encode(string)
+					: string;
+			});
+		}
+
+		/*--------------------------------------------------------------------------*/
+
+		/** Define the public API */
+		punycode = {
+			/**
+			 * A string representing the current Punycode.js version number.
+			 * @memberOf punycode
+			 * @type String
+			 */
+			'version': '1.3.2',
+			/**
+			 * An object of methods to convert from JavaScript's internal character
+			 * representation (UCS-2) to Unicode code points, and back.
+			 * @see <https://mathiasbynens.be/notes/javascript-encoding>
+			 * @memberOf punycode
+			 * @type Object
+			 */
+			'ucs2': {
+				'decode': ucs2decode,
+				'encode': ucs2encode
+			},
+			'decode': decode,
+			'encode': encode,
+			'toASCII': toASCII,
+			'toUnicode': toUnicode
+		};
+
+		/** Expose `punycode` */
+		// Some AMD build optimizers, like r.js, check for specific condition patterns
+		// like the following:
+		if (
+			true
+		) {
+			!(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+				return punycode;
+			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else if (freeExports && freeModule) {
+			if (module.exports == freeExports) { // in Node.js or RingoJS v0.8.0+
+				freeModule.exports = punycode;
+			} else { // in Narwhal or RingoJS v0.7.0-
+				for (key in punycode) {
+					punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
+				}
+			}
+		} else { // in Rhino or a web browser
+			root.punycode = punycode;
+		}
+
+	}(this));
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module), (function() { return this; }())))
+
+/***/ },
+/* 619 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.decode = exports.parse = __webpack_require__(620);
+	exports.encode = exports.stringify = __webpack_require__(621);
+
+
+/***/ },
+/* 620 */
+/***/ function(module, exports) {
+
+	// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	'use strict';
+
+	// If obj.hasOwnProperty has been overridden, then calling
+	// obj.hasOwnProperty(prop) will break.
+	// See: https://github.com/joyent/node/issues/1707
+	function hasOwnProperty(obj, prop) {
+	  return Object.prototype.hasOwnProperty.call(obj, prop);
+	}
+
+	module.exports = function(qs, sep, eq, options) {
+	  sep = sep || '&';
+	  eq = eq || '=';
+	  var obj = {};
+
+	  if (typeof qs !== 'string' || qs.length === 0) {
+	    return obj;
+	  }
+
+	  var regexp = /\+/g;
+	  qs = qs.split(sep);
+
+	  var maxKeys = 1000;
+	  if (options && typeof options.maxKeys === 'number') {
+	    maxKeys = options.maxKeys;
+	  }
+
+	  var len = qs.length;
+	  // maxKeys <= 0 means that we should not limit keys count
+	  if (maxKeys > 0 && len > maxKeys) {
+	    len = maxKeys;
+	  }
+
+	  for (var i = 0; i < len; ++i) {
+	    var x = qs[i].replace(regexp, '%20'),
+	        idx = x.indexOf(eq),
+	        kstr, vstr, k, v;
+
+	    if (idx >= 0) {
+	      kstr = x.substr(0, idx);
+	      vstr = x.substr(idx + 1);
+	    } else {
+	      kstr = x;
+	      vstr = '';
+	    }
+
+	    k = decodeURIComponent(kstr);
+	    v = decodeURIComponent(vstr);
+
+	    if (!hasOwnProperty(obj, k)) {
+	      obj[k] = v;
+	    } else if (Array.isArray(obj[k])) {
+	      obj[k].push(v);
+	    } else {
+	      obj[k] = [obj[k], v];
+	    }
+	  }
+
+	  return obj;
+	};
+
+
+/***/ },
+/* 621 */
+/***/ function(module, exports) {
+
+	// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	'use strict';
+
+	var stringifyPrimitive = function(v) {
+	  switch (typeof v) {
+	    case 'string':
+	      return v;
+
+	    case 'boolean':
+	      return v ? 'true' : 'false';
+
+	    case 'number':
+	      return isFinite(v) ? v : '';
+
+	    default:
+	      return '';
+	  }
+	};
+
+	module.exports = function(obj, sep, eq, name) {
+	  sep = sep || '&';
+	  eq = eq || '=';
+	  if (obj === null) {
+	    obj = undefined;
+	  }
+
+	  if (typeof obj === 'object') {
+	    return Object.keys(obj).map(function(k) {
+	      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+	      if (Array.isArray(obj[k])) {
+	        return obj[k].map(function(v) {
+	          return ks + encodeURIComponent(stringifyPrimitive(v));
+	        }).join(sep);
+	      } else {
+	        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
+	      }
+	    }).join(sep);
+
+	  }
+
+	  if (!name) return '';
+	  return encodeURIComponent(stringifyPrimitive(name)) + eq +
+	         encodeURIComponent(stringifyPrimitive(obj));
+	};
+
+
+/***/ },
+/* 622 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	// resolves . and .. elements in a path array with directory names there
+	// must be no slashes, empty elements, or device names (c:\) in the array
+	// (so also no leading and trailing slashes - it does not distinguish
+	// relative and absolute paths)
+	function normalizeArray(parts, allowAboveRoot) {
+	  // if the path tries to go above the root, `up` ends up > 0
+	  var up = 0;
+	  for (var i = parts.length - 1; i >= 0; i--) {
+	    var last = parts[i];
+	    if (last === '.') {
+	      parts.splice(i, 1);
+	    } else if (last === '..') {
+	      parts.splice(i, 1);
+	      up++;
+	    } else if (up) {
+	      parts.splice(i, 1);
+	      up--;
+	    }
+	  }
+
+	  // if the path is allowed to go above the root, restore leading ..s
+	  if (allowAboveRoot) {
+	    for (; up--; up) {
+	      parts.unshift('..');
+	    }
+	  }
+
+	  return parts;
+	}
+
+	// Split a filename into [root, dir, basename, ext], unix version
+	// 'root' is just a slash, or nothing.
+	var splitPathRe =
+	    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+	var splitPath = function(filename) {
+	  return splitPathRe.exec(filename).slice(1);
+	};
+
+	// path.resolve([from ...], to)
+	// posix version
+	exports.resolve = function() {
+	  var resolvedPath = '',
+	      resolvedAbsolute = false;
+
+	  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+	    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+	    // Skip empty and invalid entries
+	    if (typeof path !== 'string') {
+	      throw new TypeError('Arguments to path.resolve must be strings');
+	    } else if (!path) {
+	      continue;
+	    }
+
+	    resolvedPath = path + '/' + resolvedPath;
+	    resolvedAbsolute = path.charAt(0) === '/';
+	  }
+
+	  // At this point the path should be resolved to a full absolute path, but
+	  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+	  // Normalize the path
+	  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+	    return !!p;
+	  }), !resolvedAbsolute).join('/');
+
+	  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+	};
+
+	// path.normalize(path)
+	// posix version
+	exports.normalize = function(path) {
+	  var isAbsolute = exports.isAbsolute(path),
+	      trailingSlash = substr(path, -1) === '/';
+
+	  // Normalize the path
+	  path = normalizeArray(filter(path.split('/'), function(p) {
+	    return !!p;
+	  }), !isAbsolute).join('/');
+
+	  if (!path && !isAbsolute) {
+	    path = '.';
+	  }
+	  if (path && trailingSlash) {
+	    path += '/';
+	  }
+
+	  return (isAbsolute ? '/' : '') + path;
+	};
+
+	// posix version
+	exports.isAbsolute = function(path) {
+	  return path.charAt(0) === '/';
+	};
+
+	// posix version
+	exports.join = function() {
+	  var paths = Array.prototype.slice.call(arguments, 0);
+	  return exports.normalize(filter(paths, function(p, index) {
+	    if (typeof p !== 'string') {
+	      throw new TypeError('Arguments to path.join must be strings');
+	    }
+	    return p;
+	  }).join('/'));
+	};
+
+
+	// path.relative(from, to)
+	// posix version
+	exports.relative = function(from, to) {
+	  from = exports.resolve(from).substr(1);
+	  to = exports.resolve(to).substr(1);
+
+	  function trim(arr) {
+	    var start = 0;
+	    for (; start < arr.length; start++) {
+	      if (arr[start] !== '') break;
+	    }
+
+	    var end = arr.length - 1;
+	    for (; end >= 0; end--) {
+	      if (arr[end] !== '') break;
+	    }
+
+	    if (start > end) return [];
+	    return arr.slice(start, end - start + 1);
+	  }
+
+	  var fromParts = trim(from.split('/'));
+	  var toParts = trim(to.split('/'));
+
+	  var length = Math.min(fromParts.length, toParts.length);
+	  var samePartsLength = length;
+	  for (var i = 0; i < length; i++) {
+	    if (fromParts[i] !== toParts[i]) {
+	      samePartsLength = i;
+	      break;
+	    }
+	  }
+
+	  var outputParts = [];
+	  for (var i = samePartsLength; i < fromParts.length; i++) {
+	    outputParts.push('..');
+	  }
+
+	  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+	  return outputParts.join('/');
+	};
+
+	exports.sep = '/';
+	exports.delimiter = ':';
+
+	exports.dirname = function(path) {
+	  var result = splitPath(path),
+	      root = result[0],
+	      dir = result[1];
+
+	  if (!root && !dir) {
+	    // No dirname whatsoever
+	    return '.';
+	  }
+
+	  if (dir) {
+	    // It has a dirname, strip trailing slash
+	    dir = dir.substr(0, dir.length - 1);
+	  }
+
+	  return root + dir;
+	};
+
+
+	exports.basename = function(path, ext) {
+	  var f = splitPath(path)[2];
+	  // TODO: make this comparison case-insensitive on windows?
+	  if (ext && f.substr(-1 * ext.length) === ext) {
+	    f = f.substr(0, f.length - ext.length);
+	  }
+	  return f;
+	};
+
+
+	exports.extname = function(path) {
+	  return splitPath(path)[3];
+	};
+
+	function filter (xs, f) {
+	    if (xs.filter) return xs.filter(f);
+	    var res = [];
+	    for (var i = 0; i < xs.length; i++) {
+	        if (f(xs[i], i, xs)) res.push(xs[i]);
+	    }
+	    return res;
+	}
+
+	// String.prototype.substr - negative index don't work in IE8
+	var substr = 'ab'.substr(-1) === 'b'
+	    ? function (str, start, len) { return str.substr(start, len) }
+	    : function (str, start, len) {
+	        if (start < 0) start = str.length + start;
+	        return str.substr(start, len);
+	    }
+	;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(28)))
+
+/***/ },
+/* 623 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -21125,7 +11758,7 @@ webpackJsonp_name_([1],[
 	};
 
 /***/ },
-/* 802 */
+/* 624 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -21660,20 +12293,20 @@ webpackJsonp_name_([1],[
 	};
 
 /***/ },
-/* 803 */
+/* 625 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./brain_selected.png": 804,
-		"./brain_unselected.png": 805,
-		"./female_selected.png": 806,
-		"./female_unselected.png": 807,
-		"./flower_parts_selected.png": 808,
-		"./flower_parts_unselected.png": 809,
-		"./male_selected.png": 810,
-		"./male_unselected.png": 811,
-		"./whole_plant_selected.png": 812,
-		"./whole_plant_unselected.png": 813
+		"./brain_selected.png": 626,
+		"./brain_unselected.png": 627,
+		"./female_selected.png": 628,
+		"./female_unselected.png": 629,
+		"./flower_parts_selected.png": 630,
+		"./flower_parts_unselected.png": 631,
+		"./male_selected.png": 632,
+		"./male_unselected.png": 633,
+		"./whole_plant_selected.png": 634,
+		"./whole_plant_unselected.png": 635
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -21686,105 +12319,105 @@ webpackJsonp_name_([1],[
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 803;
+	webpackContext.id = 625;
 
 
 /***/ },
-/* 804 */
+/* 626 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "cbe297d1ea7bf5aac3cfcd540c8be570.png";
 
 /***/ },
-/* 805 */
+/* 627 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "bc6cb140072af5b41e6dc150228f8735.png";
 
 /***/ },
-/* 806 */
+/* 628 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "3661376bad0ed63dd397d20227943739.png";
 
 /***/ },
-/* 807 */
+/* 629 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "f1a4ab676c0362ce2f16c8f25bd4f863.png";
 
 /***/ },
-/* 808 */
+/* 630 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "0a8a46f3670c36c03bc15a90db754a19.png";
 
 /***/ },
-/* 809 */
+/* 631 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "ad3370345bfd3369763a3f106f57dcb5.png";
 
 /***/ },
-/* 810 */
+/* 632 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "bc6d754760910043bb887ade6e598cd3.png";
 
 /***/ },
-/* 811 */
+/* 633 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "8c0597cbe1b70b385479fc347d5b83fa.png";
 
 /***/ },
-/* 812 */
+/* 634 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "130a3f15fc96a7fa5e9ac4db73d9aa37.png";
 
 /***/ },
-/* 813 */
+/* 635 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "568a8e809ccaac58b013552d275965f8.png";
 
 /***/ },
-/* 814 */
+/* 636 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./anolis_carolinensis.svg": 815,
-		"./arabidopsis_thaliana_whole_plant.svg": 816,
-		"./brachypodium_distachyon_flower_parts.svg": 817,
-		"./brachypodium_distachyon_whole_plant.svg": 818,
-		"./chicken.svg": 819,
-		"./cow.svg": 820,
-		"./hordeum_vulgare_flower_parts.svg": 821,
-		"./hordeum_vulgare_whole_plant.svg": 822,
-		"./human_brain.svg": 823,
-		"./human_female.svg": 824,
-		"./human_male.svg": 825,
-		"./macaca_mulatta.svg": 826,
-		"./monodelphis_domestica.svg": 827,
-		"./mouse_brain.svg": 828,
-		"./mouse_female.svg": 829,
-		"./mouse_male.svg": 830,
-		"./oryza_sativa_flower_parts.svg": 831,
-		"./oryza_sativa_whole_plant.svg": 832,
-		"./papio_anubis.svg": 833,
-		"./rat.svg": 834,
-		"./solanum_lycopersicum_flower_parts.svg": 835,
-		"./solanum_lycopersicum_whole_plant.svg": 836,
-		"./solanum_tuberosum_whole_plant.svg": 837,
-		"./sorghum_bicolor_flower_parts.svg": 838,
-		"./sorghum_bicolor_whole_plant.svg": 839,
-		"./tetraodon_nigroviridis.svg": 840,
-		"./triticum_aestivum_flower_parts.svg": 841,
-		"./triticum_aestivum_whole_plant.svg": 842,
-		"./xenopus_tropicalis.svg": 843,
-		"./zea_mays_flower_parts.svg": 844,
-		"./zea_mays_whole_plant.svg": 845
+		"./anolis_carolinensis.svg": 637,
+		"./arabidopsis_thaliana_whole_plant.svg": 638,
+		"./brachypodium_distachyon_flower_parts.svg": 639,
+		"./brachypodium_distachyon_whole_plant.svg": 640,
+		"./chicken.svg": 641,
+		"./cow.svg": 642,
+		"./hordeum_vulgare_flower_parts.svg": 643,
+		"./hordeum_vulgare_whole_plant.svg": 644,
+		"./human_brain.svg": 645,
+		"./human_female.svg": 646,
+		"./human_male.svg": 647,
+		"./macaca_mulatta.svg": 648,
+		"./monodelphis_domestica.svg": 649,
+		"./mouse_brain.svg": 650,
+		"./mouse_female.svg": 651,
+		"./mouse_male.svg": 652,
+		"./oryza_sativa_flower_parts.svg": 653,
+		"./oryza_sativa_whole_plant.svg": 654,
+		"./papio_anubis.svg": 655,
+		"./rat.svg": 656,
+		"./solanum_lycopersicum_flower_parts.svg": 657,
+		"./solanum_lycopersicum_whole_plant.svg": 658,
+		"./solanum_tuberosum_whole_plant.svg": 659,
+		"./sorghum_bicolor_flower_parts.svg": 660,
+		"./sorghum_bicolor_whole_plant.svg": 661,
+		"./tetraodon_nigroviridis.svg": 662,
+		"./triticum_aestivum_flower_parts.svg": 663,
+		"./triticum_aestivum_whole_plant.svg": 664,
+		"./xenopus_tropicalis.svg": 665,
+		"./zea_mays_flower_parts.svg": 666,
+		"./zea_mays_whole_plant.svg": 667
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -21797,206 +12430,206 @@ webpackJsonp_name_([1],[
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 814;
+	webpackContext.id = 636;
 
 
 /***/ },
-/* 815 */
+/* 637 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "15e3c69b67d92ca008087978d6b8448e.svg";
 
 /***/ },
-/* 816 */
+/* 638 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "98c06a5c7a59b3bab435902524ffe7d8.svg";
 
 /***/ },
-/* 817 */
+/* 639 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "cb470d533c62706f829d5f4f38aa425e.svg";
 
 /***/ },
-/* 818 */
+/* 640 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "8483707aa435eba64fda951ff49ccb11.svg";
 
 /***/ },
-/* 819 */
+/* 641 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "2a49f7c1bbfd4ce9943dd967b6565d97.svg";
 
 /***/ },
-/* 820 */
+/* 642 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "6a792bb3d4f6b7ab4c4e13b2511b17f2.svg";
 
 /***/ },
-/* 821 */
+/* 643 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "173fddfa0293be721333dd0488441bad.svg";
 
 /***/ },
-/* 822 */
+/* 644 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "a5a63a356c3d5b0ebd4c72044eafa587.svg";
 
 /***/ },
-/* 823 */
+/* 645 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "b4d4749ed2f9a3523a77749d41159a59.svg";
 
 /***/ },
-/* 824 */
+/* 646 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "ab77c41fd83e3ac7b59824eedcc7c5a7.svg";
 
 /***/ },
-/* 825 */
+/* 647 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "f75018cb835783dfc8cba05679925db6.svg";
 
 /***/ },
-/* 826 */
+/* 648 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "66214fa72aa58ed3471cf5db8dcfb73c.svg";
 
 /***/ },
-/* 827 */
+/* 649 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "6e931c35578a6f5cd2631a8035edc6c4.svg";
 
 /***/ },
-/* 828 */
+/* 650 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "ca7eed0e443dfbb1778393a05ff98533.svg";
 
 /***/ },
-/* 829 */
+/* 651 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "b798241c027f3433267b5fd2c7e162f4.svg";
 
 /***/ },
-/* 830 */
+/* 652 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "7227aa2d41f33d2dda795451b732f606.svg";
 
 /***/ },
-/* 831 */
+/* 653 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "731e1923bcc41297de5b17335c6a088b.svg";
 
 /***/ },
-/* 832 */
+/* 654 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "6fd77ccb71c445a69ecda1d7f2acf3be.svg";
 
 /***/ },
-/* 833 */
+/* 655 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "d0808ee85e6f2aa9923a2c02c855d3aa.svg";
 
 /***/ },
-/* 834 */
+/* 656 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "e8a6d2add179be4126a5236f96b2af5b.svg";
 
 /***/ },
-/* 835 */
+/* 657 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "65e77feca458643bf95b5c5e13148726.svg";
 
 /***/ },
-/* 836 */
+/* 658 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "2406acaef2f238d3504430eb7bcb9d95.svg";
 
 /***/ },
-/* 837 */
+/* 659 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "8ab8f4f9840301eff71e1b84c08f1fda.svg";
 
 /***/ },
-/* 838 */
+/* 660 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "35cac077905e5c012fb5502a2acf0407.svg";
 
 /***/ },
-/* 839 */
+/* 661 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "6d7f6fa1372c8c9c27c2b2d6d0ecdb87.svg";
 
 /***/ },
-/* 840 */
+/* 662 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "99203386ec5edc719c3a8f3c790aedec.svg";
 
 /***/ },
-/* 841 */
+/* 663 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "ccb6040d000ff031a35680692a0c6521.svg";
 
 /***/ },
-/* 842 */
+/* 664 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "30d9d46ebd8ed96acef4182f0e5dea5d.svg";
 
 /***/ },
-/* 843 */
+/* 665 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "01aa50632e4ce254ff1abf10f815b2fa.svg";
 
 /***/ },
-/* 844 */
+/* 666 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "514455ffe1d2fc47050b3448b6c47304.svg";
 
 /***/ },
-/* 845 */
+/* 667 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "8d6532733a5ffa657ae1df67a81fda1a.svg";
 
 /***/ },
-/* 846 */
+/* 668 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(847);
+	var content = __webpack_require__(669);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(638)(content, {});
+	var update = __webpack_require__(671)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -22013,10 +12646,10 @@ webpackJsonp_name_([1],[
 	}
 
 /***/ },
-/* 847 */
+/* 669 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(637)();
+	exports = module.exports = __webpack_require__(670)();
 	// imports
 
 
@@ -22027,16 +12660,324 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 848 */
+/* 670 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 671 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		var blob = new Blob([css], { type: "text/css" });
+
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 672 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(849);
+	var content = __webpack_require__(673);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(638)(content, {});
+	var update = __webpack_require__(671)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -22053,15 +12994,9045 @@ webpackJsonp_name_([1],[
 	}
 
 /***/ },
-/* 849 */
+/* 673 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(637)();
+	exports = module.exports = __webpack_require__(670)();
 	// imports
 
 
 	// module
 	exports.push([module.id, "#gxaAnatomogramWrapper {\n  display: block;\n  zoom: 1;\n  position: relative;\n  overflow: hidden;\n  marginLeft: 270px;\n}\n#gxaAnatomogramWrapper:after {\n  content: \" \";\n  display: block;\n  font-size: 0;\n  height: 0;\n  clear: both;\n  visibility: hidden;\n}\n#gxaAnatomogramAside {\n  float: left;\n  max-width: 270px;\n}\n.clearfix {\n  display: block;\n  zoom: 1;\n}\n.clearfix:after {\n  content: \" \";\n  display: block;\n  font-size: 0;\n  height: 0;\n  clear: both;\n  visibility: hidden;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 674 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	//*------------------------------------------------------------------*
+
+	var Config = __webpack_require__(675);
+	var Orderings = __webpack_require__(677);
+	var ColorAxis = __webpack_require__(678);
+	var Data = __webpack_require__(680);
+	//*------------------------------------------------------------------*
+
+	var _allRows = function _allRows(data) {
+	  return [].concat.apply(data.profiles.rows, (data.jsonCoexpressions || []).map(function (coex) {
+	    return (coex.jsonProfiles && coex.jsonProfiles.rows ? coex.jsonProfiles.rows : []).map(function (row, ix) {
+	      return Object.assign(row, {
+	        coexpressionOfGene: {
+	          id: coex.geneId,
+	          name: coex.geneName,
+	          index: ix
+	        }
+	      });
+	    });
+	  }));
+	};
+	var get = function get(setupConfig, payload) {
+	  var config = Config(setupConfig, payload);
+	  var rows = _allRows(payload);
+	  var columnHeaders = payload.columnHeaders;
+
+	  var data = Data(config, rows, columnHeaders, payload.columnGroupings);
+
+	  return {
+	    heatmapConfig: config,
+	    colorAxis: ColorAxis(config, data.dataSeries),
+	    orderings: Orderings(config, rows, columnHeaders),
+	    heatmapData: data
+	  };
+	};
+
+	module.exports = get;
+
+/***/ },
+/* 675 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var genomeBrowserTemplate = __webpack_require__(676);
+	var capitalizeFirstLetter = function capitalizeFirstLetter(str) {
+	  return !str ? str : str.charAt(0).toUpperCase() + str.substr(1);
+	};
+
+	var _introductoryMessage = function _introductoryMessage(isMultiExperiment, profiles) {
+	  var shownRows = profiles.rows.length,
+	      totalRows = profiles.searchResultTotal;
+
+	  var what = (isMultiExperiment ? 'experiment' : 'gene') + (totalRows > 1 ? 's' : '');
+
+	  return 'Showing ' + shownRows + ' ' + (totalRows === shownRows ? what + ':' : 'of ' + totalRows + ' ' + what + ' found:');
+	};
+
+	var geneURL = function geneURL(config) {
+	  return "/query" + "?geneQuery=" + config.geneQuery + "&conditionQuery=" + config.conditionQuery + "&organism=" + config.species;
+	};
+
+	var _coexpressions = function _coexpressions(jsonCoexpressions) {
+	  /*
+	  The backend code and the feature in the old heatmap were written to support coexpressions of multiple genes.
+	  It doesn't seem necessary, so this assumes zero or one coexpressions.
+	  */
+	  return jsonCoexpressions[0] ? {
+	    coexpressedGene: jsonCoexpressions[0].geneName,
+	    numCoexpressionsAvailable: jsonCoexpressions[0].jsonProfiles ? jsonCoexpressions[0].jsonProfiles.rows.length : 0
+	  } : "";
+	};
+	var coexpressions = function coexpressions(setupConfig, data) {
+	  return setupConfig.isExperimentPage && data.jsonCoexpressions && Array.isArray(data.jsonCoexpressions) ? _coexpressions(data.jsonCoexpressions) : "";
+	};
+
+	var getConfig = function getConfig(setupConfig, data) {
+	  var config = {
+	    geneQuery: data.config.geneQuery,
+	    atlasBaseURL: setupConfig.atlasBaseURL,
+	    pathToFolderWithBundledResources: setupConfig.pathToFolderWithBundledResources,
+	    isExperimentPage: setupConfig.isExperimentPage,
+	    isMultiExperiment: setupConfig.isMultiExperiment,
+	    isReferenceExperiment: setupConfig.isReferenceExperiment,
+	    isDifferential: setupConfig.isDifferential,
+	    introductoryMessage: _introductoryMessage(setupConfig.isMultiExperiment, data.profiles),
+	    description: setupConfig.isExperimentPage && data.experiment && data.experiment.description ? data.experiment.description : "",
+	    xAxisLegendName: capitalizeFirstLetter(data.config.columnType) || "Experimental condition",
+	    yAxisLegendName: setupConfig.isExperimentPage ? "Gene name" : "Experiment",
+	    coexpressions: coexpressions(setupConfig, data)
+	  };
+	  //See in heatmap-data.jsp which thirteen properties this config is populated with.
+	  Object.assign(config, data.config);
+	  Object.assign(config, {
+	    geneURL: geneURL(config)
+	  });
+	  Object.assign(config, {
+	    genomeBrowserTemplate: setupConfig.isExperimentPage ? genomeBrowserTemplate(config) : ""
+	  });
+	  Object.assign(config, {
+	    description: data.jsonExperiment ? setupConfig.isExperimentPage && data.jsonExperiment.description ? data.jsonExperiment.description : setupConfig.isReferenceExperiment && data.jsonExperiment.URL ? "Reference experiment: " + setupConfig.atlasBaseURL + data.jsonExperiment.URL : "" : setupConfig.isMultiExperiment ? "Query results: " + decodeURI(config.geneQuery) + (config.conditionQuery ? ", in conditions: " + decodeURI(config.conditionQuery) : "") + ", in species: " + config.species : ""
+	  });
+	  Object.assign(config, {
+	    shortDescription: config.experimentAccession ? (setupConfig.isReferenceExperiment ? "ReferenceExp" : "") + config.experimentAccession : "expression-atlas-" + config.species.replace(/ +/, "-")
+	  });
+
+	  return Object.freeze(config);
+	};
+
+	module.exports = getConfig;
+
+/***/ },
+/* 676 */
+/***/ function(module, exports) {
+
+	"use strict";
+	//Taken from ensemblUtils.js and EnsemblLauncher.jsx in the old heatmap
+	//*------------------------------------------------------------------*
+
+	// ensemblSpecies is the first two words only, with underscores instead of spaces, and all lower case except for the first character
+	// used to launch the ensembl genome browser for tracks
+	/**
+	 * @param {string} species
+	 */
+
+	var toEnsemblSpecies = function toEnsemblSpecies(species) {
+	    /**
+	     * @param {string} str
+	     */
+	    function capitaliseFirstLetter(str) {
+	        return str.charAt(0).toUpperCase() + str.slice(1);
+	    }
+
+	    /**
+	     * @param {string} str
+	     */
+	    function firstTwoWords(str) {
+	        var words = str.split(" ");
+	        return words.length <= 2 ? str : words[0] + " " + words[1];
+	    }
+
+	    return capitaliseFirstLetter(firstTwoWords(species).replace(" ", "_").toLowerCase());
+	};
+
+	var _ensemblTrackURL = function _ensemblTrackURL(isBaseline, experimentAccession, atlasBaseUrl, species, baseURL, selectedColumnId, selectedGeneId) {
+	    var ensemblSpecies = toEnsemblSpecies(species);
+	    var atlasTrackBaseURLWithTrackFileHeader = atlasBaseUrl + "/experiments/" + experimentAccession + "/tracks/" + experimentAccession + "." + selectedColumnId;
+	    var contigViewBottom = "contigviewbottom=url:" + atlasTrackBaseURLWithTrackFileHeader + (isBaseline ? ".genes.expressions.bedGraph" : ".genes.log2foldchange.bedGraph");
+	    var tiling = isBaseline ? "" : "=tiling,url:" + atlasTrackBaseURLWithTrackFileHeader + ".genes.pval.bedGraph=pvalue;";
+	    return baseURL + ensemblSpecies + "/Location/View?g=" + selectedGeneId + ";db=core;" + contigViewBottom + tiling + ";format=BEDGRAPH";
+	};
+
+	var getHost = function getHost(ensemblDB) {
+	    var ensemblHost = "";
+	    if (ensemblDB === "plants") {
+	        ensemblHost = "https://ensembl.gramene.org/";
+	    } else if (ensemblDB === "fungi") {
+	        ensemblHost = "https://fungi.ensembl.org/";
+	    } else if (ensemblDB === "metazoa") {
+	        ensemblHost = "https://metazoa.ensembl.org/";
+	    } else if (ensemblDB === "ensembl") {
+	        ensemblHost = "https://www.ensembl.org/";
+	    }
+	    return ensemblHost;
+	};
+
+	module.exports = function (config) {
+	    return _ensemblTrackURL(!config.isDifferential, config.experimentAccession, config.atlasBaseURL, config.species, getHost(config.ensemblDB), "__x__", "__y__");
+	};
+
+/***/ },
+/* 677 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	//*------------------------------------------------------------------*
+
+	var _ = __webpack_require__(18);
+
+	//*------------------------------------------------------------------*
+
+	//apply rank first,use comparator to resolve ties
+	var createOrdering = function createOrdering(rank, comparator, arr) {
+	  return arr.map(function (e, ix) {
+	    return [e, ix];
+	  }).sort(function (e_ixLeft, e_ixRight) {
+	    return (//lower ranks go to the beginning of series
+	      rank[e_ixLeft[1]] - rank[e_ixRight[1]] || comparator(e_ixLeft[0], e_ixRight[0])
+	    );
+	  }).map(function (e_ix) {
+	    return e_ix[1];
+	  });
+	};
+
+	var createAlphabeticalOrdering = function createAlphabeticalOrdering(property, arr) {
+	  return createOrdering(arr.map(_.constant(0)), comparatorByProperty(property), arr);
+	};
+
+	var comparatorByProperty = _.curry(function (property, e1, e2) {
+	  return e1[property].localeCompare(e2[property]);
+	});
+
+	var rankColumnsByWhereTheyAppearFirst = function rankColumnsByWhereTheyAppearFirst(expressions) {
+	  return _.chain(expressions).map(function (row) {
+	    return row.map(function (e) {
+	      return +e.hasOwnProperty("value");
+	    });
+	  }).thru(_.spread(_.zip)).map(function (column) {
+	    return column.map(function (e, ix) {
+	      return e * (ix + 1);
+	    }).filter(_.identity);
+	  }).map(_.min).value();
+	};
+
+	var highestColumnRankPossible = function highestColumnRankPossible(expressions) {
+	  return expressions.length ? expressions[0].length : Number.MAX_VALUE;
+	};
+
+	var thresholdColumnsByExpressionAboveCutoff = function thresholdColumnsByExpressionAboveCutoff(expressions) {
+	  return rankColumnsByExpression(expressions, 0).map(function (e) {
+	    //check if the function assigned the rank value corresponding to everything filtered off
+	    return e === highestColumnRankPossible(expressions) ? 1 : 0;
+	  });
+	};
+
+	var rankColumnsByExpression = function rankColumnsByExpression(expressions, minimalExpression) {
+	  var includeInRanking = typeof minimalExpression === 'number' ? function (e) {
+	    return e.hasOwnProperty("value") && !isNaN(e.value) && Math.abs(e.value) > minimalExpression;
+	  } : function (e) {
+	    return e.hasOwnProperty("value") && !isNaN(e.value);
+	  };
+	  return _.chain(expressions).map(function (row) {
+	    var valuesInRow = row.filter(includeInRanking).map(function (e) {
+	      return e.value;
+	    }).sort(function (l, r) {
+	      return r - l;
+	    }).filter(function (e, ix, self) {
+	      return self.indexOf(e) === ix;
+	    });
+	    return row.map(function (e) {
+	      return includeInRanking(e) ? valuesInRow.indexOf(e.value) : "missing";
+	    });
+	  }).thru(_.spread(_.zip)).map(function (ranks) {
+	    return ranks.filter(_.negate(isNaN));
+	  }).map(function (ranks) {
+	    return ranks.length ? _.sum(ranks) / ranks.length : highestColumnRankPossible(expressions);
+	  }).value();
+	};
+
+	var rankColumnsByThreshold = function rankColumnsByThreshold(threshold, expressions) {
+	  return expressions.map(function (row) {
+	    return row.map(function (point) {
+	      return +(point.hasOwnProperty("value") && point.value !== 0);
+	    });
+	  }).reduce(function (r1, r2) {
+	    return r1.map(function (el, ix) {
+	      return el + r2[ix];
+	    }, _.fill(Array(expressions.length ? expressions[0].length : 0), 0));
+	  }).map(function (countOfExperimentsWhereTissueExpressedAboveCutoff) {
+	    return countOfExperimentsWhereTissueExpressedAboveCutoff > expressions.length * threshold ? 0 : 1;
+	  });
+	};
+
+	var noOrdering = function noOrdering(arr) {
+	  return arr.map(function (el, ix) {
+	    return ix;
+	  });
+	};
+
+	var combineRanks = function combineRanks(ranksAndTheirWeighings) {
+	  return _.chain(ranksAndTheirWeighings).map(_.spread(function (ranks, weighing) {
+	    return ranks.map(_.curry(_.multiply, 2)(weighing));
+	  })).thru(_.spread(_.zip)).map(_.sum).value();
+	};
+
+	var createOrderings = function createOrderings(expressions, columnHeaders, rows, config) {
+	  var transposed = _.zip.apply(_, expressions);
+	  return config.isMultiExperiment || config.isReferenceExperiment ? {
+	    "Default": {
+	      columns: createAlphabeticalOrdering("factorValue", columnHeaders),
+	      rows: noOrdering(rows)
+	    },
+	    "Alphabetical order": {
+	      columns: createAlphabeticalOrdering("factorValue", columnHeaders),
+	      rows: createAlphabeticalOrdering("name", rows)
+	    },
+	    "Gene expression rank": {
+	      columns: createOrdering(combineRanks([[rankColumnsByWhereTheyAppearFirst(expressions), 1], [rankColumnsByExpression(expressions), 1e3], [rankColumnsByThreshold(0.05 + 0.4 / Math.pow(1 + transposed.length / 8, 0.4), expressions), 1e6], [thresholdColumnsByExpressionAboveCutoff(expressions), 1e7]]), comparatorByProperty("factorValue"), columnHeaders),
+	      rows: createOrdering(combineRanks([[rankColumnsByExpression(transposed), 1e3], [rankColumnsByThreshold(0.05 + 0.4 / (1 + expressions.length / 5), transposed), 1e6]]), comparatorByProperty("name"), rows)
+	    }
+	  } : {
+	    "Default": {
+	      columns: noOrdering(columnHeaders),
+	      rows: noOrdering(rows)
+	    }
+	  };
+	};
+
+	var extractExpressionValues = function extractExpressionValues(rows, isDifferential) {
+	  var _valueFieldExtractor = function _valueFieldExtractor(valueField) {
+	    return function (expression) {
+	      return expression.hasOwnProperty(valueField) ? { value: +expression[valueField] } : {};
+	    };
+	  };
+	  return rows.map(function (row) {
+	    return row.expressions.map(_valueFieldExtractor(isDifferential ? "foldChange" : "value"));
+	  });
+	};
+
+	var createOrderingsForData = function createOrderingsForData(config, rows, columnHeaders) {
+	  return createOrderings(extractExpressionValues(rows, config.isDifferential), columnHeaders, rows, config);
+	};
+
+	//*------------------------------------------------------------------*
+
+	module.exports = createOrderingsForData;
+
+/***/ },
+/* 678 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	//*------------------------------------------------------------------*
+
+	var React = __webpack_require__(138);
+	var validateDataSeries = __webpack_require__(679).validateDataSeries;
+	var Colour = __webpack_require__(1);
+
+	//*------------------------------------------------------------------*
+
+	//*------------------------------------------------------------------*
+
+	var highlightColour = function highlightColour(c) {
+	  return c.light() ? c.clone().lighten(0.5) : c.clone().saturate(0.3).darken(0.5);
+	};
+
+	var dataClassesFromSeries = function dataClassesFromSeries(dataSeries) {
+	  validateDataSeries(dataSeries);
+	  var xs = dataSeries.map(function (series) {
+	    return series.data.length === 0 && series.info.name === "Below cutoff" ? {
+	      data: [{ value: 0.0 }],
+	      colour: series.info.colour
+	    } : {
+	      data: series.data,
+	      colour: series.info.colour
+	    };
+	  }).filter(function (series) {
+	    return series.data.length > 0;
+	  }).map(function (series, ix, self) {
+	    var theseSeriesValuesSorted = series.data.map(function (point) {
+	      return point.value;
+	    });
+	    theseSeriesValuesSorted.sort(function (l, r) {
+	      return l - r;
+	    });
+	    return {
+	      min: theseSeriesValuesSorted[0],
+	      minColour: ix == 0 ? highlightColour(Colour(self[ix].colour)) : Colour(self[ix].colour).mix(Colour(self[ix - 1].colour)),
+	      max: theseSeriesValuesSorted[theseSeriesValuesSorted.length - 1],
+	      maxColour: ix == self.length - 1 ? highlightColour(Colour(self[ix].colour)) : Colour(self[ix].colour).mix(Colour(self[ix + 1].colour)),
+	      median: theseSeriesValuesSorted[Math.floor(series.data.length / 2)],
+	      medianColour: Colour(self[ix].colour),
+	      sortedValues: theseSeriesValuesSorted
+	    };
+	  });
+	  var needToSplit = function needToSplit(x) {
+	    return x.sortedValues.length > 3 && x.sortedValues[0] != x.sortedValues[x.sortedValues.length - 1] && x.minColour.rgbString() !== x.maxColour.rgbString();
+	  };
+
+	  var splitInHalf = function splitInHalf(x) {
+	    return [{
+	      min: x.min,
+	      minColour: x.minColour,
+	      max: x.median,
+	      maxColour: x.medianColour,
+	      median: x.sortedValues[Math.floor(x.sortedValues.length / 4)],
+	      medianColour: x.minColour.clone().mix(x.medianColour),
+	      sortedValues: x.sortedValues.slice(0, Math.floor(x.sortedValues.length / 2))
+	    }, {
+	      min: x.median,
+	      minColour: x.medianColour,
+	      max: x.max,
+	      maxColour: x.maxColour,
+	      median: x.sortedValues[Math.floor(3 * x.sortedValues.length / 4)],
+	      medianColour: x.medianColour.clone().mix(x.maxColour),
+	      sortedValues: x.sortedValues.slice(Math.floor(x.sortedValues.length / 2))
+	    }];
+	  };
+	  var l = Number.MIN_VALUE;
+	  var L = xs.length;
+	  while (l < L) {
+	    xs = [].concat.apply([], xs.map(function (x) {
+	      if (needToSplit(x)) {
+	        return splitInHalf(x);
+	      } else {
+	        return [x];
+	      }
+	    }));
+	    l = L;
+	    L = xs.length;
+	  }
+
+	  return xs.map(function (x) {
+	    return {
+	      from: x.min,
+	      to: x.max,
+	      color: x.medianColour.hexString()
+	    };
+	  });
+	};
+
+	var getColorAxisFromDataSeries = function getColorAxisFromDataSeries(config, dataSeries) {
+	  return config.isExperimentPage ? {
+	    dataClasses: dataClassesFromSeries(dataSeries)
+	  } : null;
+	};
+
+	module.exports = getColorAxisFromDataSeries;
+
+/***/ },
+/* 679 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(138);
+	var validate = __webpack_require__(606);
+
+	var PointPropType = React.PropTypes.shape({
+	    x: React.PropTypes.number.isRequired,
+	    y: React.PropTypes.number.isRequired,
+	    value: React.PropTypes.number.isRequired,
+	    info: React.PropTypes.object.isRequired
+	});
+
+	var PointsInDataSeriesPropType = React.PropTypes.arrayOf(React.PropTypes.arrayOf(PointPropType));
+
+	var DataSeriesProps = {
+	    info: React.PropTypes.shape({
+	        colour: React.PropTypes.string.isRequired,
+	        name: React.PropTypes.string.isRequired
+	    }),
+	    data: React.PropTypes.arrayOf(PointPropType).isRequired
+	};
+
+	var ValidateDataSeries = function ValidateDataSeries(dataSeries) {
+	    dataSeries.forEach(function (series) {
+	        validate(series, DataSeriesProps);
+	    });
+	};
+
+	var AxisCategoriesPropType = React.PropTypes.arrayOf(React.PropTypes.shape({
+	    id: React.PropTypes.string, // ontology ID can be missing for x axis
+	    label: React.PropTypes.string.isRequired,
+	    info: React.PropTypes.shape({
+	        trackId: React.PropTypes.string,
+	        tooltip: React.PropTypes.object
+	    }).isRequired
+	})).isRequired;
+
+	var OrderingsPropType = function OrderingsPropType(props, propName) {
+	    var orderings = props[propName];
+
+	    var isPermutation = function isPermutation(arr) {
+	        return [].concat(arr).sort(function (a, b) {
+	            return a - b;
+	        }).map(function (el, ix) {
+	            return el === ix;
+	        }).reduce(function (l, r) {
+	            return l && r;
+	        });
+	    };
+
+	    if (!orderings.hasOwnProperty("Default")) {
+	        return new Error("Default ordering missing");
+	    }
+
+	    Object.keys(orderings).forEach(function (orderingName) {
+	        var ordering = orderings[orderingName];
+
+	        if (!isPermutation(ordering.columns)) {
+	            return new Error("Column ordering invalid in " + orderingName);
+	        }
+	        if (!isPermutation(ordering.rows)) {
+	            return new Error("Row ordering invalid in " + orderingName);
+	        }
+	    });
+	};
+
+	var HeatmapDataPropType = function HeatmapDataPropType(props, propName) {
+	    var heatmapData = props[propName];
+	    var possiblyError = ValidateDataSeries(heatmapData.dataSeries);
+	    if (possiblyError !== undefined) {
+	        return possiblyError;
+	    }
+
+	    var width = heatmapData.xAxisCategories.length;
+	    var height = heatmapData.yAxisCategories.length;
+
+	    for (var i = 0; i < heatmapData.dataSeries.length; i++) {
+	        for (var j = 0; j < heatmapData.dataSeries[i].data.length; j++) {
+	            var point = heatmapData.dataSeries[i].data[j];
+	            var x = point.x;
+	            var y = point.y;
+	            if (x < 0 || y < 0 || x >= width || y >= height) {
+	                return new Error("Point with coordinates outside range: " + x + ", " + y);
+	            }
+	        }
+	    }
+	};
+
+	var LoadResultPropType = React.PropTypes.shape({
+	    heatmapConfig: React.PropTypes.object.isRequired,
+	    colorAxis: React.PropTypes.object,
+	    orderings: OrderingsPropType,
+	    heatmapData: HeatmapDataPropType
+	});
+
+	var FormatterPropType = function FormatterPropType(props, propName) {
+	    var f = props[propName];
+	    if (f === undefined) {
+	        return new Error(propName + " formatter missing");
+	    } else if (typeof f !== "function" || f.name !== "Formatter") {
+	        return new Error(propName + " formatter not correctly created. See the main method of TooltipFormatter.jsx.");
+	    }
+	};
+
+	var OrderingsPropTypes = React.PropTypes.shape({
+	    available: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    selected: React.PropTypes.string.isRequired,
+	    onSelect: React.PropTypes.func.isRequired
+	}).isRequired;
+
+	/*
+	selected should be a subset of values
+	valueGroupings should be two element arrays, one the name of the grouping and the second a subset of values
+	*/
+	var FilterProps = {
+	    name: React.PropTypes.string.isRequired,
+	    values: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    selected: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    valueGroupings: React.PropTypes.arrayOf(function (props, propName) {
+	        var prop = props[propName];
+	        if (prop === undefined) {
+	            return new Error(propName + " missing in " + props);
+	        } else if (!Array.isArray(prop) || prop.length !== 2) {
+	            return new Error(prop + " invalid: expected array of length two");
+	        } else if (typeof prop[0] !== "string") {
+	            return new Error(prop[0] + " should be a string representing name of the grouping");
+	        } else if (!Array.isArray(prop[1])) {
+	            return new Error(prop[1] + " should be an array with members of the grouping ");
+	        }
+	    })
+	};
+
+	module.exports = {
+	    validateDataSeries: ValidateDataSeries,
+	    PointsInDataSeries: PointsInDataSeriesPropType,
+	    Point: PointPropType,
+	    HeatmapData: HeatmapDataPropType,
+	    LoadResult: LoadResultPropType,
+	    AxisCategories: AxisCategoriesPropType,
+	    Formatter: FormatterPropType,
+	    Orderings: OrderingsPropTypes,
+	    Filter: React.PropTypes.shape(FilterProps).isRequired,
+	    FilterProps: FilterProps
+	};
+
+/***/ },
+/* 680 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	//*------------------------------------------------------------------*
+
+	var _ = __webpack_require__(18);
+	var Url = __webpack_require__(617);
+	var Path = __webpack_require__(622);
+
+	//*------------------------------------------------------------------*
+
+	var _columnGroupings = function _columnGroupings(columnGroupings, id) {
+	  return columnGroupings.map(function (grouping) {
+	    var values = grouping.groups.filter(function (group) {
+	      return group.values.indexOf(id) > -1;
+	    }).map(function (group) {
+	      return {
+	        label: group.name,
+	        id: group.id
+	      };
+	    });
+	    return {
+	      name: grouping.name,
+	      memberName: grouping.memberName,
+	      values: values.length ? values : [{
+	        label: "Unmapped",
+	        id: ""
+	      }]
+	    };
+	  });
+	};
+
+	var getXAxisCategories = function getXAxisCategories(columnHeaders, columnGroupings, config) {
+	  return columnHeaders.map(config.isExperimentPage ? config.isDifferential ? function (columnHeader) {
+	    return { "label": columnHeader.displayName,
+	      "id": columnHeader.id,
+	      "info": {
+	        trackId: columnHeader.id,
+	        tooltip: Object.assign({ resources: (columnHeader.resources || []).map(function (resource) {
+	            return {
+	              type: resource.type,
+	              uri: config.atlasBaseURL + resource.uri,
+	              icon: Url.resolve(config.pathToFolderWithBundledResources, Path.basename(__webpack_require__(681)("./" + resource.type + "-icon.png")))
+	            };
+	          })
+	        }, columnHeader.contrastSummary),
+	        groupings: []
+	      } };
+	  } : function (columnHeader) {
+	    return { "label": columnHeader.factorValue,
+	      "id": columnHeader.factorValueOntologyTermId || "",
+	      "info": {
+	        trackId: columnHeader.assayGroupId,
+	        tooltip: columnHeader.assayGroupSummary,
+	        groupings: _columnGroupings(columnGroupings, columnHeader.factorValueOntologyTermId || "")
+	      } };
+	  } : function (columnHeader) {
+	    return { "label": columnHeader.factorValue,
+	      "id": columnHeader.factorValueOntologyTermId || "",
+	      "info": {
+	        trackId: "",
+	        tooltip: {},
+	        groupings: _columnGroupings(columnGroupings, columnHeader.factorValueOntologyTermId || "")
+	      } };
+	  });
+	};
+
+	var getYAxisCategories = function getYAxisCategories(rows, config) {
+	  return rows.map(config.isExperimentPage ? function (profile) {
+	    return { "label": profile.name,
+	      "id": profile.id,
+	      "info": {
+	        trackId: profile.id,
+	        designElement: profile.designElement || ""
+	      } };
+	  } : function (profile) {
+	    return { "label": profile.name,
+	      "id": profile.id + "?geneQuery=" + config.geneQuery + (profile.serializedFilterFactors ? "&serializedFilterFactors=" + encodeURIComponent(profile.serializedFilterFactors) : ""),
+	      "info": {
+	        trackId: "",
+	        designElement: ""
+	      } };
+	  });
+	};
+
+	var __dataPointFromExpression = function __dataPointFromExpression(infoCommonForTheRow, columnNumber, expression, rowNumber) {
+	  //TODO make this function more complicated and determine the info to pass about each point here.
+	  return expression.hasOwnProperty("value") ? { x: rowNumber, y: columnNumber, value: expression.value, info: infoCommonForTheRow } : expression.hasOwnProperty("foldChange") ? {
+	    x: rowNumber,
+	    y: columnNumber,
+	    value: +expression.foldChange,
+	    info: Object.assign({
+	      pValue: expression.pValue,
+	      foldChange: expression.foldChange,
+	      tStat: expression.tStat || "" }, infoCommonForTheRow)
+	  } : null;
+	};
+
+	var _commonPropertiesForRow = function _commonPropertiesForRow(row, config) {
+	  return Object.assign({}, { unit: unitForThisRowOfData(row, config) }, { index: row.coexpressionOfGene ? row.coexpressionOfGene.index + 1 : 0 });
+	};
+
+	var _dataPointsFromRow = _.curry(function (config, row, columnNumber) {
+	  return row.expressions.map(_.curry(__dataPointFromExpression, 4)(_commonPropertiesForRow(row, config), columnNumber)).filter(function (el) {
+	    return el;
+	  });
+	}, 3);
+
+	var unitForThisRowOfData = function unitForThisRowOfData(row, config) {
+	  return config.isDifferential ? "Log2Fold change" //this is what we use for point.value, but we don't actually use this unit for display. See Formatters.jsx.
+	  : config.isMultiExperiment ? row.experimentType === "RNASEQ_MRNA_BASELINE" ? row.name.indexOf("FANTOM") > -1 ? "TPM" : "FPKM" : "" : config.experimentAccession.indexOf("PROT") > -1 ? "" : config.description.toUpperCase().indexOf("FANTOM") > -1 ? "TPM" : "FPKM";
+	};
+
+	var _groupByExperimentType = function _groupByExperimentType(chain, config) {
+	  return chain.map(function (row, columnNumber) {
+	    return [row.experimentType, _dataPointsFromRow(config, row, columnNumber)];
+	  }).groupBy(function (experimentTypeAndRow) {
+	    return experimentTypeAndRow[0];
+	  }).mapValues(function (rows) {
+	    return rows.map(function (experimentTypeAndRow) {
+	      return experimentTypeAndRow[1];
+	    });
+	  }).mapValues(_.flatten).toPairs();
+	};
+
+	var _experimentsIntoDataSeriesByThresholds = function _experimentsIntoDataSeriesByThresholds(thresholds) {
+	  return function (experimentType, dataPoints) {
+	    return dataPoints.map(function (dataPoint) {
+	      return [_.sortedIndex(thresholds[experimentType] || thresholds.DEFAULT, dataPoint.value), dataPoint];
+	    }.bind(this));
+	  };
+	};
+
+	var getDataSeries = function getDataSeries(profilesRows, config) {
+	  var _fns = [_.lt, _.eq, _.gt].map(function (f) {
+	    return function (point) {
+	      return f(point.value, 0);
+	    };
+	  });
+	  var _belowCutoff = _fns[1];
+	  return config.isMultiExperiment ? _dataSplitByThresholds({
+	    RNASEQ_MRNA_BASELINE: [0, 10, 1000],
+	    PROTEOMICS_BASELINE: [0, 0.001, 8],
+	    DEFAULT: [0, 10, 1000]
+	  }, ["Below cutoff", "Low", "Medium", "High"], ["#eaeaea", "#45affd", "#1E74CA", "#024990"], profilesRows, config) : config.isDifferential ? _dataProportionallyInEachSeries(profilesRows, config, _fns, [["High down", "Down"], ["Below cutoff"], ["Up", "High up"]], [["#0000ff", "#8cc6ff"], ["gainsboro"], ["#e9967a", "#b22222"]]) : _dataProportionallyInEachSeries(profilesRows, config, [_belowCutoff, _.negate(_belowCutoff)], [["Below cutoff"], ["Low", "Medium", "High"]], [["gainsboro"], ["#8cc6ff", "#0000ff", "#0000b3"]]);
+	};
+	var _splitDataSetByProportion = function _splitDataSetByProportion(data, names, colours) {
+	  var sortedValues = data.map(function (point) {
+	    return point.value;
+	  }).sort(function (l, r) {
+	    return l - r;
+	  });
+	  var howManyPointsInTotal = data.length;
+	  var howManyDataSetsToSplitIn = names.length;
+	  return _bucketsIntoSeries(names, colours)(_.chain(data).map(function (point) {
+	    return [Math.floor(_.sortedIndex(sortedValues, point.value) / howManyPointsInTotal * howManyDataSetsToSplitIn), point];
+	  })).value();
+	};
+
+	var _dataProportionallyInEachSeries = function _dataProportionallyInEachSeries(profilesRows, config, filters, names, colors) {
+	  var points = _.flatten(profilesRows.map(_dataPointsFromRow(config)));
+	  return _.flatten(_.range(filters.length).map(function (i) {
+	    return _splitDataSetByProportion(points.filter(filters[i]), names[i], colors[i]);
+	  }));
+	};
+
+	var _bucketsIntoSeries = _.curry(function (names, colours, chain) {
+	  return chain.groupBy(_.spread(function (dataSeriesAssigned, point) {
+	    return dataSeriesAssigned;
+	  })).mapValues(function (bucket) {
+	    return bucket.map(_.spread(function (dataSeriesAssigned, point) {
+	      return point;
+	    }));
+	  }).transform(function (result, bucket, bucketNumber) {
+	    result[bucketNumber].data = bucket;
+	  }, _.range(names.length).map(function (i) {
+	    return {
+	      info: {
+	        name: names[i],
+	        colour: colours[i]
+	      },
+	      data: []
+	    };
+	  }));
+	}, 3);
+
+	var _dataSplitByThresholds = function _dataSplitByThresholds(thresholds, names, colours, profilesRows, config) {
+	  return _bucketsIntoSeries(names, colours)(_groupByExperimentType(_.chain(profilesRows), config).map(_.spread(_experimentsIntoDataSeriesByThresholds(thresholds))).flatten()).value();
+	};
+
+	var getTheWholeDataObject = function getTheWholeDataObject(config, rows, columnHeaders, columnGroupings) {
+	  return {
+	    xAxisCategories: getXAxisCategories(columnHeaders, columnGroupings || [], config),
+	    yAxisCategories: getYAxisCategories(rows, config),
+	    dataSeries: getDataSeries(rows, config)
+	  };
+	};
+
+	//*------------------------------------------------------------------*
+	module.exports = getTheWholeDataObject;
+
+/***/ },
+/* 681 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./gsea_go-icon.png": 682,
+		"./gsea_interpro-icon.png": 683,
+		"./gsea_reactome-icon.png": 684,
+		"./ma-plot-icon.png": 685
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 681;
+
+
+/***/ },
+/* 682 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "5faee84bd1cf86bc62432d4065523c39.png";
+
+/***/ },
+/* 683 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "e5bd8b95955895136e36bc4722d71cf0.png";
+
+/***/ },
+/* 684 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "4d9b25a425f08c8f240a14045f694819.png";
+
+/***/ },
+/* 685 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "6b3ed826d015fcfafd268718f1d4d39c.png";
+
+/***/ },
+/* 686 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(138);
+	var Button = __webpack_require__(389);
+	var FormattersFactory = __webpack_require__(687);
+	var TooltipsFactory = __webpack_require__(691);
+	var PropTypes = __webpack_require__(679);
+	var Show = __webpack_require__(697);
+	var _ = __webpack_require__(18);
+
+	module.exports = React.createClass({
+	    displayName: "Heatmap with settings",
+
+	    propTypes: {
+	        loadResult: PropTypes.LoadResult,
+	        googleAnalyticsCallback: React.PropTypes.func.isRequired,
+	        ontologyIdsToHighlight: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	        onOntologyIdIsUnderFocus: React.PropTypes.func.isRequired
+	    },
+
+	    getInitialState: function getInitialState() {
+	        return {
+	            ordering: "Default",
+	            filtersSelection: this._filtersInitially(),
+	            coexpressionsShown: 0,
+	            zoom: false
+	        };
+	    },
+	    _getFilterSelection: function _getFilterSelection(name) {
+	        return (this.state.filtersSelection.find(function (f) {
+	            return f.name == name;
+	        }) || { selected: [] }).selected;
+	    },
+	    _onUserZoom: function _onUserZoom(zoomedIn) {
+	        this.setState({ zoom: zoomedIn });
+	    },
+	    _heatmapDataToPresent: function _heatmapDataToPresent() {
+	        var _this = this;
+
+	        return __webpack_require__(847).manipulate({
+	            keepSeries: function keepSeries(series) {
+	                return _this._getFilterSelection(_this._expressionLevelInSelectedBucketFilter().name).includes(series.info.name);
+	            },
+	            keepRow: function keepRow(row) {
+	                return !row.info.index || row.info.index <= _this.state.coexpressionsShown;
+	            },
+	            keepColumn: function keepColumn(columnHeader) {
+	                return _this._columnHeadersThatColumnGroupingFiltersSayWeCanInclude().length == 0 || _this._columnHeadersThatColumnGroupingFiltersSayWeCanInclude().includes(columnHeader.label);
+	            },
+	            ordering: this.props.loadResult.orderings[this.state.ordering],
+	            allowEmptyColumns: this.props.loadResult.heatmapConfig.isExperimentPage && _.isEqual(this._filtersInitially(), this._filtersCurrently())
+	        }, this.props.loadResult.heatmapData);
+	    },
+	    _columnHeadersThatColumnGroupingFiltersSayWeCanInclude: function _columnHeadersThatColumnGroupingFiltersSayWeCanInclude() {
+	        var _this2 = this;
+
+	        return this._columnBelongsToGroupingFilterPerGrouping().map(function (groupingFilter) {
+	            return groupingFilter.name;
+	        }).map(function (name) {
+	            return _this2._getFilterSelection(name);
+	        }).reduce(function (l, r) {
+	            return l.concat(r);
+	        }, []);
+	    },
+	    _labels: function _labels() {
+	        return this.props.loadResult.heatmapData.dataSeries.map(function (e) {
+	            return {
+	                colour: e.info.colour,
+	                name: e.info.name
+	            };
+	        });
+	    },
+	    _orderings: function _orderings() {
+	        var _this3 = this;
+
+	        return {
+	            available: Object.keys(this.props.loadResult.orderings),
+	            selected: this.state.ordering,
+	            onSelect: function onSelect(orderingChosen) {
+	                _this3.setState({ ordering: orderingChosen });
+	            }
+	        };
+	    },
+	    __filters__: function __filters__() {
+	        return [this._expressionLevelInSelectedBucketFilter()].concat(this._columnBelongsToGroupingFilterPerGrouping());
+	    },
+	    _filtersInitially: function _filtersInitially() {
+	        return this.__filters__().map(function (filter) {
+	            return {
+	                name: filter.name,
+	                selected: filter.values
+	            };
+	        });
+	    },
+	    _filtersCurrently: function _filtersCurrently() {
+	        var _this4 = this;
+
+	        return this.__filters__().map(function (_filter) {
+	            return Object.assign({}, _filter, { selected: _this4._getFilterSelection(_filter.name) });
+	        });
+	    },
+	    _expressionLevelInSelectedBucketFilter: function _expressionLevelInSelectedBucketFilter() {
+	        return {
+	            name: "Expression Value" + (this.props.loadResult.heatmapConfig.isExperimentPage ? " \u2013 relative" : ""),
+	            values: this.props.loadResult.heatmapData.dataSeries.map(function (e) {
+	                return e.info.name;
+	            })
+	        };
+	    },
+	    _columnBelongsToGroupingFilterPerGrouping: function _columnBelongsToGroupingFilterPerGrouping() {
+	        var groupingTriplets = _.flattenDeep(this.props.loadResult.heatmapData.xAxisCategories.reduce(function (acc, columnHeader) {
+	            var groupingTriplets = columnHeader.info.groupings.map(function (grouping) {
+	                return grouping.values.map(function (groupingValue) {
+	                    return {
+	                        name: grouping.name,
+	                        groupingLabel: groupingValue.label,
+	                        columnLabel: columnHeader.label
+	                    };
+	                });
+	            });
+	            acc.push(groupingTriplets);
+
+	            return acc;
+	        }, []));
+
+	        var groupingNames = _.uniq(groupingTriplets.map(function (groupingTriplet) {
+	            return groupingTriplet.name;
+	        }));
+
+	        return groupingNames.map(function (groupingName) {
+	            var columnLabels = _.uniq(groupingTriplets.filter(function (groupingTriplet) {
+	                return groupingTriplet.name === groupingName;
+	            }).map(function (groupingTriplet) {
+	                return groupingTriplet.columnLabel;
+	            }));
+
+	            return {
+	                name: groupingName,
+	                values: columnLabels,
+	                valueGroupings: _.uniq(groupingTriplets.map(function (groupingTriplet) {
+	                    return groupingTriplet.groupingLabel;
+	                })).sort().map(function (groupingLabel) {
+	                    return [groupingLabel, _.sortedUniq(groupingTriplets.filter(function (groupingTriplet) {
+	                        return groupingTriplet.name === groupingName && groupingTriplet.groupingLabel === groupingLabel;
+	                    }).map(function (groupingTriplet) {
+	                        return groupingTriplet.columnLabel;
+	                    }))];
+	                })
+	            };
+	        });
+	    },
+	    _onFilterChange: function _onFilterChange(newFiltersSelection) {
+	        this.setState({ filtersSelection: newFiltersSelection });
+	    },
+	    _legend: function _legend() {
+	        var _this5 = this;
+
+	        //See properties required for HeatmapLegendBox
+	        return this.props.loadResult.heatmapConfig.isExperimentPage ? null : this.props.loadResult.heatmapData.dataSeries.map(function (e, ix) {
+	            return {
+	                key: e.info.name,
+	                name: e.info.name,
+	                colour: e.info.colour,
+	                on: _this5._getFilterSelection(_this5._expressionLevelInSelectedBucketFilter().name).includes(e.info.name)
+	            };
+	        });
+	    },
+	    _coexpressionOption: function _coexpressionOption() {
+	        var _this6 = this;
+
+	        return this.props.loadResult.heatmapConfig.coexpressions && {
+	            geneName: this.props.loadResult.heatmapConfig.coexpressions.coexpressedGene,
+	            numCoexpressionsVisible: this.state.coexpressionsShown,
+	            numCoexpressionsAvailable: this.props.loadResult.heatmapConfig.coexpressions.numCoexpressionsAvailable,
+	            showCoexpressionsCallback: function showCoexpressionsCallback(e) {
+	                _this6.setState({ coexpressionsShown: e });
+	            }
+	        };
+	    },
+	    render: function render() {
+	        var heatmapDataToPresent = this._heatmapDataToPresent();
+	        return Show(heatmapDataToPresent, this._orderings(), this._filtersCurrently(), this._onFilterChange, this.state.zoom, this._onUserZoom, this.props.loadResult.colorAxis || undefined, FormattersFactory(this.props.loadResult.heatmapConfig), TooltipsFactory(this.props.loadResult.heatmapConfig, heatmapDataToPresent.xAxisCategories, heatmapDataToPresent.yAxisCategories), this._legend(), this._coexpressionOption(), this.props);
+	    }
+	});
+
+/***/ },
+/* 687 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	//*------------------------------------------------------------------*
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var React = __webpack_require__(138);
+	var ReactDOMServer = __webpack_require__(688);
+	var PropTypes = __webpack_require__(679);
+	var scientificNotation = function scientificNotation(value) {
+	  return React.createElement(
+	    'b',
+	    null,
+	    __webpack_require__(689).scientificNotation(value)
+	  );
+	};
+	var escapedHtmlDecoder = __webpack_require__(13);
+
+	//*------------------------------------------------------------------*
+
+	var Tooltip = React.createClass({
+	  displayName: 'Tooltip',
+
+	  propTypes: {
+	    config: React.PropTypes.shape({
+	      isDifferential: React.PropTypes.bool.isRequired,
+	      xAxisLegendName: React.PropTypes.string.isRequired,
+	      yAxisLegendName: React.PropTypes.string.isRequired,
+	      genomeBrowserTemplate: React.PropTypes.string.isRequired
+	    }).isRequired,
+	    colour: React.PropTypes.string.isRequired,
+	    xLabel: React.PropTypes.string.isRequired,
+	    yLabel: React.PropTypes.string.isRequired,
+	    value: React.PropTypes.number.isRequired,
+	    unit: React.PropTypes.string,
+	    foldChange: React.PropTypes.number,
+	    pValue: React.PropTypes.string,
+	    tStat: React.PropTypes.string,
+	    xAxisLegendName: React.PropTypes.string
+	  }, //TODO extend this prop checker.Props for this component are created dynamically so it's important. If differential, expect p-values and fold changes, etc.
+
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { style: { whiteSpace: "pre" } },
+	      this._div(this.props.config.yAxisLegendName, this.props.yLabel),
+	      this._div(this.props.xAxisLegendName || this.props.config.xAxisLegendName, this.props.xLabel),
+	      this.props.config.isDifferential ? [React.createElement(
+	        'div',
+	        { key: "" },
+	        this._tinySquare(),
+	        this._span("Fold change", this.props.foldChange)
+	      ), this._div("P-value", this.props.pValue, scientificNotation), this._div("T-statistic", this.props.tStat)] : React.createElement(
+	        'div',
+	        null,
+	        [this._tinySquare(), this._span("Expression level", this.props.value ? this.props.value + " " + (this.props.unit || "") : "Below cutoff")]
+	      ),
+	      !!this.props.config.genomeBrowserTemplate ? this._info("Click on the cell to show expression in the Genome Browser") : null
+	    );
+	  },
+	  _tinySquare: function _tinySquare() {
+	    return React.createElement('span', { key: "Tiny " + this.props.colour + " square",
+	      style: {
+	        border: "1px rgb(192, 192, 192) solid",
+	        marginRight: "2px",
+	        width: "6px",
+	        height: "6px",
+	        display: "inline-block",
+	        backgroundColor: this.props.colour
+	      } });
+	  },
+	  _info: function _info(text) {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'i',
+	        null,
+	        text
+	      )
+	    );
+	  },
+	  _div: function _div(name, value, format) {
+	    return name && value ? React.createElement(
+	      'div',
+	      { key: name + " " + value },
+	      name + ": ",
+	      value.length > 50 ? React.createElement('br', null) : null,
+	      (format || this._bold)(value)
+	    ) : null;
+	  },
+	  _span: function _span(name, value) {
+	    return React.createElement(
+	      'span',
+	      { key: name + " " + value },
+	      name + ": ",
+	      value.length > 50 ? React.createElement('br', null) : null,
+	      this._bold(value)
+	    );
+	  },
+	  _bold: function _bold(value) {
+	    return React.createElement(
+	      'b',
+	      null,
+	      value
+	    );
+	  }
+	});
+
+	var YAxisLabel = React.createClass({
+	  displayName: 'YAxisLabel',
+
+	  propTypes: {
+	    config: React.PropTypes.shape({
+	      atlasBaseURL: React.PropTypes.string.isRequired,
+	      isMultiExperiment: React.PropTypes.bool.isRequired
+	    }).isRequired,
+	    labelText: React.PropTypes.string.isRequired,
+	    resourceId: React.PropTypes.string.isRequired,
+	    extra: React.PropTypes.string
+	  },
+	  render: function render() {
+	    var geneNameWithLink = React.createElement(
+	      'a',
+	      { href: this.props.config.atlasBaseURL + (this.props.config.isMultiExperiment ? "/experiments/" : "/genes/") + this.props.resourceId },
+	      this.props.labelText
+	    );
+	    return this.props.extra ? React.createElement(
+	      'span',
+	      null,
+	      geneNameWithLink,
+	      React.createElement(
+	        'i',
+	        { style: { color: "black" } },
+	        "\t" + this.props.extra
+	      )
+	    ) : geneNameWithLink;
+	  }
+	});
+
+	var reactToHtml = function reactToHtml(component) {
+	  return escapedHtmlDecoder.decode(ReactDOMServer.renderToStaticMarkup(component));
+	};
+
+	var makeFormatter = function makeFormatter(config) {
+	  return {
+	    xAxis: function Formatter(value) {
+	      return value.label;
+	    },
+	    xAxisStyle: {
+	      fontSize: '9px',
+	      cursor: config.isExperimentPage && config.isDifferential ? 'pointer' : 'default',
+	      textOverflow: config.isExperimentPage ? 'none' : 'ellipsis'
+	    },
+	    yAxis: function Formatter(value) {
+	      return reactToHtml(React.createElement(YAxisLabel, {
+	        config: config,
+	        labelText: value.label,
+	        resourceId: value.id,
+	        extra: value.info.designElement || "" }));
+	    },
+	    yAxisStyle: {
+	      fontSize: '10px',
+	      color: '#148ff3'
+	    },
+	    tooltip: function Formatter(series, point) {
+	      var o = {
+	        colour: point.color,
+	        xLabel: point.options.info.xLabel || series.xAxis.categories[point.x].label,
+	        yLabel: series.yAxis.categories[point.y].label,
+	        value: point.value
+	      };
+	      for (var key in point.options.info) {
+	        if (point.options.info.hasOwnProperty(key)) {
+	          o[key] = point.options.info[key];
+	        }
+	      }
+	      return reactToHtml(React.createElement(Tooltip, _extends({}, o, { config: config })));
+	    }
+	  };
+	};
+	//*------------------------------------------------------------------*
+
+	module.exports = makeFormatter;
+
+/***/ },
+/* 688 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(284);
+
+
+/***/ },
+/* 689 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	//*------------------------------------------------------------------*
+
+	module.exports = __webpack_require__(690);
+
+/***/ },
+/* 690 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(138); // React is called in the transpiled JS files in the return statements
+
+	//*------------------------------------------------------------------*
+
+	function formatBaselineExpression(expressionLevel) {
+	    var numberExpressionLevel = +expressionLevel;
+	    return numberExpressionLevel >= 100000 || numberExpressionLevel < 0.1 ? formatScientificNotation(expressionLevel, 1) : '' + numberExpressionLevel;
+	}
+
+	// expects number in the format #E# and displays exponent in superscript
+	function formatScientificNotation(value, accuracy) {
+	    var scientificNotationString = (+value).toExponential(accuracy || 4);
+
+	    var formatParts = scientificNotationString.split(/[Ee]/);
+
+	    if (formatParts.length == 1) {
+	        return React.createElement(
+	            'span',
+	            null,
+	            value
+	        );
+	    }
+
+	    var mantissa = formatParts[0].replace(/([^\.])0+$/, "$1");
+	    var exponent = formatParts[1].replace("+", "");
+
+	    if (+exponent == 0) {
+	        return React.createElement(
+	            'span',
+	            null,
+	            mantissa
+	        );
+	    }
+
+	    return React.createElement(
+	        'span',
+	        null,
+	        mantissa !== "1" ? mantissa + ' \xD7 ' : '',
+	        '10',
+	        React.createElement(
+	            'span',
+	            { style: { 'verticalAlign': 'super' } },
+	            exponent
+	        )
+	    );
+	}
+
+	//*------------------------------------------------------------------*
+
+	exports.baselineExpression = formatBaselineExpression;
+	exports.scientificNotation = formatScientificNotation;
+
+/***/ },
+/* 691 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	/*
+	This module returns functions that take in labels of rows/columns,
+	and return content as it should appear in tooltip.
+	*/
+	//*------------------------------------------------------------------*
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var React = __webpack_require__(138);
+
+	var GeneTooltip = __webpack_require__(692);
+	__webpack_require__(693);
+
+	//*------------------------------------------------------------------*
+
+	var createColumnLabelTooltipRenderer = function createColumnLabelTooltipRenderer(heatmapConfig, xAxisCategories) {
+	  if (!heatmapConfig.isExperimentPage) {
+	    return function () {
+	      return null;
+	    };
+	  }
+
+	  var tooltipDataPerHeader = {};
+	  for (var i = 0; i < xAxisCategories.length; i++) {
+	    if (xAxisCategories[i].info.tooltip) {
+	      tooltipDataPerHeader[xAxisCategories[i].label] = xAxisCategories[i].info.tooltip;
+	    }
+	  }
+	  Object.freeze(tooltipDataPerHeader);
+
+	  var Tooltip = heatmapConfig.isDifferential ? __webpack_require__(695) : __webpack_require__(696);
+
+	  return function (columnLabel) {
+	    return tooltipDataPerHeader.hasOwnProperty(columnLabel) ? React.createElement(Tooltip, tooltipDataPerHeader[columnLabel]) : null;
+	  };
+	};
+	var createRowLabelTooltipRenderer = function createRowLabelTooltipRenderer(heatmapConfig, yAxisCategories) {
+	  //We have the labels, but we need the indentifiers to do lookups
+	  var rowHeaderPerLabel = {};
+	  for (var i = 0; i < yAxisCategories.length; i++) {
+	    rowHeaderPerLabel[yAxisCategories[i].label] = yAxisCategories[i];
+	  }
+	  Object.freeze(rowHeaderPerLabel);
+
+	  var resultCache = {};
+	  return function (rowLabel) {
+	    if (!rowHeaderPerLabel.hasOwnProperty(rowLabel)) {
+	      return null;
+	    }
+	    var bioentityIdentifier = rowHeaderPerLabel[rowLabel].id;
+	    return React.createElement(GeneTooltip, _extends({
+	      key: bioentityIdentifier,
+	      atlasBaseURL: heatmapConfig.atlasBaseURL,
+	      label: rowLabel,
+	      id: bioentityIdentifier,
+	      designElement: rowHeaderPerLabel[rowLabel].info.designElement || ""
+	    }, resultCache.hasOwnProperty(bioentityIdentifier) ? { data: resultCache[bioentityIdentifier] } : { onAjaxSuccessfulCacheResult: function onAjaxSuccessfulCacheResult(result) {
+	        resultCache[bioentityIdentifier] = result;
+	      } }));
+	  };
+	};
+
+	//TODO consider what the interface of this function should be.
+	module.exports = function (heatmapConfig, xAxisCategories, yAxisCategories) {
+	  return {
+	    row: createRowLabelTooltipRenderer(heatmapConfig, yAxisCategories),
+	    column: createColumnLabelTooltipRenderer(heatmapConfig, xAxisCategories),
+	    point: function point() {}
+	  };
+	};
+
+/***/ },
+/* 692 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	//*------------------------------------------------------------------*
+
+	var React = __webpack_require__(138);
+
+	//*------------------------------------------------------------------*
+
+	var GeneTooltip = React.createClass({
+	  displayName: 'GeneTooltip',
+
+	  propTypes: {
+	    atlasBaseURL: React.PropTypes.string.isRequired,
+	    label: React.PropTypes.string.isRequired,
+	    id: React.PropTypes.string.isRequired,
+	    designElement: React.PropTypes.string,
+	    data: React.PropTypes.shape({
+	      synonyms: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	      goterms: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	      interproterms: React.PropTypes.arrayOf(React.PropTypes.string).isRequired
+	    }),
+	    onAjaxSuccessfulCacheResult: React.PropTypes.func
+	  },
+	  getInitialState: function getInitialState(props) {
+	    return {
+	      loaded: !!this.props.data,
+	      error: false,
+	      data: this.props.data || {
+	        synonyms: [],
+	        goterms: [],
+	        interproterms: []
+	      }
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    if (this.state.loaded) {
+	      return;
+	    }
+	    //https://www.sitepoint.com/guide-vanilla-ajax-without-jquery/
+	    var xhr = new XMLHttpRequest();
+	    xhr.open('GET', this.props.atlasBaseURL + "/json/genename-tooltip?identifier=" + this.props.id, true);
+	    xhr.onreadystatechange = function () {
+	      if (xhr.readyState === 4) {
+	        //request done
+	        if (xhr.status === 200) {
+	          var result = JSON.parse(xhr.responseText);
+	          this.setState({ data: result, loaded: true });
+	          this.props.onAjaxSuccessfulCacheResult && this.props.onAjaxSuccessfulCacheResult(result);
+	        } else {
+	          this.setState({ error: xhr.status, loaded: true });
+	        }
+	      }
+	    }.bind(this);
+	    xhr.send();
+	  },
+	  _row: function _row(name, values) {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'span',
+	        { className: 'propertyName' },
+	        name
+	      ),
+	      React.createElement(
+	        'span',
+	        { className: 'propertyValues' },
+	        values
+	      )
+	    );
+	  },
+
+	  _propertyValueList: function _propertyValueList(values) {
+	    return values.map(function (value) {
+	      return React.createElement(
+	        'span',
+	        { className: 'propertyValue', key: value },
+	        value
+	      );
+	    });
+	  },
+	  _bracketedList: function _bracketedList(values) {
+	    return values.length ? [React.createElement(
+	      'span',
+	      { key: '(' },
+	      "("
+	    )].concat(this._propertyValueList(values)).concat([React.createElement(
+	      'span',
+	      { key: ')' },
+	      ")"
+	    )]) : [];
+	  },
+
+
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { className: 'gxaGeneTooltip' },
+	      this._row(this.props.label, this._bracketedList([].concat.apply([], [this.props.label].concat(this.state.data.synonyms).indexOf(this.props.id) == -1 ? [this.props.id] : [], this.state.data.synonyms))),
+	      this.props.designElement ? this._row("Design element:", this._propertyValueList([this.props.designElement])) : null,
+	      this.state.data.goterms.length ? this._row("Gene ontology terms:", this._propertyValueList(this.state.data.goterms)) : null,
+	      this.state.data.interproterms.length ? this._row("Interpro terms:", this._propertyValueList(this.state.data.interproterms)) : null,
+	      this.state.loading ? React.createElement(
+	        'div',
+	        null,
+	        '...'
+	      ) : null,
+	      this.state.error ? React.createElement(
+	        'div',
+	        null,
+	        "Error: " + this.state.error
+	      ) : null
+	    );
+	  }
+	});
+
+	module.exports = GeneTooltip;
+
+/***/ },
+/* 693 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(694);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(671)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/less-loader/index.js!./Tooltips.less", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/less-loader/index.js!./Tooltips.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 694 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(670)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".gxaTooltip {\n  border: solid transparent;\n  color: darkslategray;\n  padding: 2px;\n  font: 10px Verdana, Helvetica, Arial, sans-serif;\n  background-color: floralwhite;\n}\n.gxaTooltip table {\n  margin: 0;\n  /* overrides ebi-visual.css:134 */\n  background-color: white;\n  border: 1px solid lightgrey;\n  border-collapse: collapse;\n}\n.gxaTooltip th {\n  border-bottom: 1px solid lightgrey;\n  background-color: floralwhite;\n}\n.gxaTooltip td {\n  border: 1px solid lightgrey;\n}\n.gxaTooltip td,\n.gxaTooltip .gxaTooltip th {\n  vertical-align: middle;\n  padding: 8px;\n}\n.gxaGeneTooltip {\n  border: solid transparent;\n  color: darkslategray;\n  padding: 2px;\n  font: 10px Verdana, Helvetica, Arial, sans-serif;\n  background-color: floralwhite;\n  max-width: 250px;\n  text-align: justify;\n}\n.gxaGeneTooltip table {\n  margin: 0;\n  /* overrides ebi-visual.css:134 */\n  background-color: white;\n  border: 1px solid lightgrey;\n  border-collapse: collapse;\n}\n.gxaGeneTooltip th {\n  border-bottom: 1px solid lightgrey;\n  background-color: floralwhite;\n}\n.gxaGeneTooltip td {\n  border: 1px solid lightgrey;\n}\n.gxaGeneTooltip td,\n.gxaGeneTooltip .gxaTooltip th {\n  vertical-align: middle;\n  padding: 8px;\n}\n.gxaGeneTooltip .propertyName {\n  color: brown;\n  font-weight: bold;\n  display: inline-block;\n  text-align: left;\n  margin-right: 5px;\n}\n.gxaGeneTooltip .propertyValue {\n  display: inline-block;\n  text-align: center;\n  background-color: #dfd5d5;\n}\n.gxaGeneTooltip .propertyValue:first-child {\n  margin-left: 5px;\n}\n.gxaGeneTooltip .propertyValue + .propertyValue {\n  margin-left: 5px;\n}\n.gxaContrastTooltip {\n  border: solid transparent;\n  color: darkslategray;\n  padding: 2px;\n  font: 10px Verdana, Helvetica, Arial, sans-serif;\n  background-color: floralwhite;\n  max-width: 500px;\n  display: inline-block;\n}\n.gxaContrastTooltip table {\n  margin: 0;\n  /* overrides ebi-visual.css:134 */\n  background-color: white;\n  border: 1px solid lightgrey;\n  border-collapse: collapse;\n}\n.gxaContrastTooltip th {\n  border-bottom: 1px solid lightgrey;\n  background-color: floralwhite;\n}\n.gxaContrastTooltip td {\n  border: 1px solid lightgrey;\n}\n.gxaContrastTooltip td,\n.gxaContrastTooltip .gxaTooltip th {\n  vertical-align: middle;\n  padding: 8px;\n}\n.gxaContrastTooltip .contrastPlots .info {\n  font-style: italic;\n  font-size: xsmall;\n  align-content: right;\n  text-align: right;\n}\n.gxaFactorTooltip {\n  border: solid transparent;\n  color: darkslategray;\n  padding: 2px;\n  font: 10px Verdana, Helvetica, Arial, sans-serif;\n  background-color: floralwhite;\n  max-width: 600px;\n}\n.gxaFactorTooltip table {\n  margin: 0;\n  /* overrides ebi-visual.css:134 */\n  background-color: white;\n  border: 1px solid lightgrey;\n  border-collapse: collapse;\n}\n.gxaFactorTooltip th {\n  border-bottom: 1px solid lightgrey;\n  background-color: floralwhite;\n}\n.gxaFactorTooltip td {\n  border: 1px solid lightgrey;\n}\n.gxaFactorTooltip td,\n.gxaFactorTooltip .gxaTooltip th {\n  vertical-align: middle;\n  padding: 8px;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 695 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	//*------------------------------------------------------------------*
+
+	var React = __webpack_require__(138);
+
+	//*------------------------------------------------------------------*
+
+	var contrastTablePropTypes = {
+	    experimentDescription: React.PropTypes.string.isRequired,
+	    contrastDescription: React.PropTypes.string.isRequired,
+	    testReplicates: React.PropTypes.number.isRequired,
+	    referenceReplicates: React.PropTypes.number.isRequired,
+	    properties: React.PropTypes.arrayOf(React.PropTypes.shape({
+	        contrastPropertyType: React.PropTypes.string,
+	        propertyName: React.PropTypes.string.isRequired,
+	        referenceValue: React.PropTypes.string.isRequired,
+	        testValue: React.PropTypes.string.isRequired
+	    }))
+	};
+
+	var ContrastTooltipTable = React.createClass({
+	    displayName: "ContrastTooltipTable",
+
+	    propTypes: contrastTablePropTypes,
+
+	    propertyRow: function propertyRow(property) {
+	        if (!property.testValue && !property.referenceValue) {
+	            return null;
+	        }
+
+	        function isFactor(property) {
+	            return property.contrastPropertyType === "FACTOR";
+	        }
+
+	        var style = { whiteSpace: "normal" };
+
+	        if (isFactor(property)) {
+	            style.fontWeight = "bold";
+	        } else {
+	            style.color = "gray";
+	        }
+
+	        return React.createElement(
+	            "tr",
+	            { key: property.contrastPropertyType + "-" + property.propertyName },
+	            React.createElement(
+	                "td",
+	                { style: style },
+	                property.propertyName
+	            ),
+	            React.createElement(
+	                "td",
+	                { style: style },
+	                property.testValue
+	            ),
+	            React.createElement(
+	                "td",
+	                { style: style },
+	                property.referenceValue
+	            )
+	        );
+	    },
+
+	    render: function render() {
+	        return React.createElement(
+	            "div",
+	            null,
+	            React.createElement(
+	                "div",
+	                { id: "contrastExperimentDescription", style: { fontWeight: "bold", color: "blue", textAlign: "center" } },
+	                this.props.experimentDescription
+	            ),
+	            React.createElement(
+	                "div",
+	                { id: "contrastDescription", style: { textAlign: "center" } },
+	                this.props.contrastDescription
+	            ),
+	            React.createElement(
+	                "table",
+	                { style: { padding: "0px", margin: "0px", width: "100%" } },
+	                React.createElement(
+	                    "thead",
+	                    null,
+	                    React.createElement(
+	                        "tr",
+	                        null,
+	                        React.createElement(
+	                            "th",
+	                            null,
+	                            "Property"
+	                        ),
+	                        React.createElement(
+	                            "th",
+	                            null,
+	                            "Test value (N=",
+	                            this.props.testReplicates,
+	                            ")"
+	                        ),
+	                        React.createElement(
+	                            "th",
+	                            null,
+	                            "Reference value (N=",
+	                            this.props.referenceReplicates,
+	                            ")"
+	                        )
+	                    )
+	                ),
+	                React.createElement(
+	                    "tbody",
+	                    null,
+	                    this.props.properties.map(this.propertyRow)
+	                )
+	            )
+	        );
+	    }
+	});
+
+	var ContrastTooltip = React.createClass({
+	    displayName: "ContrastTooltip",
+
+	    propTypes: Object.assign({
+	        resources: React.PropTypes.arrayOf(React.PropTypes.shape({
+	            type: React.PropTypes.oneOf(["gsea_go", "gsea_interpro", "gsea_reactome", "ma-plot"]).isRequired,
+	            uri: React.PropTypes.string.isRequired
+	        })).isRequired
+	    }, contrastTablePropTypes),
+
+	    render: function render() {
+	        var descriptions = {
+	            "gsea_go": "Click to view GO terms enrichment analysis plot",
+	            "gsea_interpro": "Click to view Interpro domains enrichment analysis plot",
+	            "gsea_reactome": "Click to view Reactome pathways enrichment analysis plot",
+	            "ma-plot": "Click to view MA plot for the contrast across all genes"
+	        };
+	        return React.createElement(
+	            "div",
+	            { className: "gxaContrastTooltip" },
+	            React.createElement(ContrastTooltipTable, this.props),
+	            React.createElement(
+	                "div",
+	                { className: "contrastPlots" },
+	                React.createElement(
+	                    "span",
+	                    null,
+	                    this.props.resources.length && React.createElement(
+	                        "span",
+	                        null,
+	                        " Available plots: "
+	                    ),
+	                    this.props.resources.map(function (resource) {
+	                        return React.createElement(
+	                            "a",
+	                            {
+	                                href: resource.uri,
+	                                key: resource.type,
+	                                title: descriptions[resource.type],
+	                                style: { textDecoration: "none" },
+	                                target: "_blank" },
+	                            React.createElement("img", { src: resource.icon })
+	                        );
+	                    })
+	                ),
+	                React.createElement(
+	                    "div",
+	                    { className: "info" },
+	                    " Click label to interact with tooltip"
+	                )
+	            )
+	        );
+	    }
+	});
+
+	//*------------------------------------------------------------------*
+
+	module.exports = ContrastTooltip;
+
+/***/ },
+/* 696 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	//*------------------------------------------------------------------*
+
+	var React = __webpack_require__(138);
+
+	//*------------------------------------------------------------------*
+
+	var FactorTooltip = React.createClass({
+	  displayName: 'FactorTooltip',
+
+
+	  propertyRow: function propertyRow(property) {
+	    if (!property.testValue) {
+	      return null;
+	    }
+
+	    function isFactor(property) {
+	      return property.contrastPropertyType === 'FACTOR';
+	    }
+
+	    var style = { 'whiteSpace': 'normal' };
+
+	    if (isFactor(property)) {
+	      style['fontWeight'] = 'bold';
+	    } else {
+	      style['color'] = 'gray';
+	    }
+
+	    return React.createElement(
+	      'tr',
+	      { key: property.propertyName },
+	      React.createElement(
+	        'td',
+	        { style: style },
+	        property.propertyName
+	      ),
+	      React.createElement(
+	        'td',
+	        { style: style },
+	        property.testValue
+	      )
+	    );
+	  },
+
+	  render: function render() {
+	    var _this = this;
+
+	    var propertyNames = this.props.properties.map(function (e) {
+	      return e.propertyName;
+	    }).filter(function (e, ix, self) {
+	      return self.indexOf(e) == ix;
+	    });
+
+	    return React.createElement(
+	      'div',
+	      { className: 'gxaFactorTooltip' },
+	      React.createElement(
+	        'table',
+	        null,
+	        React.createElement(
+	          'thead',
+	          null,
+	          React.createElement(
+	            'tr',
+	            null,
+	            React.createElement(
+	              'th',
+	              null,
+	              'Property'
+	            ),
+	            React.createElement(
+	              'th',
+	              null,
+	              'Value',
+	              this.props.replicates ? " (N=" + this.props.replicates + ")" : ""
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          'tbody',
+	          null,
+	          propertyNames.map(function (propertyName) {
+	            var values = _this.props.properties.filter(function (e) {
+	              return e.propertyName == propertyName;
+	            }).map(function (e) {
+	              return e.testValue;
+	            }).filter(function (e, ix, self) {
+	              return self.indexOf(e) == ix;
+	            });
+	            return {
+	              propertyName: propertyName,
+	              testValue: values.length ? values.reduce(function (l, r) {
+	                return l + ", " + r;
+	              }) : ""
+	            };
+	          }).map(this.propertyRow)
+	        )
+	      )
+	    );
+	  }
+	});
+
+	//*------------------------------------------------------------------*
+
+	module.exports = FactorTooltip;
+
+/***/ },
+/* 697 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var React = __webpack_require__(138);
+	var PropTypes = __webpack_require__(679);
+	var Button = __webpack_require__(389);
+	var DownloadProfilesButton = __webpack_require__(698);
+	var HeatmapCanvas = __webpack_require__(722);
+	var OrderingsDropdown = __webpack_require__(723);
+	var SettingsModal = __webpack_require__(724);
+	var TooltipStateManager = __webpack_require__(826);
+	var CoexpressionOption = __webpack_require__(840);
+
+	__webpack_require__(845);
+
+	var HeatmapLegendBox = React.createClass({
+	    displayName: "HeatmapLegendBox",
+
+	    propTypes: {
+	        name: React.PropTypes.string.isRequired,
+	        colour: React.PropTypes.string.isRequired,
+	        on: React.PropTypes.bool.isRequired
+	    },
+
+	    render: function render() {
+	        return React.createElement(
+	            "div",
+	            { className: "legend-item" + (this.props.on ? "" : " legend-item-off") },
+	            React.createElement("div", { style: { background: this.props.colour }, className: "legend-rectangle" }),
+	            React.createElement(
+	                "span",
+	                { style: { verticalAlign: "middle" } },
+	                this.props.name
+	            )
+	        );
+	    }
+	});
+
+	var HeatmapOptions = React.createClass({
+	    displayName: "HeatmapOptions",
+
+	    propTypes: {
+	        marginRight: React.PropTypes.number.isRequired,
+	        downloadOptions: React.PropTypes.object.isRequired,
+	        googleAnalyticsCallback: React.PropTypes.func.isRequired,
+	        showUsageMessage: React.PropTypes.bool.isRequired,
+	        orderings: React.PropTypes.shape(PropTypes.Orderings),
+	        filters: React.PropTypes.arrayOf(PropTypes.Filter).isRequired,
+	        filtersSelect: React.PropTypes.func.isRequired,
+	        disableSettings: React.PropTypes.bool.isRequired
+	    },
+
+	    render: function render() {
+	        var _this = this;
+
+	        return React.createElement(
+	            "div",
+	            { className: "gxaHeatmapCountAndLegend", style: { paddingBottom: "15px", position: "sticky", zIndex: "1" } },
+	            React.createElement(
+	                "div",
+	                { style: { display: "inline-block", verticalAlign: "top" } },
+	                this.props.introductoryMessage
+	            ),
+	            React.createElement(
+	                "div",
+	                { style: { display: "inline-block", verticalAlign: "top", float: "right", marginRight: this.props.marginRight } },
+	                React.createElement(
+	                    "div",
+	                    { style: { display: "inline-block" } },
+	                    React.createElement(OrderingsDropdown, {
+	                        orderings: this.props.orderings,
+	                        disabled: this.props.disableSettings
+	                    })
+	                ),
+	                React.createElement(
+	                    "div",
+	                    { style: { display: "inline-block", paddingLeft: "10px" } },
+	                    React.createElement(SettingsModal, {
+	                        filters: this.props.filters,
+	                        orderings: this.props.orderings,
+	                        propagateChosenFilterSelection: this.props.filtersSelect,
+	                        disabled: this.props.disableSettings
+	                    })
+	                ),
+	                React.createElement(
+	                    "div",
+	                    { style: { display: "inline-block", paddingLeft: "10px" } },
+	                    React.createElement(DownloadProfilesButton, _extends({}, this.props.downloadOptions, {
+	                        onDownloadCallbackForAnalytics: function onDownloadCallbackForAnalytics() {
+	                            _this.props.googleAnalyticsCallback("send", "event", "HeatmapHighcharts", "downloadData");
+	                        }
+	                    }))
+	                )
+	            ),
+	            this.props.showUsageMessage ? React.createElement(
+	                "div",
+	                { style: { fontSize: "small", color: "grey" } },
+	                "Select a section of the heatmap to zoom in"
+	            ) : null
+	        );
+	    }
+	});
+
+	var HeatmapCanvasWithTooltips = React.createClass({
+	    displayName: "HeatmapCanvasWithTooltips",
+	    render: function render() {
+	        return React.createElement(TooltipStateManager, {
+	            managedComponent: HeatmapCanvas,
+	            managedComponentProps: this.props.heatmapProps,
+	            tooltips: this.props.tooltips,
+	            onUserSelectsColumn: this.props.anatomogramCallbacks.onUserSelectsColumn,
+	            onUserSelectsRow: this.props.anatomogramCallbacks.onUserSelectsRow,
+	            onUserSelectsPoint: this.props.anatomogramCallbacks.onUserSelectsPoint,
+	            enableFreeze: this.props.enableFreeze
+	        });
+	    }
+	});
+
+	var __heatmapCanvas = function __heatmapCanvas(tooltips, anatomogramCallbacks, heatmapProps, interactiveColumnTooltips) {
+	    return !tooltips ? React.createElement(HeatmapCanvas, _extends({}, heatmapProps, anatomogramCallbacks)) : React.createElement(HeatmapCanvasWithTooltips, {
+	        heatmapProps: heatmapProps,
+	        tooltips: tooltips,
+	        anatomogramCallbacks: anatomogramCallbacks,
+	        enableFreeze: interactiveColumnTooltips
+	    });
+	};
+
+	var heatmapCanvas = function heatmapCanvas(heatmapConfig, tooltips, anatomogramCallbacks, heatmapProps) {
+	    return __heatmapCanvas(heatmapConfig.isExperimentPage && tooltips, anatomogramCallbacks, heatmapProps, heatmapConfig.isExperimentPage && heatmapConfig.isDifferential);
+	};
+
+	var anatomogramCallbacks = function anatomogramCallbacks(heatmapDataToPresent, highlightOntologyIds) {
+	    return {
+	        onUserSelectsRow: function onUserSelectsRow(rowLabel) {
+	            var y = heatmapDataToPresent.yAxisCategories.findIndex(function (e) {
+	                return e.label === rowLabel;
+	            });
+
+	            highlightOntologyIds([].concat.apply([], [].concat.apply([], heatmapDataToPresent.dataSeries.map(function (series) {
+	                return series.data;
+	            })).filter(function (point) {
+	                return point.y === y;
+	            }).map(function (point) {
+	                return point.info.xId || heatmapDataToPresent.xAxisCategories[point.x].id;
+	            }).map(function (e) {
+	                return Array.isArray(e) ? e : [e];
+	            })).filter(function (e, ix, self) {
+	                return self.indexOf(e) === ix;
+	            }));
+	        },
+	        onUserSelectsColumn: function onUserSelectsColumn(columnLabel) {
+	            highlightOntologyIds(heatmapDataToPresent.xAxisCategories.filter(function (e) {
+	                return e.label === columnLabel;
+	            }).map(function (e) {
+	                return e.id;
+	            }).concat([""])[0]);
+	        },
+	        onUserSelectsPoint: function onUserSelectsPoint(columnId) {
+	            //Column ids are, in fact, factorValueOntologyTermId's
+	            highlightOntologyIds(columnId || "");
+	        }
+	    };
+	};
+
+	var show = function show(heatmapDataToPresent, orderings, filters, filtersSelect, zoom, zoomCallback, colorAxis, formatters, tooltips, legend, coexpressions, properties) {
+	    var marginRight = 60;
+	    var heatmapConfig = properties.loadResult.heatmapConfig;
+	    return React.createElement(
+	        "div",
+	        null,
+	        React.createElement(HeatmapOptions, { marginRight: marginRight,
+	            introductoryMessage: heatmapConfig.introductoryMessage,
+	            downloadOptions: {
+	                download: {
+	                    name: heatmapConfig.shortDescription || "download",
+	                    descriptionLines: [].concat.apply([], [heatmapConfig.description, orderings.selected != "Default" ? ["Ordering: " + orderings.selected] : [], filters.filter(function (_filter) {
+	                        return _filter.selected.length < _filter.values.length;
+	                    }).map(function (_filter) {
+	                        return "Filter By " + _filter.name + ": " + (_filter.selected.length < 5 ? _filter.selected.join(", ") : _filter.selected.length) + " selected out of " + (_filter.values.length < 5 ? _filter.values.join(", ") : _filter.values.length + " filter values");
+	                    }), coexpressions ? "Including " + coexpressions.numCoexpressionsVisible + " genes with similar expression pattern" : []]),
+	                    heatmapData: heatmapDataToPresent
+	                },
+	                disclaimer: heatmapConfig.disclaimer
+	            },
+	            orderings: orderings,
+	            filters: filters,
+	            filtersSelect: filtersSelect,
+	            disableSettings: zoom,
+	            googleAnalyticsCallback: properties.googleAnalyticsCallback,
+	            showUsageMessage: heatmapDataToPresent.xAxisCategories.length > 100
+	        }),
+	        React.createElement(
+	            "div",
+	            null,
+	            heatmapDataToPresent.dataSeries.map(function (e) {
+	                return e.data;
+	            }).reduce(function (l, r) {
+	                return l.concat(r);
+	            }, []).length ? heatmapCanvas(heatmapConfig, tooltips, anatomogramCallbacks(heatmapDataToPresent, properties.onOntologyIdIsUnderFocus), {
+	                marginRight: marginRight,
+	                ontologyIdsToHighlight: properties.ontologyIdsToHighlight,
+	                heatmapData: heatmapDataToPresent,
+	                colorAxis: colorAxis,
+	                onHeatmapRedrawn: properties.onHeatmapRedrawn,
+	                formatters: formatters,
+	                genomeBrowserTemplate: heatmapConfig.genomeBrowserTemplate,
+	                onZoom: zoomCallback
+	            }) : React.createElement(
+	                "p",
+	                null,
+	                " No data in the series currently selected. "
+	            )
+	        ),
+	        legend ? React.createElement(
+	            "div",
+	            { className: "gxaHeatmapLegend" },
+	            legend.map(function (legendItemProps) {
+	                return React.createElement(HeatmapLegendBox, legendItemProps);
+	            }),
+	            React.createElement(
+	                "div",
+	                { className: "legend-item" },
+	                React.createElement("span", { className: "icon icon-generic", "data-icon": "i", "data-toggle": "tooltip", "data-placement": "bottom",
+	                    title: "Baseline expression levels in RNA-seq experiments are in FPKM or TPM. Low: 0-10, Medium: 11-1000,  High: >1000. Proteomics expression levels are mapped to low, medium, high on per experiment basis." })
+	            ),
+	            React.createElement(HeatmapLegendBox, { key: "No data available",
+	                name: "No data available",
+	                colour: "white",
+	                on: true
+	            })
+	        ) : null,
+	        coexpressions ? React.createElement(CoexpressionOption, coexpressions) : null
+	    );
+	};
+
+	module.exports = show;
+
+/***/ },
+/* 698 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(138);
+	var Modal = __webpack_require__(536);
+	var Button = __webpack_require__(389);
+	var Glyphicon = __webpack_require__(395);
+	var Disclaimers = __webpack_require__(699);
+	var PropTypes = __webpack_require__(679);
+
+	var Download = __webpack_require__(700).commenceDownload;
+	var DownloadProfilesButton = React.createClass({
+	    displayName: "DownloadProfilesButton",
+
+	    propTypes: {
+	        download: React.PropTypes.shape({
+	            name: React.PropTypes.string.isRequired,
+	            descriptionLines: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	            heatmapData: PropTypes.HeatmapData
+	        }),
+	        disclaimer: React.PropTypes.string.isRequired,
+	        onDownloadCallbackForAnalytics: React.PropTypes.func.isRequired
+	    },
+
+	    getInitialState: function getInitialState() {
+	        return { showModal: false };
+	    },
+	    _closeModal: function _closeModal() {
+	        this.setState({ showModal: false });
+	    },
+	    _disclaimer: function _disclaimer() {
+	        return this.props.disclaimer && Disclaimers[this.props.disclaimer] || { title: null, content: null };
+	    },
+	    _afterDownloadButtonClicked: function _afterDownloadButtonClicked() {
+	        if (!this._disclaimer().title && !this._disclaimer().content) {
+	            this._commenceDownload();
+	        } else {
+	            this.setState({ showModal: true });
+	        }
+	    },
+	    _commenceDownload: function _commenceDownload() {
+	        this.props.onDownloadCallbackForAnalytics();
+	        Download(this.props.download);
+	    },
+	    _commenceDownloadAndCloseModal: function _commenceDownloadAndCloseModal() {
+	        this._commenceDownload();
+	        this._closeModal();
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            "a",
+	            { onClick: this._afterDownloadButtonClicked },
+	            React.createElement(
+	                Button,
+	                { bsSize: "small" },
+	                React.createElement(Glyphicon, { glyph: "download-alt" }),
+	                " Download table content"
+	            ),
+	            React.createElement(
+	                Modal,
+	                { show: this.state.showModal, onHide: this._closeModal },
+	                React.createElement(
+	                    Modal.Header,
+	                    { closeButton: true },
+	                    React.createElement(
+	                        Modal.Title,
+	                        null,
+	                        this._disclaimer().title
+	                    )
+	                ),
+	                React.createElement(
+	                    Modal.Body,
+	                    null,
+	                    this._disclaimer().content
+	                ),
+	                React.createElement(
+	                    Modal.Footer,
+	                    null,
+	                    React.createElement(
+	                        Button,
+	                        { onClick: this._closeModal },
+	                        "Close"
+	                    ),
+	                    React.createElement(
+	                        Button,
+	                        { bsStyle: "primary", onClick: this._commenceDownloadAndCloseModal },
+	                        "Continue downloading"
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+	module.exports = DownloadProfilesButton;
+
+/***/ },
+/* 699 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(138);
+
+	var BlueprintText = {
+	    title: "The Blueprint project Data Reuse statement",
+	    content: React.createElement(
+	        "div",
+	        null,
+	        React.createElement(
+	            "p",
+	            null,
+	            "This document refers to the reuse of data generated by the EC funded FP7 High Impact Project, Blueprint."
+	        ),
+	        React.createElement(
+	            "p",
+	            null,
+	            "Blueprint regularly released analysis results via its ftp site and makes the raw sequence data available through the sequence archives at the EMBL-EBI. Much Blueprint data is generated from samples whose data must be released through a managed access process. For these data sets external users must apply for permission to access the data from the European Genome-phenome Archive (EGA) through the Blueprint Data Access Committee."
+	        ),
+	        React.createElement(
+	            "p",
+	            null,
+	            "The Blueprint consortium expects this data to be valuable to other researchers and in keeping with Fort Lauderdale principles data users may use the data for many studies, but are expected to allow the data producers to make the first presentations and to publish the first paper with global analyses of the data."
+	        ),
+	        React.createElement(
+	            "h4",
+	            null,
+	            "Global analyses of Project data"
+	        ),
+	        React.createElement(
+	            "p",
+	            null,
+	            "Blueprint plans to publish global analyses of the sequencing data, epigenetic marks, expression levels and variation both in the context of normal hematopoietic cells and of those neoplastic and non-neoplastic diseases studied within th econsortium. Talks, posters, and papers on all such analyses are to be published first by the Blueprint project, by approved presenters on behalf of the Project, with the Project as author. When the first major Project paper on these analyses is published, then researchers inside and outside the Project are free to present and publish using the Project data for these and other analyses."
+	        ),
+	        React.createElement(
+	            "h4",
+	            null,
+	            "Large-scale analyses of Project data"
+	        ),
+	        React.createElement(
+	            "p",
+	            null,
+	            "Groups within the Project may make presentations and publish papers on more extensive analyses of topics to be included in the main analysis presentations and papers, coincident with the main project analysis presentations and papers. The major points would be included in the main Project presentations and papers, but these additional presentations and papers allow more focused discussion of methods and results. The author list would include the Consortium."
+	        ),
+	        React.createElement(
+	            "h4",
+	            null,
+	            "Methods development using Project data"
+	        ),
+	        React.createElement(
+	            "p",
+	            null,
+	            "Researchers who have used small amounts of Project data (<= one chromosome) may present methods development posters, talks, and papers that include these data prior to the first major Project paper, without needing Project approval or authorship, although the Project should be acknowledged. Methods presentations or papers on global analyses or analyses using large amounts of Project data, on topics that the Consortium plans to examine, would be similar to large-scale analyses of Project data: researchers within the Project may make presentations or submit papers at the same time as the main Project presentations and papers, and others could do so after the Project publishes the first major analysis paper."
+	        ),
+	        React.createElement(
+	            "h4",
+	            null,
+	            "Disease studies using Project data"
+	        ),
+	        React.createElement(
+	            "p",
+	            null,
+	            "Researchers may present and publish on use of Project data in specific chromosome regions (that are not of general interest) or as summaries (such as number of differentially expressed genes in cell types assayed by Blueprint) for studies on diseases not studied by BLUEPRINT without Project approval, prior to the first major Project paper being published. The Project should not be listed as an author."
+	        ),
+	        React.createElement(
+	            "h4",
+	            null,
+	            "Authors who use data from the project must acknowledge Blueprint using the following wording"
+	        ),
+	        React.createElement(
+	            "p",
+	            null,
+	            "This study makes use of data generated by the Blueprint Consortium. A full list of the investigators who contributed to the generation of the data is available from",
+	            React.createElement(
+	                "a",
+	                { href: "http://www.blueprint-epigenome.eu" },
+	                "www.blueprint-epigenome.eu"
+	            ),
+	            ". Funding for the project was provided by the European Union's Seventh Framework Programme (FP7/2007-2013) under grant agreement no 282510 \u2013 BLUEPRINT."
+	        )
+	    )
+	};
+
+	var ZebrafishText = {
+	    title: "Data Reuse statement",
+	    content: React.createElement(
+	        "div",
+	        null,
+	        React.createElement(
+	            "p",
+	            null,
+	            "This is a pre-publication release in accordance with ",
+	            React.createElement(
+	                "a",
+	                { href: "http://www.sanger.ac.uk/datasharing/" },
+	                "the Fort Lauderdale Agreement "
+	            ),
+	            ". Feel free to search and download data on your genes of interest."
+	        ),
+	        React.createElement(
+	            "p",
+	            null,
+	            "Equally, you can use the dataset to show developmental expression profiles for specific genes in your publications."
+	        ),
+	        React.createElement(
+	            "p",
+	            null,
+	            "However, we ask that you refrain from publishing larger scale or genome-wide analyses of this dataset for 12 months from the time of deposition in Expression Atlas or until we have published our transcriptional time-course paper, whichever comes first."
+	        ),
+	        React.createElement(
+	            "p",
+	            null,
+	            "For citations in publications before the paper is out please use this link to the Expression Atlas site (",
+	            React.createElement(
+	                "a",
+	                { href: "https://www.ebi.ac.uk/gxa/experiments/E-ERAD-475" },
+	                "http://www.ebi.ac.uk/gxa/experiments/E-ERAD-475"
+	            ),
+	            ") and acknowledge us: \u201CWe would like to thank the Busch-Nentwich lab for providing RNA-seq data.\u201D"
+	        )
+	    )
+	};
+
+	module.exports = { "fortLauderdale": BlueprintText, "zebrafish": ZebrafishText };
+
+/***/ },
+/* 700 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _range = __webpack_require__(701);
+	var CommenceDownload = __webpack_require__(721);
+
+	/*
+	TODO Units? there can be both FPKMs and sometimes TPMs
+	*/
+
+	var heatmapDataIntoLinesOfData = function heatmapDataIntoLinesOfData(heatmapData) {
+
+	  var heatmapDataAsMatrix = _range(heatmapData.yAxisCategories.length).map(function (y) {
+	    return _range(heatmapData.xAxisCategories.length).map(function (x) {
+	      return "NA";
+	    });
+	  });
+	  heatmapData.dataSeries.forEach(function (series) {
+	    series.data.forEach(function (point) {
+	      heatmapDataAsMatrix[point.y][point.x] = point.value;
+	    });
+	  });
+	  return [[""].concat(heatmapData.xAxisCategories.map(function (header) {
+	    return header.label;
+	  }))].concat(heatmapData.yAxisCategories.map(function (rowLabel, ix) {
+	    return [].concat.apply([rowLabel.label], heatmapDataAsMatrix[ix]);
+	  })).map(function (line) {
+	    return line.join('\t');
+	  });
+	};
+
+	var buildUrl = function buildUrl(lines) {
+	  return 'data:text/tsv;charset=utf-8,' + encodeURI(lines.join('\n'));
+	};
+
+	exports.buildUrl = buildUrl;
+
+	exports.commenceDownload = function (args) {
+	  CommenceDownload(buildUrl(["# Downloaded from: " + window.location.href, "# Timestamp: " + new Date().toISOString()].concat(args.descriptionLines.map(function (line) {
+	    return "# " + line;
+	  }), heatmapDataIntoLinesOfData(args.heatmapData))), args.name.replace(/" +"/, "_") + ".tsv", "text/tsv");
+	};
+
+/***/ },
+/* 701 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var createRange = __webpack_require__(702);
+
+	/**
+	 * Creates an array of numbers (positive and/or negative) progressing from
+	 * `start` up to, but not including, `end`. A step of `-1` is used if a negative
+	 * `start` is specified without an `end` or `step`. If `end` is not specified,
+	 * it's set to `start` with `start` then set to `0`.
+	 *
+	 * **Note:** JavaScript follows the IEEE-754 standard for resolving
+	 * floating-point values which can produce unexpected results.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Util
+	 * @param {number} [start=0] The start of the range.
+	 * @param {number} end The end of the range.
+	 * @param {number} [step=1] The value to increment or decrement by.
+	 * @returns {Array} Returns the range of numbers.
+	 * @see _.inRange, _.rangeRight
+	 * @example
+	 *
+	 * _.range(4);
+	 * // => [0, 1, 2, 3]
+	 *
+	 * _.range(-4);
+	 * // => [0, -1, -2, -3]
+	 *
+	 * _.range(1, 5);
+	 * // => [1, 2, 3, 4]
+	 *
+	 * _.range(0, 20, 5);
+	 * // => [0, 5, 10, 15]
+	 *
+	 * _.range(0, -4, -1);
+	 * // => [0, -1, -2, -3]
+	 *
+	 * _.range(1, 4, 0);
+	 * // => [1, 1, 1]
+	 *
+	 * _.range(0);
+	 * // => []
+	 */
+	var range = createRange();
+
+	module.exports = range;
+
+
+/***/ },
+/* 702 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseRange = __webpack_require__(703),
+	    isIterateeCall = __webpack_require__(704),
+	    toFinite = __webpack_require__(717);
+
+	/**
+	 * Creates a `_.range` or `_.rangeRight` function.
+	 *
+	 * @private
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {Function} Returns the new range function.
+	 */
+	function createRange(fromRight) {
+	  return function(start, end, step) {
+	    if (step && typeof step != 'number' && isIterateeCall(start, end, step)) {
+	      end = step = undefined;
+	    }
+	    // Ensure the sign of `-0` is preserved.
+	    start = toFinite(start);
+	    if (end === undefined) {
+	      end = start;
+	      start = 0;
+	    } else {
+	      end = toFinite(end);
+	    }
+	    step = step === undefined ? (start < end ? 1 : -1) : toFinite(step);
+	    return baseRange(start, end, step, fromRight);
+	  };
+	}
+
+	module.exports = createRange;
+
+
+/***/ },
+/* 703 */
+/***/ function(module, exports) {
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeCeil = Math.ceil,
+	    nativeMax = Math.max;
+
+	/**
+	 * The base implementation of `_.range` and `_.rangeRight` which doesn't
+	 * coerce arguments.
+	 *
+	 * @private
+	 * @param {number} start The start of the range.
+	 * @param {number} end The end of the range.
+	 * @param {number} step The value to increment or decrement by.
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {Array} Returns the range of numbers.
+	 */
+	function baseRange(start, end, step, fromRight) {
+	  var index = -1,
+	      length = nativeMax(nativeCeil((end - start) / (step || 1)), 0),
+	      result = Array(length);
+
+	  while (length--) {
+	    result[fromRight ? length : ++index] = start;
+	    start += step;
+	  }
+	  return result;
+	}
+
+	module.exports = baseRange;
+
+
+/***/ },
+/* 704 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var eq = __webpack_require__(705),
+	    isArrayLike = __webpack_require__(706),
+	    isIndex = __webpack_require__(716),
+	    isObject = __webpack_require__(714);
+
+	/**
+	 * Checks if the given arguments are from an iteratee call.
+	 *
+	 * @private
+	 * @param {*} value The potential iteratee value argument.
+	 * @param {*} index The potential iteratee index or key argument.
+	 * @param {*} object The potential iteratee object argument.
+	 * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
+	 *  else `false`.
+	 */
+	function isIterateeCall(value, index, object) {
+	  if (!isObject(object)) {
+	    return false;
+	  }
+	  var type = typeof index;
+	  if (type == 'number'
+	        ? (isArrayLike(object) && isIndex(index, object.length))
+	        : (type == 'string' && index in object)
+	      ) {
+	    return eq(object[index], value);
+	  }
+	  return false;
+	}
+
+	module.exports = isIterateeCall;
+
+
+/***/ },
+/* 705 */
+/***/ function(module, exports) {
+
+	/**
+	 * Performs a
+	 * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+	 * comparison between two values to determine if they are equivalent.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to compare.
+	 * @param {*} other The other value to compare.
+	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+	 * @example
+	 *
+	 * var object = { 'a': 1 };
+	 * var other = { 'a': 1 };
+	 *
+	 * _.eq(object, object);
+	 * // => true
+	 *
+	 * _.eq(object, other);
+	 * // => false
+	 *
+	 * _.eq('a', 'a');
+	 * // => true
+	 *
+	 * _.eq('a', Object('a'));
+	 * // => false
+	 *
+	 * _.eq(NaN, NaN);
+	 * // => true
+	 */
+	function eq(value, other) {
+	  return value === other || (value !== value && other !== other);
+	}
+
+	module.exports = eq;
+
+
+/***/ },
+/* 706 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isFunction = __webpack_require__(707),
+	    isLength = __webpack_require__(715);
+
+	/**
+	 * Checks if `value` is array-like. A value is considered array-like if it's
+	 * not a function and has a `value.length` that's an integer greater than or
+	 * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 * @example
+	 *
+	 * _.isArrayLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLike(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLike('abc');
+	 * // => true
+	 *
+	 * _.isArrayLike(_.noop);
+	 * // => false
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength(value.length) && !isFunction(value);
+	}
+
+	module.exports = isArrayLike;
+
+
+/***/ },
+/* 707 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseGetTag = __webpack_require__(708),
+	    isObject = __webpack_require__(714);
+
+	/** `Object#toString` result references. */
+	var asyncTag = '[object AsyncFunction]',
+	    funcTag = '[object Function]',
+	    genTag = '[object GeneratorFunction]',
+	    proxyTag = '[object Proxy]';
+
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a function, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  if (!isObject(value)) {
+	    return false;
+	  }
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in Safari 9 which returns 'object' for typed arrays and other constructors.
+	  var tag = baseGetTag(value);
+	  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
+	}
+
+	module.exports = isFunction;
+
+
+/***/ },
+/* 708 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Symbol = __webpack_require__(709),
+	    getRawTag = __webpack_require__(712),
+	    objectToString = __webpack_require__(713);
+
+	/** `Object#toString` result references. */
+	var nullTag = '[object Null]',
+	    undefinedTag = '[object Undefined]';
+
+	/** Built-in value references. */
+	var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+	/**
+	 * The base implementation of `getTag` without fallbacks for buggy environments.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @returns {string} Returns the `toStringTag`.
+	 */
+	function baseGetTag(value) {
+	  if (value == null) {
+	    return value === undefined ? undefinedTag : nullTag;
+	  }
+	  value = Object(value);
+	  return (symToStringTag && symToStringTag in value)
+	    ? getRawTag(value)
+	    : objectToString(value);
+	}
+
+	module.exports = baseGetTag;
+
+
+/***/ },
+/* 709 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var root = __webpack_require__(710);
+
+	/** Built-in value references. */
+	var Symbol = root.Symbol;
+
+	module.exports = Symbol;
+
+
+/***/ },
+/* 710 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var freeGlobal = __webpack_require__(711);
+
+	/** Detect free variable `self`. */
+	var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+	/** Used as a reference to the global object. */
+	var root = freeGlobal || freeSelf || Function('return this')();
+
+	module.exports = root;
+
+
+/***/ },
+/* 711 */
+/***/ function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
+	var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+	module.exports = freeGlobal;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 712 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Symbol = __webpack_require__(709);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var nativeObjectToString = objectProto.toString;
+
+	/** Built-in value references. */
+	var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+	/**
+	 * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @returns {string} Returns the raw `toStringTag`.
+	 */
+	function getRawTag(value) {
+	  var isOwn = hasOwnProperty.call(value, symToStringTag),
+	      tag = value[symToStringTag];
+
+	  try {
+	    value[symToStringTag] = undefined;
+	    var unmasked = true;
+	  } catch (e) {}
+
+	  var result = nativeObjectToString.call(value);
+	  if (unmasked) {
+	    if (isOwn) {
+	      value[symToStringTag] = tag;
+	    } else {
+	      delete value[symToStringTag];
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = getRawTag;
+
+
+/***/ },
+/* 713 */
+/***/ function(module, exports) {
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/**
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var nativeObjectToString = objectProto.toString;
+
+	/**
+	 * Converts `value` to a string using `Object.prototype.toString`.
+	 *
+	 * @private
+	 * @param {*} value The value to convert.
+	 * @returns {string} Returns the converted string.
+	 */
+	function objectToString(value) {
+	  return nativeObjectToString.call(value);
+	}
+
+	module.exports = objectToString;
+
+
+/***/ },
+/* 714 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is the
+	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(_.noop);
+	 * // => true
+	 *
+	 * _.isObject(null);
+	 * // => false
+	 */
+	function isObject(value) {
+	  var type = typeof value;
+	  return value != null && (type == 'object' || type == 'function');
+	}
+
+	module.exports = isObject;
+
+
+/***/ },
+/* 715 */
+/***/ function(module, exports) {
+
+	/** Used as references for various `Number` constants. */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This method is loosely based on
+	 * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 * @example
+	 *
+	 * _.isLength(3);
+	 * // => true
+	 *
+	 * _.isLength(Number.MIN_VALUE);
+	 * // => false
+	 *
+	 * _.isLength(Infinity);
+	 * // => false
+	 *
+	 * _.isLength('3');
+	 * // => false
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' &&
+	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+
+	module.exports = isLength;
+
+
+/***/ },
+/* 716 */
+/***/ function(module, exports) {
+
+	/** Used as references for various `Number` constants. */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+
+	/** Used to detect unsigned integer values. */
+	var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+	/**
+	 * Checks if `value` is a valid array-like index.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+	 */
+	function isIndex(value, length) {
+	  length = length == null ? MAX_SAFE_INTEGER : length;
+	  return !!length &&
+	    (typeof value == 'number' || reIsUint.test(value)) &&
+	    (value > -1 && value % 1 == 0 && value < length);
+	}
+
+	module.exports = isIndex;
+
+
+/***/ },
+/* 717 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var toNumber = __webpack_require__(718);
+
+	/** Used as references for various `Number` constants. */
+	var INFINITY = 1 / 0,
+	    MAX_INTEGER = 1.7976931348623157e+308;
+
+	/**
+	 * Converts `value` to a finite number.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.12.0
+	 * @category Lang
+	 * @param {*} value The value to convert.
+	 * @returns {number} Returns the converted number.
+	 * @example
+	 *
+	 * _.toFinite(3.2);
+	 * // => 3.2
+	 *
+	 * _.toFinite(Number.MIN_VALUE);
+	 * // => 5e-324
+	 *
+	 * _.toFinite(Infinity);
+	 * // => 1.7976931348623157e+308
+	 *
+	 * _.toFinite('3.2');
+	 * // => 3.2
+	 */
+	function toFinite(value) {
+	  if (!value) {
+	    return value === 0 ? value : 0;
+	  }
+	  value = toNumber(value);
+	  if (value === INFINITY || value === -INFINITY) {
+	    var sign = (value < 0 ? -1 : 1);
+	    return sign * MAX_INTEGER;
+	  }
+	  return value === value ? value : 0;
+	}
+
+	module.exports = toFinite;
+
+
+/***/ },
+/* 718 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(714),
+	    isSymbol = __webpack_require__(719);
+
+	/** Used as references for various `Number` constants. */
+	var NAN = 0 / 0;
+
+	/** Used to match leading and trailing whitespace. */
+	var reTrim = /^\s+|\s+$/g;
+
+	/** Used to detect bad signed hexadecimal string values. */
+	var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+	/** Used to detect binary string values. */
+	var reIsBinary = /^0b[01]+$/i;
+
+	/** Used to detect octal string values. */
+	var reIsOctal = /^0o[0-7]+$/i;
+
+	/** Built-in method references without a dependency on `root`. */
+	var freeParseInt = parseInt;
+
+	/**
+	 * Converts `value` to a number.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to process.
+	 * @returns {number} Returns the number.
+	 * @example
+	 *
+	 * _.toNumber(3.2);
+	 * // => 3.2
+	 *
+	 * _.toNumber(Number.MIN_VALUE);
+	 * // => 5e-324
+	 *
+	 * _.toNumber(Infinity);
+	 * // => Infinity
+	 *
+	 * _.toNumber('3.2');
+	 * // => 3.2
+	 */
+	function toNumber(value) {
+	  if (typeof value == 'number') {
+	    return value;
+	  }
+	  if (isSymbol(value)) {
+	    return NAN;
+	  }
+	  if (isObject(value)) {
+	    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
+	    value = isObject(other) ? (other + '') : other;
+	  }
+	  if (typeof value != 'string') {
+	    return value === 0 ? value : +value;
+	  }
+	  value = value.replace(reTrim, '');
+	  var isBinary = reIsBinary.test(value);
+	  return (isBinary || reIsOctal.test(value))
+	    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+	    : (reIsBadHex.test(value) ? NAN : +value);
+	}
+
+	module.exports = toNumber;
+
+
+/***/ },
+/* 719 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseGetTag = __webpack_require__(708),
+	    isObjectLike = __webpack_require__(720);
+
+	/** `Object#toString` result references. */
+	var symbolTag = '[object Symbol]';
+
+	/**
+	 * Checks if `value` is classified as a `Symbol` primitive or object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+	 * @example
+	 *
+	 * _.isSymbol(Symbol.iterator);
+	 * // => true
+	 *
+	 * _.isSymbol('abc');
+	 * // => false
+	 */
+	function isSymbol(value) {
+	  return typeof value == 'symbol' ||
+	    (isObjectLike(value) && baseGetTag(value) == symbolTag);
+	}
+
+	module.exports = isSymbol;
+
+
+/***/ },
+/* 720 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return value != null && typeof value == 'object';
+	}
+
+	module.exports = isObjectLike;
+
+
+/***/ },
+/* 721 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//download.js v4.2, by dandavis; 2008-2016. [MIT] see http://danml.com/download.html for tests/usage
+	// v1 landed a FF+Chrome compat way of downloading strings to local un-named files, upgraded to use a hidden frame and optional mime
+	// v2 added named files via a[download], msSaveBlob, IE (10+) support, and window.URL support for larger+faster saves than dataURLs
+	// v3 added dataURL and Blob Input, bind-toggle arity, and legacy dataURL fallback was improved with force-download mime and base64 support. 3.1 improved safari handling.
+	// v4 adds AMD/UMD, commonJS, and plain browser support
+	// v4.1 adds url download capability via solo URL argument (same domain/CORS only)
+	// v4.2 adds semantic variable names, long (over 2MB) dataURL support, and hidden by default temp anchors
+	// https://github.com/rndme/download
+
+	(function (root, factory) {
+		if (true) {
+			// AMD. Register as an anonymous module.
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else if (typeof exports === 'object') {
+			// Node. Does not work with strict CommonJS, but
+			// only CommonJS-like environments that support module.exports,
+			// like Node.
+			module.exports = factory();
+		} else {
+			// Browser globals (root is window)
+			root.download = factory();
+	  }
+	}(this, function () {
+
+		return function download(data, strFileName, strMimeType) {
+
+			var self = window, // this script is only for browsers anyway...
+				defaultMime = "application/octet-stream", // this default mime also triggers iframe downloads
+				mimeType = strMimeType || defaultMime,
+				payload = data,
+				url = !strFileName && !strMimeType && payload,
+				anchor = document.createElement("a"),
+				toString = function(a){return String(a);},
+				myBlob = (self.Blob || self.MozBlob || self.WebKitBlob || toString),
+				fileName = strFileName || "download",
+				blob,
+				reader;
+				myBlob= myBlob.call ? myBlob.bind(self) : Blob ;
+		  
+			if(String(this)==="true"){ //reverse arguments, allowing download.bind(true, "text/xml", "export.xml") to act as a callback
+				payload=[payload, mimeType];
+				mimeType=payload[0];
+				payload=payload[1];
+			}
+
+
+			if(url && url.length< 2048){ // if no filename and no mime, assume a url was passed as the only argument
+				fileName = url.split("/").pop().split("?")[0];
+				anchor.href = url; // assign href prop to temp anchor
+			  	if(anchor.href.indexOf(url) !== -1){ // if the browser determines that it's a potentially valid url path:
+	        		var ajax=new XMLHttpRequest();
+	        		ajax.open( "GET", url, true);
+	        		ajax.responseType = 'blob';
+	        		ajax.onload= function(e){ 
+					  download(e.target.response, fileName, defaultMime);
+					};
+	        		setTimeout(function(){ ajax.send();}, 0); // allows setting custom ajax headers using the return:
+				    return ajax;
+				} // end if valid url?
+			} // end if url?
+
+
+			//go ahead and download dataURLs right away
+			if(/^data\:[\w+\-]+\/[\w+\-\.]+[,;]/.test(payload)){
+			
+				if(payload.length > (1024*1024*1.999) && myBlob !== toString ){
+					payload=dataUrlToBlob(payload);
+					mimeType=payload.type || defaultMime;
+				}else{			
+					return navigator.msSaveBlob ?  // IE10 can't do a[download], only Blobs:
+						navigator.msSaveBlob(dataUrlToBlob(payload), fileName) :
+						saver(payload) ; // everyone else can save dataURLs un-processed
+				}
+				
+			}else{//not data url, is it a string with special needs?
+				if(/([\x80-\xff])/.test(payload)){			  
+					var i=0, tempUiArr= new Uint8Array(payload.length), mx=tempUiArr.length;
+					for(i;i<mx;++i) tempUiArr[i]= payload.charCodeAt(i);
+				 	payload=new myBlob([tempUiArr], {type: mimeType});
+				}		  
+			}
+			blob = payload instanceof myBlob ?
+				payload :
+				new myBlob([payload], {type: mimeType}) ;
+
+
+			function dataUrlToBlob(strUrl) {
+				var parts= strUrl.split(/[:;,]/),
+				type= parts[1],
+				decoder= parts[2] == "base64" ? atob : decodeURIComponent,
+				binData= decoder( parts.pop() ),
+				mx= binData.length,
+				i= 0,
+				uiArr= new Uint8Array(mx);
+
+				for(i;i<mx;++i) uiArr[i]= binData.charCodeAt(i);
+
+				return new myBlob([uiArr], {type: type});
+			 }
+
+			function saver(url, winMode){
+
+				if ('download' in anchor) { //html5 A[download]
+					anchor.href = url;
+					anchor.setAttribute("download", fileName);
+					anchor.className = "download-js-link";
+					anchor.innerHTML = "downloading...";
+					anchor.style.display = "none";
+					document.body.appendChild(anchor);
+					setTimeout(function() {
+						anchor.click();
+						document.body.removeChild(anchor);
+						if(winMode===true){setTimeout(function(){ self.URL.revokeObjectURL(anchor.href);}, 250 );}
+					}, 66);
+					return true;
+				}
+
+				// handle non-a[download] safari as best we can:
+				if(/(Version)\/(\d+)\.(\d+)(?:\.(\d+))?.*Safari\//.test(navigator.userAgent)) {
+					if(/^data:/.test(url))	url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
+					if(!window.open(url)){ // popup blocked, offer direct download:
+						if(confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.")){ location.href=url; }
+					}
+					return true;
+				}
+
+				//do iframe dataURL download (old ch+FF):
+				var f = document.createElement("iframe");
+				document.body.appendChild(f);
+
+				if(!winMode && /^data:/.test(url)){ // force a mime that will download:
+					url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
+				}
+				f.src=url;
+				setTimeout(function(){ document.body.removeChild(f); }, 333);
+
+			}//end saver
+
+
+
+
+			if (navigator.msSaveBlob) { // IE10+ : (has Blob, but not a[download] or URL)
+				return navigator.msSaveBlob(blob, fileName);
+			}
+
+			if(self.URL){ // simple fast and modern way using Blob and URL:
+				saver(self.URL.createObjectURL(blob), true);
+			}else{
+				// handle non-Blob()+non-URL browsers:
+				if(typeof blob === "string" || blob.constructor===toString ){
+					try{
+						return saver( "data:" +  mimeType   + ";base64,"  +  self.btoa(blob)  );
+					}catch(y){
+						return saver( "data:" +  mimeType   + "," + encodeURIComponent(blob)  );
+					}
+				}
+
+				// Blob but not URL support:
+				reader=new FileReader();
+				reader.onload=function(e){
+					saver(this.result);
+				};
+				reader.readAsDataURL(blob);
+			}
+			return true;
+		}; /* end download() */
+	}));
+
+
+/***/ },
+/* 722 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	//*------------------------------------------------------------------*
+
+	var React = __webpack_require__(138);
+	var ReactHighcharts = __webpack_require__(604);
+	var Highcharts = ReactHighcharts.Highcharts;
+	__webpack_require__(16)(Highcharts);
+
+	__webpack_require__(15)(Highcharts);
+	// Overrides default Custom Events behaviour
+	window.oncontextmenu = function () {
+	    return true;
+	};
+
+	var hash = __webpack_require__(19);
+
+	var PropTypes = __webpack_require__(679);
+
+	//*------------------------------------------------------------------*
+
+	var HeatmapCanvas = React.createClass({
+	    displayName: 'HeatmapCanvas',
+
+	    propTypes: {
+	        marginRight: React.PropTypes.number.isRequired,
+	        ontologyIdsToHighlight: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	        heatmapData: PropTypes.HeatmapData,
+	        colorAxis: React.PropTypes.object,
+	        formatters: React.PropTypes.shape({
+	            xAxis: PropTypes.Formatter,
+	            xAxisStyle: React.PropTypes.object.isRequired,
+	            yAxis: PropTypes.Formatter,
+	            yAxisStyle: React.PropTypes.object.isRequired,
+	            tooltip: PropTypes.Formatter
+	        }).isRequired,
+	        genomeBrowserTemplate: React.PropTypes.string.isRequired,
+	        onUserSelectsRow: React.PropTypes.func.isRequired,
+	        onUserSelectsColumn: React.PropTypes.func.isRequired,
+	        onUserSelectsPoint: React.PropTypes.func.isRequired,
+	        onUserClicksColumn: React.PropTypes.func,
+	        onZoom: React.PropTypes.func.isRequired
+	    },
+
+	    shouldComponentUpdate: function shouldComponentUpdate(nextProps) {
+	        return hash.MD5(nextProps.heatmapData) !== hash.MD5(this.props.heatmapData);
+	    },
+
+	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	        var chart = this.refs.chart.getChart();
+	        var forEachXNotInYsEmit = function forEachXNotInYsEmit(xs, ys, eventName) {
+	            xs.filter(function (id) {
+	                return ys.indexOf(id) == -1;
+	            }).filter(function uniq(id, ix, self) {
+	                return ix == self.indexOf(id);
+	            }).forEach(function (id) {
+	                Highcharts.fireEvent(chart, eventName, { svgPathId: id });
+	            }.bind(this));
+	        };
+	        forEachXNotInYsEmit(nextProps.ontologyIdsToHighlight, this.props.ontologyIdsToHighlight, 'handleGxaAnatomogramTissueMouseEnter');
+	        forEachXNotInYsEmit(this.props.ontologyIdsToHighlight, nextProps.ontologyIdsToHighlight, 'handleGxaAnatomogramTissueMouseLeave');
+	    },
+
+	    render: function render() {
+	        var xAxisLongestHeaderLength = Math.max.apply(null, this.props.heatmapData.xAxisCategories.map(function (category) {
+	            return category.label.length;
+	        }));
+	        var marginTop = this.props.heatmapData.xAxisCategories.length < 10 ? 30 : // labels aren’t tilted
+	        this.props.heatmapData.xAxisCategories.length < 50 ? Math.min(150, Math.round(xAxisLongestHeaderLength * 3.75)) : // labels at -45°
+	        Math.min(250, Math.round(xAxisLongestHeaderLength * 5.5)); // labels at -90°
+
+	        var dimensions = {
+	            marginTop: marginTop,
+	            marginRight: //leave space for tilted long headers
+	            //TODO the marginRight value of props used to be the same here and in top legend.
+	            //Probably it's time to get rid of this prop.
+	            this.props.marginRight * (1 + 10 / Math.pow(1 + this._countColumnsToShow(), 2)),
+	            height: Math.max(70, this._countRowsToShow() * 30 + marginTop)
+	        };
+
+	        var maxWidthFraction = 1 - Math.exp(-(0.2 + 0.05 * Math.pow(this._countColumnsToShow() + 1, 2)));
+	        return React.createElement(
+	            'div',
+	            { style: { maxWidth: maxWidthFraction * 100 + "%" } },
+	            React.createElement(ReactHighcharts, {
+	                config: this._highchartsOptions(dimensions, this.props.heatmapData),
+	                ref: 'chart' })
+	        );
+	    },
+	    _count_sToShow: function _count_sToShow(xOrY) {
+	        return [].concat.apply([], this.props.heatmapData.dataSeries.map(function (el) {
+	            return el.data;
+	        })).map(function (el) {
+	            return el[xOrY];
+	        }).sort(function (l, r) {
+	            return l - r;
+	        }).filter(function (el, ix, self) {
+	            return self.indexOf(el) == ix;
+	        }).length;
+	    },
+
+	    _countRowsToShow: function _countRowsToShow() {
+	        return this._count_sToShow("y");
+	    },
+
+	    _countColumnsToShow: function _countColumnsToShow() {
+	        //we have turned the min and max on to show empty columns in heatmap
+	        return this.props.heatmapData.xAxisCategories.length;
+	    },
+
+	    _highchartsOptions: function _highchartsOptions(dimensions, data) {
+	        var _this = this;
+
+	        return {
+	            plotOptions: {
+	                heatmap: {
+	                    turboThreshold: 0
+	                },
+	                series: {
+	                    cursor: !!this.props.genomeBrowserTemplate ? "pointer" : undefined,
+	                    point: {
+	                        events: {
+	                            mouseOver: function () {
+	                                var f = this.props.onUserSelectsPoint;
+	                                return function () {
+	                                    return f(this.options.info.xId || this.series.xAxis.categories[this.x].id, this.series.yAxis.categories[this.y].id);
+	                                };
+	                            }.bind(this)(),
+	                            mouseOut: function () {
+	                                var f = this.props.onUserSelectsColumn;
+	                                return function () {
+	                                    return f("", "");
+	                                };
+	                            }.bind(this)(),
+	                            click: !this.props.genomeBrowserTemplate ? function () {} : function () {
+	                                var x = this.series.xAxis.categories[this.x].info.trackId;
+	                                var y = this.series.yAxis.categories[this.y].info.trackId;
+	                                window.open(this.series.chart.userOptions.genomeBrowserTemplate.replace(/__x__/g, x).replace(/__y__/g, y), "_blank");
+	                            }
+	                        }
+	                    },
+
+	                    states: {
+	                        hover: {
+	                            color: '#eeec38' //#edab12 color cell on mouse over
+	                        },
+	                        select: {
+	                            color: '#eeec38'
+	                        }
+	                    }
+	                }
+	            },
+	            credits: {
+	                enabled: false //remove Highcharts text in the bottom right corner
+	            },
+	            chart: Object.assign({
+	                type: 'heatmap',
+	                spacingTop: 0,
+	                plotBorderWidth: 1,
+	                zoomType: 'x',
+	                events: {
+	                    handleGxaAnatomogramTissueMouseEnter: function handleGxaAnatomogramTissueMouseEnter(e) {
+	                        Highcharts.each(this.series, function (series) {
+	                            Highcharts.each(series.points, function (point) {
+	                                if (point.series.xAxis.categories[point.x].id === e.svgPathId) {
+	                                    point.select(true, true);
+	                                }
+	                            });
+	                        });
+	                    },
+	                    handleGxaAnatomogramTissueMouseLeave: function handleGxaAnatomogramTissueMouseLeave(e) {
+	                        var points = this.getSelectedPoints();
+	                        if (points.length > 0) {
+	                            Highcharts.each(points, function (point) {
+	                                point.select(false);
+	                            });
+	                        }
+	                    }
+	                }
+	            }, dimensions),
+	            legend: {
+	                enabled: false
+	            },
+	            title: null,
+	            colorAxis: this.props.colorAxis || undefined,
+	            xAxis: { //assays
+	                tickLength: 5,
+	                tickColor: 'rgb(192, 192, 192)',
+	                lineColor: 'rgb(192, 192, 192)',
+	                labels: {
+	                    style: this.props.formatters.xAxisStyle,
+	                    events: {
+	                        mouseover: function () {
+	                            var f = _this.props.onUserSelectsColumn;
+	                            return function () {
+	                                return f && f(this.value);
+	                            };
+	                        }(),
+	                        mouseout: function () {
+	                            var f = _this.props.onUserSelectsColumn;
+	                            return function () {
+	                                return f && f("");
+	                            };
+	                        }(),
+	                        click: function () {
+	                            var f = _this.props.onUserClicksColumn;
+	                            return function () {
+	                                return f && f(this.value);
+	                            };
+	                        }()
+	                    },
+	                    autoRotation: [-45, -90],
+	                    formatter: function () {
+	                        var f = this.props.formatters.xAxis;return function () {
+	                            return f(this.value);
+	                        };
+	                    }.bind(this)()
+	                },
+
+	                opposite: 'true',
+	                categories: data.xAxisCategories,
+	                min: 0,
+	                max: data.xAxisCategories.length - 1,
+
+	                events: {
+	                    setExtremes: function (event) {
+	                        this.props.onZoom(event.min !== undefined && event.max !== undefined);
+	                    }.bind(this)
+	                }
+	            },
+	            yAxis: { //experiments or bioentities
+	                useHTML: true,
+	                reversed: true,
+	                labels: {
+	                    style: this.props.formatters.yAxisStyle,
+	                    events: {
+	                        mouseover: function () {
+	                            var f = this.props.onUserSelectsRow;
+	                            return function () {
+	                                return f( //We assume the longest text is the callback we want
+	                                [].concat.apply([], [].concat.apply([], this.element.children).filter(function (c) {
+	                                    return !c.style || c.style.fill != "black";
+	                                }) //skip design elements
+	                                ).map(function (c) {
+	                                    return c.textContent;
+	                                }).reduce(function (l, r) {
+	                                    return l.length > r.length ? l : r;
+	                                }, ""));
+	                            };
+	                        }.bind(this)(),
+	                        mouseout: function () {
+	                            var f = this.props.onUserSelectsRow;return function () {
+	                                return f("");
+	                            };
+	                        }.bind(this)()
+	                    },
+	                    formatter: function () {
+	                        var f = this.props.formatters.yAxis;return function () {
+	                            return f(this.value);
+	                        };
+	                    }.bind(this)()
+	                },
+
+	                categories: data.yAxisCategories,
+	                title: null,
+	                gridLineWidth: 0,
+	                minorGridLineWidth: 0,
+	                endOnTick: false
+	            },
+	            tooltip: {
+	                useHTML: true,
+	                formatter: function () {
+	                    var f = this.props.formatters.tooltip;return function () {
+	                        return f(this.series, this.point);
+	                    };
+	                }.bind(this)()
+	            },
+
+	            genomeBrowserTemplate: this.props.genomeBrowserTemplate,
+	            series: data.dataSeries.map(function (e) {
+	                return {
+	                    name: e.info.name,
+	                    color: e.info.colour,
+	                    borderWidth: data.xAxisCategories.length > 200 ? 0 : 1,
+	                    borderColor: "white",
+	                    data: e.data
+	                };
+	            })
+	        };
+	    }
+	});
+
+	module.exports = HeatmapCanvas;
+
+/***/ },
+/* 723 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(138);
+	var Dropdown = __webpack_require__(422);
+	var MenuItem = __webpack_require__(535);
+	var Glyphicon = __webpack_require__(395);
+	var PropTypes = __webpack_require__(679);
+
+	var OrderingsDropdown = React.createClass({
+	    displayName: "OrderingsDropdown",
+
+	    propTypes: {
+	        orderings: PropTypes.Orderings,
+	        disabled: React.PropTypes.bool.isRequired
+	    },
+
+	    handleChange: function handleChange(eventKey, event) {
+	        this.props.orderings.onSelect(event.target.text);
+	        event.preventDefault();
+	    },
+	    _orderingIcon: function _orderingIcon(ordering) {
+	        switch (ordering) {
+	            case "Alphabetical order":
+	                return "sort-by-alphabet";
+	            case "Gene expression rank":
+	                return "sort-by-attributes-alt";
+	            case "Default":
+	                return "sort-by-order";
+	            default:
+	                return "sort-by-order";
+	        }
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            "span",
+	            null,
+	            React.createElement(
+	                Dropdown,
+	                { id: "orderings-dropdown", onSelect: this.handleChange, title: this.props.disabled ? "Reset zoom to enable sorting options" : "" },
+	                React.createElement(
+	                    Dropdown.Toggle,
+	                    { bsSize: "small", disabled: this.props.disabled },
+	                    React.createElement(Glyphicon, { glyph: this._orderingIcon(this.props.orderings.selected) }),
+	                    " ",
+	                    this.props.orderings.selected
+	                ),
+	                React.createElement(
+	                    Dropdown.Menu,
+	                    { bsSize: "small" },
+	                    this.props.orderings.available.map(function (orderingName) {
+	                        return React.createElement(
+	                            MenuItem,
+	                            { style: { textDecoration: "none" }, key: orderingName, href: "#" },
+	                            orderingName
+	                        );
+	                    })
+	                )
+	            )
+	        );
+	    }
+	});
+
+	module.exports = OrderingsDropdown;
+
+/***/ },
+/* 724 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var React = __webpack_require__(138);
+	var Modal = __webpack_require__(536);
+	var Button = __webpack_require__(389);
+	var Glyphicon = __webpack_require__(395);
+
+	var PropTypes = __webpack_require__(679);
+	var FlatFilter = __webpack_require__(725);
+	var GroupedFilter = __webpack_require__(794);
+	var deepEquals = __webpack_require__(795);
+
+	var SettingsModal = React.createClass({
+	    displayName: "SettingsModal",
+
+	    propTypes: {
+	        filters: React.PropTypes.arrayOf(PropTypes.Filter).isRequired,
+	        disabled: React.PropTypes.bool.isRequired,
+	        propagateChosenFilterSelection: React.PropTypes.func.isRequired
+	    },
+
+	    _filtersSelectionBeforeModalOpen: function _filtersSelectionBeforeModalOpen() {
+	        return this.props.filters.map(function (_filter) {
+	            return {
+	                name: _filter.name,
+	                selected: _filter.selected
+	            };
+	        });
+	    },
+	    getInitialState: function getInitialState() {
+	        return {
+	            filtersSelection: this._filtersSelectionBeforeModalOpen(),
+	            showModal: false
+	        };
+	    },
+	    _close: function _close() {
+	        this.setState({
+	            showModal: false
+	        });
+	    },
+	    _apply: function _apply() {
+	        this.props.propagateChosenFilterSelection(this.state.filtersSelection);
+	        this.setState({ showModal: false });
+	    },
+	    _open: function _open() {
+	        this.setState({ showModal: true,
+	            filtersSelection: this._filtersSelectionBeforeModalOpen() });
+	    },
+	    _renderFilter: function _renderFilter(_filter) {
+	        var _this = this;
+
+	        var FilterComponent = _filter.valueGroupings ? GroupedFilter : FlatFilter;
+
+	        return React.createElement(FilterComponent, _extends({
+	            key: _filter.name,
+	            propagateFilterSelection: function propagateFilterSelection(selected) {
+	                _this.setState(function (previousState) {
+	                    return {
+	                        filtersSelection: previousState.filtersSelection.map(function (filterSelection) {
+	                            return filterSelection.name == _filter.name ? Object.assign({}, filterSelection, { selected: selected }) : filterSelection;
+	                        })
+	                    };
+	                });
+	            },
+	            disabled: this.props.disabled
+	        }, _filter));
+	    },
+	    _filtersCorrespondingToCurrentSelection: function _filtersCorrespondingToCurrentSelection() {
+	        var _this2 = this;
+
+	        return this.props.filters.map(function (_filter) {
+	            return Object.assign({}, _filter, { selected: _this2.state.filtersSelection.find(function (f) {
+	                    return f.name == _filter.name;
+	                }).selected
+	            });
+	        });
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            "div",
+	            null,
+	            React.createElement(
+	                Button,
+	                { bsSize: "small", onClick: this._open, disabled: this.props.disabled, title: this.props.disabled ? "Reset zoom to enable filters" : "" },
+	                React.createElement(Glyphicon, { glyph: "equalizer" }),
+	                React.createElement(
+	                    "span",
+	                    { style: { verticalAlign: "middle" } },
+	                    " Filters"
+	                )
+	            ),
+	            React.createElement(
+	                Modal,
+	                { show: this.state.showModal, onHide: this._close, bsSize: "large" },
+	                React.createElement(
+	                    Modal.Header,
+	                    { closeButton: true },
+	                    React.createElement(
+	                        Modal.Title,
+	                        null,
+	                        "Filters"
+	                    )
+	                ),
+	                React.createElement(
+	                    Modal.Body,
+	                    null,
+	                    this._filtersCorrespondingToCurrentSelection().map(this._renderFilter)
+	                ),
+	                React.createElement(
+	                    Modal.Footer,
+	                    null,
+	                    React.createElement(
+	                        Button,
+	                        { bsStyle: "primary", onClick: this._apply },
+	                        "Apply"
+	                    ),
+	                    React.createElement(
+	                        Button,
+	                        { onClick: this._close },
+	                        "Close"
+	                    )
+	                )
+	            )
+	        );
+	    }
+	});
+
+	module.exports = SettingsModal;
+
+/***/ },
+/* 725 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(138);
+	var PropTypes = __webpack_require__(679);
+	var xor = __webpack_require__(726);
+
+	__webpack_require__(792);
+
+	var FlatFilter = React.createClass({
+	  displayName: "FlatFilter",
+
+	  propTypes: Object.assign({}, PropTypes.FilterProps, {
+	    propagateFilterSelection: React.PropTypes.func.isRequired,
+	    disabled: React.PropTypes.bool.isRequired
+	  }),
+
+	  toggleOne: function toggleOne(which, evt) {
+	    this.props.propagateFilterSelection(xor(this.props.selected, [which]));
+	  },
+	  render: function render() {
+	    var _this = this;
+
+	    return React.createElement(
+	      "div",
+	      { className: "gxaFilter" },
+	      React.createElement(
+	        "h4",
+	        null,
+	        this.props.name
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "filterBody" },
+	        React.createElement(
+	          "div",
+	          null,
+	          this.props.values.map(function (value) {
+	            return React.createElement(
+	              "div",
+	              { key: value },
+	              React.createElement("input", { type: "checkbox",
+	                value: value,
+	                onChange: function onChange(evt) {
+	                  return _this.toggleOne(value, evt);
+	                },
+	                disabled: _this.props.selectDisabled,
+	                checked: _this.props.selected.indexOf(value) > -1 }),
+	              value
+	            );
+	          })
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = FlatFilter;
+
+/***/ },
+/* 726 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var arrayFilter = __webpack_require__(727),
+	    baseRest = __webpack_require__(728),
+	    baseXor = __webpack_require__(743),
+	    isArrayLikeObject = __webpack_require__(791);
+
+	/**
+	 * Creates an array of unique values that is the
+	 * [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)
+	 * of the given arrays. The order of result values is determined by the order
+	 * they occur in the arrays.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 2.4.0
+	 * @category Array
+	 * @param {...Array} [arrays] The arrays to inspect.
+	 * @returns {Array} Returns the new array of filtered values.
+	 * @see _.difference, _.without
+	 * @example
+	 *
+	 * _.xor([2, 1], [2, 3]);
+	 * // => [1, 3]
+	 */
+	var xor = baseRest(function(arrays) {
+	  return baseXor(arrayFilter(arrays, isArrayLikeObject));
+	});
+
+	module.exports = xor;
+
+
+/***/ },
+/* 727 */
+/***/ function(module, exports) {
+
+	/**
+	 * A specialized version of `_.filter` for arrays without support for
+	 * iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to iterate over.
+	 * @param {Function} predicate The function invoked per iteration.
+	 * @returns {Array} Returns the new filtered array.
+	 */
+	function arrayFilter(array, predicate) {
+	  var index = -1,
+	      length = array == null ? 0 : array.length,
+	      resIndex = 0,
+	      result = [];
+
+	  while (++index < length) {
+	    var value = array[index];
+	    if (predicate(value, index, array)) {
+	      result[resIndex++] = value;
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = arrayFilter;
+
+
+/***/ },
+/* 728 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var identity = __webpack_require__(729),
+	    overRest = __webpack_require__(730),
+	    setToString = __webpack_require__(732);
+
+	/**
+	 * The base implementation of `_.rest` which doesn't validate or coerce arguments.
+	 *
+	 * @private
+	 * @param {Function} func The function to apply a rest parameter to.
+	 * @param {number} [start=func.length-1] The start position of the rest parameter.
+	 * @returns {Function} Returns the new function.
+	 */
+	function baseRest(func, start) {
+	  return setToString(overRest(func, start, identity), func + '');
+	}
+
+	module.exports = baseRest;
+
+
+/***/ },
+/* 729 */
+/***/ function(module, exports) {
+
+	/**
+	 * This method returns the first argument it receives.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Util
+	 * @param {*} value Any value.
+	 * @returns {*} Returns `value`.
+	 * @example
+	 *
+	 * var object = { 'a': 1 };
+	 *
+	 * console.log(_.identity(object) === object);
+	 * // => true
+	 */
+	function identity(value) {
+	  return value;
+	}
+
+	module.exports = identity;
+
+
+/***/ },
+/* 730 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var apply = __webpack_require__(731);
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeMax = Math.max;
+
+	/**
+	 * A specialized version of `baseRest` which transforms the rest array.
+	 *
+	 * @private
+	 * @param {Function} func The function to apply a rest parameter to.
+	 * @param {number} [start=func.length-1] The start position of the rest parameter.
+	 * @param {Function} transform The rest array transform.
+	 * @returns {Function} Returns the new function.
+	 */
+	function overRest(func, start, transform) {
+	  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
+	  return function() {
+	    var args = arguments,
+	        index = -1,
+	        length = nativeMax(args.length - start, 0),
+	        array = Array(length);
+
+	    while (++index < length) {
+	      array[index] = args[start + index];
+	    }
+	    index = -1;
+	    var otherArgs = Array(start + 1);
+	    while (++index < start) {
+	      otherArgs[index] = args[index];
+	    }
+	    otherArgs[start] = transform(array);
+	    return apply(func, this, otherArgs);
+	  };
+	}
+
+	module.exports = overRest;
+
+
+/***/ },
+/* 731 */
+/***/ function(module, exports) {
+
+	/**
+	 * A faster alternative to `Function#apply`, this function invokes `func`
+	 * with the `this` binding of `thisArg` and the arguments of `args`.
+	 *
+	 * @private
+	 * @param {Function} func The function to invoke.
+	 * @param {*} thisArg The `this` binding of `func`.
+	 * @param {Array} args The arguments to invoke `func` with.
+	 * @returns {*} Returns the result of `func`.
+	 */
+	function apply(func, thisArg, args) {
+	  switch (args.length) {
+	    case 0: return func.call(thisArg);
+	    case 1: return func.call(thisArg, args[0]);
+	    case 2: return func.call(thisArg, args[0], args[1]);
+	    case 3: return func.call(thisArg, args[0], args[1], args[2]);
+	  }
+	  return func.apply(thisArg, args);
+	}
+
+	module.exports = apply;
+
+
+/***/ },
+/* 732 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseSetToString = __webpack_require__(733),
+	    shortOut = __webpack_require__(742);
+
+	/**
+	 * Sets the `toString` method of `func` to return `string`.
+	 *
+	 * @private
+	 * @param {Function} func The function to modify.
+	 * @param {Function} string The `toString` result.
+	 * @returns {Function} Returns `func`.
+	 */
+	var setToString = shortOut(baseSetToString);
+
+	module.exports = setToString;
+
+
+/***/ },
+/* 733 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var constant = __webpack_require__(734),
+	    defineProperty = __webpack_require__(735),
+	    identity = __webpack_require__(729);
+
+	/**
+	 * The base implementation of `setToString` without support for hot loop shorting.
+	 *
+	 * @private
+	 * @param {Function} func The function to modify.
+	 * @param {Function} string The `toString` result.
+	 * @returns {Function} Returns `func`.
+	 */
+	var baseSetToString = !defineProperty ? identity : function(func, string) {
+	  return defineProperty(func, 'toString', {
+	    'configurable': true,
+	    'enumerable': false,
+	    'value': constant(string),
+	    'writable': true
+	  });
+	};
+
+	module.exports = baseSetToString;
+
+
+/***/ },
+/* 734 */
+/***/ function(module, exports) {
+
+	/**
+	 * Creates a function that returns `value`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 2.4.0
+	 * @category Util
+	 * @param {*} value The value to return from the new function.
+	 * @returns {Function} Returns the new constant function.
+	 * @example
+	 *
+	 * var objects = _.times(2, _.constant({ 'a': 1 }));
+	 *
+	 * console.log(objects);
+	 * // => [{ 'a': 1 }, { 'a': 1 }]
+	 *
+	 * console.log(objects[0] === objects[1]);
+	 * // => true
+	 */
+	function constant(value) {
+	  return function() {
+	    return value;
+	  };
+	}
+
+	module.exports = constant;
+
+
+/***/ },
+/* 735 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(736);
+
+	var defineProperty = (function() {
+	  try {
+	    var func = getNative(Object, 'defineProperty');
+	    func({}, '', {});
+	    return func;
+	  } catch (e) {}
+	}());
+
+	module.exports = defineProperty;
+
+
+/***/ },
+/* 736 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIsNative = __webpack_require__(737),
+	    getValue = __webpack_require__(741);
+
+	/**
+	 * Gets the native function at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {string} key The key of the method to get.
+	 * @returns {*} Returns the function if it's native, else `undefined`.
+	 */
+	function getNative(object, key) {
+	  var value = getValue(object, key);
+	  return baseIsNative(value) ? value : undefined;
+	}
+
+	module.exports = getNative;
+
+
+/***/ },
+/* 737 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isFunction = __webpack_require__(707),
+	    isMasked = __webpack_require__(738),
+	    isObject = __webpack_require__(714),
+	    toSource = __webpack_require__(740);
+
+	/**
+	 * Used to match `RegExp`
+	 * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+	 */
+	var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+	/** Used to detect host constructors (Safari). */
+	var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+	/** Used for built-in method references. */
+	var funcProto = Function.prototype,
+	    objectProto = Object.prototype;
+
+	/** Used to resolve the decompiled source of functions. */
+	var funcToString = funcProto.toString;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/** Used to detect if a method is native. */
+	var reIsNative = RegExp('^' +
+	  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+	);
+
+	/**
+	 * The base implementation of `_.isNative` without bad shim checks.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a native function,
+	 *  else `false`.
+	 */
+	function baseIsNative(value) {
+	  if (!isObject(value) || isMasked(value)) {
+	    return false;
+	  }
+	  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
+	  return pattern.test(toSource(value));
+	}
+
+	module.exports = baseIsNative;
+
+
+/***/ },
+/* 738 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var coreJsData = __webpack_require__(739);
+
+	/** Used to detect methods masquerading as native. */
+	var maskSrcKey = (function() {
+	  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+	  return uid ? ('Symbol(src)_1.' + uid) : '';
+	}());
+
+	/**
+	 * Checks if `func` has its source masked.
+	 *
+	 * @private
+	 * @param {Function} func The function to check.
+	 * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+	 */
+	function isMasked(func) {
+	  return !!maskSrcKey && (maskSrcKey in func);
+	}
+
+	module.exports = isMasked;
+
+
+/***/ },
+/* 739 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var root = __webpack_require__(710);
+
+	/** Used to detect overreaching core-js shims. */
+	var coreJsData = root['__core-js_shared__'];
+
+	module.exports = coreJsData;
+
+
+/***/ },
+/* 740 */
+/***/ function(module, exports) {
+
+	/** Used for built-in method references. */
+	var funcProto = Function.prototype;
+
+	/** Used to resolve the decompiled source of functions. */
+	var funcToString = funcProto.toString;
+
+	/**
+	 * Converts `func` to its source code.
+	 *
+	 * @private
+	 * @param {Function} func The function to convert.
+	 * @returns {string} Returns the source code.
+	 */
+	function toSource(func) {
+	  if (func != null) {
+	    try {
+	      return funcToString.call(func);
+	    } catch (e) {}
+	    try {
+	      return (func + '');
+	    } catch (e) {}
+	  }
+	  return '';
+	}
+
+	module.exports = toSource;
+
+
+/***/ },
+/* 741 */
+/***/ function(module, exports) {
+
+	/**
+	 * Gets the value at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} [object] The object to query.
+	 * @param {string} key The key of the property to get.
+	 * @returns {*} Returns the property value.
+	 */
+	function getValue(object, key) {
+	  return object == null ? undefined : object[key];
+	}
+
+	module.exports = getValue;
+
+
+/***/ },
+/* 742 */
+/***/ function(module, exports) {
+
+	/** Used to detect hot functions by number of calls within a span of milliseconds. */
+	var HOT_COUNT = 800,
+	    HOT_SPAN = 16;
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeNow = Date.now;
+
+	/**
+	 * Creates a function that'll short out and invoke `identity` instead
+	 * of `func` when it's called `HOT_COUNT` or more times in `HOT_SPAN`
+	 * milliseconds.
+	 *
+	 * @private
+	 * @param {Function} func The function to restrict.
+	 * @returns {Function} Returns the new shortable function.
+	 */
+	function shortOut(func) {
+	  var count = 0,
+	      lastCalled = 0;
+
+	  return function() {
+	    var stamp = nativeNow(),
+	        remaining = HOT_SPAN - (stamp - lastCalled);
+
+	    lastCalled = stamp;
+	    if (remaining > 0) {
+	      if (++count >= HOT_COUNT) {
+	        return arguments[0];
+	      }
+	    } else {
+	      count = 0;
+	    }
+	    return func.apply(undefined, arguments);
+	  };
+	}
+
+	module.exports = shortOut;
+
+
+/***/ },
+/* 743 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseDifference = __webpack_require__(744),
+	    baseFlatten = __webpack_require__(780),
+	    baseUniq = __webpack_require__(786);
+
+	/**
+	 * The base implementation of methods like `_.xor`, without support for
+	 * iteratee shorthands, that accepts an array of arrays to inspect.
+	 *
+	 * @private
+	 * @param {Array} arrays The arrays to inspect.
+	 * @param {Function} [iteratee] The iteratee invoked per element.
+	 * @param {Function} [comparator] The comparator invoked per element.
+	 * @returns {Array} Returns the new array of values.
+	 */
+	function baseXor(arrays, iteratee, comparator) {
+	  var length = arrays.length;
+	  if (length < 2) {
+	    return length ? baseUniq(arrays[0]) : [];
+	  }
+	  var index = -1,
+	      result = Array(length);
+
+	  while (++index < length) {
+	    var array = arrays[index],
+	        othIndex = -1;
+
+	    while (++othIndex < length) {
+	      if (othIndex != index) {
+	        result[index] = baseDifference(result[index] || array, arrays[othIndex], iteratee, comparator);
+	      }
+	    }
+	  }
+	  return baseUniq(baseFlatten(result, 1), iteratee, comparator);
+	}
+
+	module.exports = baseXor;
+
+
+/***/ },
+/* 744 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SetCache = __webpack_require__(745),
+	    arrayIncludes = __webpack_require__(771),
+	    arrayIncludesWith = __webpack_require__(776),
+	    arrayMap = __webpack_require__(777),
+	    baseUnary = __webpack_require__(778),
+	    cacheHas = __webpack_require__(779);
+
+	/** Used as the size to enable large array optimizations. */
+	var LARGE_ARRAY_SIZE = 200;
+
+	/**
+	 * The base implementation of methods like `_.difference` without support
+	 * for excluding multiple arrays or iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {Array} values The values to exclude.
+	 * @param {Function} [iteratee] The iteratee invoked per element.
+	 * @param {Function} [comparator] The comparator invoked per element.
+	 * @returns {Array} Returns the new array of filtered values.
+	 */
+	function baseDifference(array, values, iteratee, comparator) {
+	  var index = -1,
+	      includes = arrayIncludes,
+	      isCommon = true,
+	      length = array.length,
+	      result = [],
+	      valuesLength = values.length;
+
+	  if (!length) {
+	    return result;
+	  }
+	  if (iteratee) {
+	    values = arrayMap(values, baseUnary(iteratee));
+	  }
+	  if (comparator) {
+	    includes = arrayIncludesWith;
+	    isCommon = false;
+	  }
+	  else if (values.length >= LARGE_ARRAY_SIZE) {
+	    includes = cacheHas;
+	    isCommon = false;
+	    values = new SetCache(values);
+	  }
+	  outer:
+	  while (++index < length) {
+	    var value = array[index],
+	        computed = iteratee == null ? value : iteratee(value);
+
+	    value = (comparator || value !== 0) ? value : 0;
+	    if (isCommon && computed === computed) {
+	      var valuesIndex = valuesLength;
+	      while (valuesIndex--) {
+	        if (values[valuesIndex] === computed) {
+	          continue outer;
+	        }
+	      }
+	      result.push(value);
+	    }
+	    else if (!includes(values, computed, comparator)) {
+	      result.push(value);
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = baseDifference;
+
+
+/***/ },
+/* 745 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var MapCache = __webpack_require__(746),
+	    setCacheAdd = __webpack_require__(769),
+	    setCacheHas = __webpack_require__(770);
+
+	/**
+	 *
+	 * Creates an array cache object to store unique values.
+	 *
+	 * @private
+	 * @constructor
+	 * @param {Array} [values] The values to cache.
+	 */
+	function SetCache(values) {
+	  var index = -1,
+	      length = values == null ? 0 : values.length;
+
+	  this.__data__ = new MapCache;
+	  while (++index < length) {
+	    this.add(values[index]);
+	  }
+	}
+
+	// Add methods to `SetCache`.
+	SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
+	SetCache.prototype.has = setCacheHas;
+
+	module.exports = SetCache;
+
+
+/***/ },
+/* 746 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var mapCacheClear = __webpack_require__(747),
+	    mapCacheDelete = __webpack_require__(763),
+	    mapCacheGet = __webpack_require__(766),
+	    mapCacheHas = __webpack_require__(767),
+	    mapCacheSet = __webpack_require__(768);
+
+	/**
+	 * Creates a map cache object to store key-value pairs.
+	 *
+	 * @private
+	 * @constructor
+	 * @param {Array} [entries] The key-value pairs to cache.
+	 */
+	function MapCache(entries) {
+	  var index = -1,
+	      length = entries == null ? 0 : entries.length;
+
+	  this.clear();
+	  while (++index < length) {
+	    var entry = entries[index];
+	    this.set(entry[0], entry[1]);
+	  }
+	}
+
+	// Add methods to `MapCache`.
+	MapCache.prototype.clear = mapCacheClear;
+	MapCache.prototype['delete'] = mapCacheDelete;
+	MapCache.prototype.get = mapCacheGet;
+	MapCache.prototype.has = mapCacheHas;
+	MapCache.prototype.set = mapCacheSet;
+
+	module.exports = MapCache;
+
+
+/***/ },
+/* 747 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Hash = __webpack_require__(748),
+	    ListCache = __webpack_require__(755),
+	    Map = __webpack_require__(762);
+
+	/**
+	 * Removes all key-value entries from the map.
+	 *
+	 * @private
+	 * @name clear
+	 * @memberOf MapCache
+	 */
+	function mapCacheClear() {
+	  this.size = 0;
+	  this.__data__ = {
+	    'hash': new Hash,
+	    'map': new (Map || ListCache),
+	    'string': new Hash
+	  };
+	}
+
+	module.exports = mapCacheClear;
+
+
+/***/ },
+/* 748 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var hashClear = __webpack_require__(749),
+	    hashDelete = __webpack_require__(751),
+	    hashGet = __webpack_require__(752),
+	    hashHas = __webpack_require__(753),
+	    hashSet = __webpack_require__(754);
+
+	/**
+	 * Creates a hash object.
+	 *
+	 * @private
+	 * @constructor
+	 * @param {Array} [entries] The key-value pairs to cache.
+	 */
+	function Hash(entries) {
+	  var index = -1,
+	      length = entries == null ? 0 : entries.length;
+
+	  this.clear();
+	  while (++index < length) {
+	    var entry = entries[index];
+	    this.set(entry[0], entry[1]);
+	  }
+	}
+
+	// Add methods to `Hash`.
+	Hash.prototype.clear = hashClear;
+	Hash.prototype['delete'] = hashDelete;
+	Hash.prototype.get = hashGet;
+	Hash.prototype.has = hashHas;
+	Hash.prototype.set = hashSet;
+
+	module.exports = Hash;
+
+
+/***/ },
+/* 749 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var nativeCreate = __webpack_require__(750);
+
+	/**
+	 * Removes all key-value entries from the hash.
+	 *
+	 * @private
+	 * @name clear
+	 * @memberOf Hash
+	 */
+	function hashClear() {
+	  this.__data__ = nativeCreate ? nativeCreate(null) : {};
+	  this.size = 0;
+	}
+
+	module.exports = hashClear;
+
+
+/***/ },
+/* 750 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(736);
+
+	/* Built-in method references that are verified to be native. */
+	var nativeCreate = getNative(Object, 'create');
+
+	module.exports = nativeCreate;
+
+
+/***/ },
+/* 751 */
+/***/ function(module, exports) {
+
+	/**
+	 * Removes `key` and its value from the hash.
+	 *
+	 * @private
+	 * @name delete
+	 * @memberOf Hash
+	 * @param {Object} hash The hash to modify.
+	 * @param {string} key The key of the value to remove.
+	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+	 */
+	function hashDelete(key) {
+	  var result = this.has(key) && delete this.__data__[key];
+	  this.size -= result ? 1 : 0;
+	  return result;
+	}
+
+	module.exports = hashDelete;
+
+
+/***/ },
+/* 752 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var nativeCreate = __webpack_require__(750);
+
+	/** Used to stand-in for `undefined` hash values. */
+	var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Gets the hash value for `key`.
+	 *
+	 * @private
+	 * @name get
+	 * @memberOf Hash
+	 * @param {string} key The key of the value to get.
+	 * @returns {*} Returns the entry value.
+	 */
+	function hashGet(key) {
+	  var data = this.__data__;
+	  if (nativeCreate) {
+	    var result = data[key];
+	    return result === HASH_UNDEFINED ? undefined : result;
+	  }
+	  return hasOwnProperty.call(data, key) ? data[key] : undefined;
+	}
+
+	module.exports = hashGet;
+
+
+/***/ },
+/* 753 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var nativeCreate = __webpack_require__(750);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Checks if a hash value for `key` exists.
+	 *
+	 * @private
+	 * @name has
+	 * @memberOf Hash
+	 * @param {string} key The key of the entry to check.
+	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+	 */
+	function hashHas(key) {
+	  var data = this.__data__;
+	  return nativeCreate ? data[key] !== undefined : hasOwnProperty.call(data, key);
+	}
+
+	module.exports = hashHas;
+
+
+/***/ },
+/* 754 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var nativeCreate = __webpack_require__(750);
+
+	/** Used to stand-in for `undefined` hash values. */
+	var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+	/**
+	 * Sets the hash `key` to `value`.
+	 *
+	 * @private
+	 * @name set
+	 * @memberOf Hash
+	 * @param {string} key The key of the value to set.
+	 * @param {*} value The value to set.
+	 * @returns {Object} Returns the hash instance.
+	 */
+	function hashSet(key, value) {
+	  var data = this.__data__;
+	  this.size += this.has(key) ? 0 : 1;
+	  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+	  return this;
+	}
+
+	module.exports = hashSet;
+
+
+/***/ },
+/* 755 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var listCacheClear = __webpack_require__(756),
+	    listCacheDelete = __webpack_require__(757),
+	    listCacheGet = __webpack_require__(759),
+	    listCacheHas = __webpack_require__(760),
+	    listCacheSet = __webpack_require__(761);
+
+	/**
+	 * Creates an list cache object.
+	 *
+	 * @private
+	 * @constructor
+	 * @param {Array} [entries] The key-value pairs to cache.
+	 */
+	function ListCache(entries) {
+	  var index = -1,
+	      length = entries == null ? 0 : entries.length;
+
+	  this.clear();
+	  while (++index < length) {
+	    var entry = entries[index];
+	    this.set(entry[0], entry[1]);
+	  }
+	}
+
+	// Add methods to `ListCache`.
+	ListCache.prototype.clear = listCacheClear;
+	ListCache.prototype['delete'] = listCacheDelete;
+	ListCache.prototype.get = listCacheGet;
+	ListCache.prototype.has = listCacheHas;
+	ListCache.prototype.set = listCacheSet;
+
+	module.exports = ListCache;
+
+
+/***/ },
+/* 756 */
+/***/ function(module, exports) {
+
+	/**
+	 * Removes all key-value entries from the list cache.
+	 *
+	 * @private
+	 * @name clear
+	 * @memberOf ListCache
+	 */
+	function listCacheClear() {
+	  this.__data__ = [];
+	  this.size = 0;
+	}
+
+	module.exports = listCacheClear;
+
+
+/***/ },
+/* 757 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assocIndexOf = __webpack_require__(758);
+
+	/** Used for built-in method references. */
+	var arrayProto = Array.prototype;
+
+	/** Built-in value references. */
+	var splice = arrayProto.splice;
+
+	/**
+	 * Removes `key` and its value from the list cache.
+	 *
+	 * @private
+	 * @name delete
+	 * @memberOf ListCache
+	 * @param {string} key The key of the value to remove.
+	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+	 */
+	function listCacheDelete(key) {
+	  var data = this.__data__,
+	      index = assocIndexOf(data, key);
+
+	  if (index < 0) {
+	    return false;
+	  }
+	  var lastIndex = data.length - 1;
+	  if (index == lastIndex) {
+	    data.pop();
+	  } else {
+	    splice.call(data, index, 1);
+	  }
+	  --this.size;
+	  return true;
+	}
+
+	module.exports = listCacheDelete;
+
+
+/***/ },
+/* 758 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var eq = __webpack_require__(705);
+
+	/**
+	 * Gets the index at which the `key` is found in `array` of key-value pairs.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {*} key The key to search for.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function assocIndexOf(array, key) {
+	  var length = array.length;
+	  while (length--) {
+	    if (eq(array[length][0], key)) {
+	      return length;
+	    }
+	  }
+	  return -1;
+	}
+
+	module.exports = assocIndexOf;
+
+
+/***/ },
+/* 759 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assocIndexOf = __webpack_require__(758);
+
+	/**
+	 * Gets the list cache value for `key`.
+	 *
+	 * @private
+	 * @name get
+	 * @memberOf ListCache
+	 * @param {string} key The key of the value to get.
+	 * @returns {*} Returns the entry value.
+	 */
+	function listCacheGet(key) {
+	  var data = this.__data__,
+	      index = assocIndexOf(data, key);
+
+	  return index < 0 ? undefined : data[index][1];
+	}
+
+	module.exports = listCacheGet;
+
+
+/***/ },
+/* 760 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assocIndexOf = __webpack_require__(758);
+
+	/**
+	 * Checks if a list cache value for `key` exists.
+	 *
+	 * @private
+	 * @name has
+	 * @memberOf ListCache
+	 * @param {string} key The key of the entry to check.
+	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+	 */
+	function listCacheHas(key) {
+	  return assocIndexOf(this.__data__, key) > -1;
+	}
+
+	module.exports = listCacheHas;
+
+
+/***/ },
+/* 761 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var assocIndexOf = __webpack_require__(758);
+
+	/**
+	 * Sets the list cache `key` to `value`.
+	 *
+	 * @private
+	 * @name set
+	 * @memberOf ListCache
+	 * @param {string} key The key of the value to set.
+	 * @param {*} value The value to set.
+	 * @returns {Object} Returns the list cache instance.
+	 */
+	function listCacheSet(key, value) {
+	  var data = this.__data__,
+	      index = assocIndexOf(data, key);
+
+	  if (index < 0) {
+	    ++this.size;
+	    data.push([key, value]);
+	  } else {
+	    data[index][1] = value;
+	  }
+	  return this;
+	}
+
+	module.exports = listCacheSet;
+
+
+/***/ },
+/* 762 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(736),
+	    root = __webpack_require__(710);
+
+	/* Built-in method references that are verified to be native. */
+	var Map = getNative(root, 'Map');
+
+	module.exports = Map;
+
+
+/***/ },
+/* 763 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getMapData = __webpack_require__(764);
+
+	/**
+	 * Removes `key` and its value from the map.
+	 *
+	 * @private
+	 * @name delete
+	 * @memberOf MapCache
+	 * @param {string} key The key of the value to remove.
+	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+	 */
+	function mapCacheDelete(key) {
+	  var result = getMapData(this, key)['delete'](key);
+	  this.size -= result ? 1 : 0;
+	  return result;
+	}
+
+	module.exports = mapCacheDelete;
+
+
+/***/ },
+/* 764 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isKeyable = __webpack_require__(765);
+
+	/**
+	 * Gets the data for `map`.
+	 *
+	 * @private
+	 * @param {Object} map The map to query.
+	 * @param {string} key The reference key.
+	 * @returns {*} Returns the map data.
+	 */
+	function getMapData(map, key) {
+	  var data = map.__data__;
+	  return isKeyable(key)
+	    ? data[typeof key == 'string' ? 'string' : 'hash']
+	    : data.map;
+	}
+
+	module.exports = getMapData;
+
+
+/***/ },
+/* 765 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is suitable for use as unique object key.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
+	 */
+	function isKeyable(value) {
+	  var type = typeof value;
+	  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+	    ? (value !== '__proto__')
+	    : (value === null);
+	}
+
+	module.exports = isKeyable;
+
+
+/***/ },
+/* 766 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getMapData = __webpack_require__(764);
+
+	/**
+	 * Gets the map value for `key`.
+	 *
+	 * @private
+	 * @name get
+	 * @memberOf MapCache
+	 * @param {string} key The key of the value to get.
+	 * @returns {*} Returns the entry value.
+	 */
+	function mapCacheGet(key) {
+	  return getMapData(this, key).get(key);
+	}
+
+	module.exports = mapCacheGet;
+
+
+/***/ },
+/* 767 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getMapData = __webpack_require__(764);
+
+	/**
+	 * Checks if a map value for `key` exists.
+	 *
+	 * @private
+	 * @name has
+	 * @memberOf MapCache
+	 * @param {string} key The key of the entry to check.
+	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+	 */
+	function mapCacheHas(key) {
+	  return getMapData(this, key).has(key);
+	}
+
+	module.exports = mapCacheHas;
+
+
+/***/ },
+/* 768 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getMapData = __webpack_require__(764);
+
+	/**
+	 * Sets the map `key` to `value`.
+	 *
+	 * @private
+	 * @name set
+	 * @memberOf MapCache
+	 * @param {string} key The key of the value to set.
+	 * @param {*} value The value to set.
+	 * @returns {Object} Returns the map cache instance.
+	 */
+	function mapCacheSet(key, value) {
+	  var data = getMapData(this, key),
+	      size = data.size;
+
+	  data.set(key, value);
+	  this.size += data.size == size ? 0 : 1;
+	  return this;
+	}
+
+	module.exports = mapCacheSet;
+
+
+/***/ },
+/* 769 */
+/***/ function(module, exports) {
+
+	/** Used to stand-in for `undefined` hash values. */
+	var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+	/**
+	 * Adds `value` to the array cache.
+	 *
+	 * @private
+	 * @name add
+	 * @memberOf SetCache
+	 * @alias push
+	 * @param {*} value The value to cache.
+	 * @returns {Object} Returns the cache instance.
+	 */
+	function setCacheAdd(value) {
+	  this.__data__.set(value, HASH_UNDEFINED);
+	  return this;
+	}
+
+	module.exports = setCacheAdd;
+
+
+/***/ },
+/* 770 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is in the array cache.
+	 *
+	 * @private
+	 * @name has
+	 * @memberOf SetCache
+	 * @param {*} value The value to search for.
+	 * @returns {number} Returns `true` if `value` is found, else `false`.
+	 */
+	function setCacheHas(value) {
+	  return this.__data__.has(value);
+	}
+
+	module.exports = setCacheHas;
+
+
+/***/ },
+/* 771 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIndexOf = __webpack_require__(772);
+
+	/**
+	 * A specialized version of `_.includes` for arrays without support for
+	 * specifying an index to search from.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to inspect.
+	 * @param {*} target The value to search for.
+	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
+	 */
+	function arrayIncludes(array, value) {
+	  var length = array == null ? 0 : array.length;
+	  return !!length && baseIndexOf(array, value, 0) > -1;
+	}
+
+	module.exports = arrayIncludes;
+
+
+/***/ },
+/* 772 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseFindIndex = __webpack_require__(773),
+	    baseIsNaN = __webpack_require__(774),
+	    strictIndexOf = __webpack_require__(775);
+
+	/**
+	 * The base implementation of `_.indexOf` without `fromIndex` bounds checks.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {*} value The value to search for.
+	 * @param {number} fromIndex The index to search from.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function baseIndexOf(array, value, fromIndex) {
+	  return value === value
+	    ? strictIndexOf(array, value, fromIndex)
+	    : baseFindIndex(array, baseIsNaN, fromIndex);
+	}
+
+	module.exports = baseIndexOf;
+
+
+/***/ },
+/* 773 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of `_.findIndex` and `_.findLastIndex` without
+	 * support for iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {Function} predicate The function invoked per iteration.
+	 * @param {number} fromIndex The index to search from.
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function baseFindIndex(array, predicate, fromIndex, fromRight) {
+	  var length = array.length,
+	      index = fromIndex + (fromRight ? 1 : -1);
+
+	  while ((fromRight ? index-- : ++index < length)) {
+	    if (predicate(array[index], index, array)) {
+	      return index;
+	    }
+	  }
+	  return -1;
+	}
+
+	module.exports = baseFindIndex;
+
+
+/***/ },
+/* 774 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of `_.isNaN` without support for number objects.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
+	 */
+	function baseIsNaN(value) {
+	  return value !== value;
+	}
+
+	module.exports = baseIsNaN;
+
+
+/***/ },
+/* 775 */
+/***/ function(module, exports) {
+
+	/**
+	 * A specialized version of `_.indexOf` which performs strict equality
+	 * comparisons of values, i.e. `===`.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {*} value The value to search for.
+	 * @param {number} fromIndex The index to search from.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function strictIndexOf(array, value, fromIndex) {
+	  var index = fromIndex - 1,
+	      length = array.length;
+
+	  while (++index < length) {
+	    if (array[index] === value) {
+	      return index;
+	    }
+	  }
+	  return -1;
+	}
+
+	module.exports = strictIndexOf;
+
+
+/***/ },
+/* 776 */
+/***/ function(module, exports) {
+
+	/**
+	 * This function is like `arrayIncludes` except that it accepts a comparator.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to inspect.
+	 * @param {*} target The value to search for.
+	 * @param {Function} comparator The comparator invoked per element.
+	 * @returns {boolean} Returns `true` if `target` is found, else `false`.
+	 */
+	function arrayIncludesWith(array, value, comparator) {
+	  var index = -1,
+	      length = array == null ? 0 : array.length;
+
+	  while (++index < length) {
+	    if (comparator(value, array[index])) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+
+	module.exports = arrayIncludesWith;
+
+
+/***/ },
+/* 777 */
+/***/ function(module, exports) {
+
+	/**
+	 * A specialized version of `_.map` for arrays without support for iteratee
+	 * shorthands.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Array} Returns the new mapped array.
+	 */
+	function arrayMap(array, iteratee) {
+	  var index = -1,
+	      length = array == null ? 0 : array.length,
+	      result = Array(length);
+
+	  while (++index < length) {
+	    result[index] = iteratee(array[index], index, array);
+	  }
+	  return result;
+	}
+
+	module.exports = arrayMap;
+
+
+/***/ },
+/* 778 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of `_.unary` without support for storing metadata.
+	 *
+	 * @private
+	 * @param {Function} func The function to cap arguments for.
+	 * @returns {Function} Returns the new capped function.
+	 */
+	function baseUnary(func) {
+	  return function(value) {
+	    return func(value);
+	  };
+	}
+
+	module.exports = baseUnary;
+
+
+/***/ },
+/* 779 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if a `cache` value for `key` exists.
+	 *
+	 * @private
+	 * @param {Object} cache The cache to query.
+	 * @param {string} key The key of the entry to check.
+	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+	 */
+	function cacheHas(cache, key) {
+	  return cache.has(key);
+	}
+
+	module.exports = cacheHas;
+
+
+/***/ },
+/* 780 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var arrayPush = __webpack_require__(781),
+	    isFlattenable = __webpack_require__(782);
+
+	/**
+	 * The base implementation of `_.flatten` with support for restricting flattening.
+	 *
+	 * @private
+	 * @param {Array} array The array to flatten.
+	 * @param {number} depth The maximum recursion depth.
+	 * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
+	 * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
+	 * @param {Array} [result=[]] The initial result value.
+	 * @returns {Array} Returns the new flattened array.
+	 */
+	function baseFlatten(array, depth, predicate, isStrict, result) {
+	  var index = -1,
+	      length = array.length;
+
+	  predicate || (predicate = isFlattenable);
+	  result || (result = []);
+
+	  while (++index < length) {
+	    var value = array[index];
+	    if (depth > 0 && predicate(value)) {
+	      if (depth > 1) {
+	        // Recursively flatten arrays (susceptible to call stack limits).
+	        baseFlatten(value, depth - 1, predicate, isStrict, result);
+	      } else {
+	        arrayPush(result, value);
+	      }
+	    } else if (!isStrict) {
+	      result[result.length] = value;
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = baseFlatten;
+
+
+/***/ },
+/* 781 */
+/***/ function(module, exports) {
+
+	/**
+	 * Appends the elements of `values` to `array`.
+	 *
+	 * @private
+	 * @param {Array} array The array to modify.
+	 * @param {Array} values The values to append.
+	 * @returns {Array} Returns `array`.
+	 */
+	function arrayPush(array, values) {
+	  var index = -1,
+	      length = values.length,
+	      offset = array.length;
+
+	  while (++index < length) {
+	    array[offset + index] = values[index];
+	  }
+	  return array;
+	}
+
+	module.exports = arrayPush;
+
+
+/***/ },
+/* 782 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Symbol = __webpack_require__(709),
+	    isArguments = __webpack_require__(783),
+	    isArray = __webpack_require__(785);
+
+	/** Built-in value references. */
+	var spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined;
+
+	/**
+	 * Checks if `value` is a flattenable `arguments` object or array.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
+	 */
+	function isFlattenable(value) {
+	  return isArray(value) || isArguments(value) ||
+	    !!(spreadableSymbol && value && value[spreadableSymbol]);
+	}
+
+	module.exports = isFlattenable;
+
+
+/***/ },
+/* 783 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIsArguments = __webpack_require__(784),
+	    isObjectLike = __webpack_require__(720);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/** Built-in value references. */
+	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+	/**
+	 * Checks if `value` is likely an `arguments` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+	 *  else `false`.
+	 * @example
+	 *
+	 * _.isArguments(function() { return arguments; }());
+	 * // => true
+	 *
+	 * _.isArguments([1, 2, 3]);
+	 * // => false
+	 */
+	var isArguments = baseIsArguments(function() { return arguments; }()) ? baseIsArguments : function(value) {
+	  return isObjectLike(value) && hasOwnProperty.call(value, 'callee') &&
+	    !propertyIsEnumerable.call(value, 'callee');
+	};
+
+	module.exports = isArguments;
+
+
+/***/ },
+/* 784 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseGetTag = __webpack_require__(708),
+	    isObjectLike = __webpack_require__(720);
+
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]';
+
+	/**
+	 * The base implementation of `_.isArguments`.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+	 */
+	function baseIsArguments(value) {
+	  return isObjectLike(value) && baseGetTag(value) == argsTag;
+	}
+
+	module.exports = baseIsArguments;
+
+
+/***/ },
+/* 785 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is classified as an `Array` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+	 * @example
+	 *
+	 * _.isArray([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArray(document.body.children);
+	 * // => false
+	 *
+	 * _.isArray('abc');
+	 * // => false
+	 *
+	 * _.isArray(_.noop);
+	 * // => false
+	 */
+	var isArray = Array.isArray;
+
+	module.exports = isArray;
+
+
+/***/ },
+/* 786 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SetCache = __webpack_require__(745),
+	    arrayIncludes = __webpack_require__(771),
+	    arrayIncludesWith = __webpack_require__(776),
+	    cacheHas = __webpack_require__(779),
+	    createSet = __webpack_require__(787),
+	    setToArray = __webpack_require__(790);
+
+	/** Used as the size to enable large array optimizations. */
+	var LARGE_ARRAY_SIZE = 200;
+
+	/**
+	 * The base implementation of `_.uniqBy` without support for iteratee shorthands.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {Function} [iteratee] The iteratee invoked per element.
+	 * @param {Function} [comparator] The comparator invoked per element.
+	 * @returns {Array} Returns the new duplicate free array.
+	 */
+	function baseUniq(array, iteratee, comparator) {
+	  var index = -1,
+	      includes = arrayIncludes,
+	      length = array.length,
+	      isCommon = true,
+	      result = [],
+	      seen = result;
+
+	  if (comparator) {
+	    isCommon = false;
+	    includes = arrayIncludesWith;
+	  }
+	  else if (length >= LARGE_ARRAY_SIZE) {
+	    var set = iteratee ? null : createSet(array);
+	    if (set) {
+	      return setToArray(set);
+	    }
+	    isCommon = false;
+	    includes = cacheHas;
+	    seen = new SetCache;
+	  }
+	  else {
+	    seen = iteratee ? [] : result;
+	  }
+	  outer:
+	  while (++index < length) {
+	    var value = array[index],
+	        computed = iteratee ? iteratee(value) : value;
+
+	    value = (comparator || value !== 0) ? value : 0;
+	    if (isCommon && computed === computed) {
+	      var seenIndex = seen.length;
+	      while (seenIndex--) {
+	        if (seen[seenIndex] === computed) {
+	          continue outer;
+	        }
+	      }
+	      if (iteratee) {
+	        seen.push(computed);
+	      }
+	      result.push(value);
+	    }
+	    else if (!includes(seen, computed, comparator)) {
+	      if (seen !== result) {
+	        seen.push(computed);
+	      }
+	      result.push(value);
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = baseUniq;
+
+
+/***/ },
+/* 787 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Set = __webpack_require__(788),
+	    noop = __webpack_require__(789),
+	    setToArray = __webpack_require__(790);
+
+	/** Used as references for various `Number` constants. */
+	var INFINITY = 1 / 0;
+
+	/**
+	 * Creates a set object of `values`.
+	 *
+	 * @private
+	 * @param {Array} values The values to add to the set.
+	 * @returns {Object} Returns the new set.
+	 */
+	var createSet = !(Set && (1 / setToArray(new Set([,-0]))[1]) == INFINITY) ? noop : function(values) {
+	  return new Set(values);
+	};
+
+	module.exports = createSet;
+
+
+/***/ },
+/* 788 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(736),
+	    root = __webpack_require__(710);
+
+	/* Built-in method references that are verified to be native. */
+	var Set = getNative(root, 'Set');
+
+	module.exports = Set;
+
+
+/***/ },
+/* 789 */
+/***/ function(module, exports) {
+
+	/**
+	 * This method returns `undefined`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 2.3.0
+	 * @category Util
+	 * @example
+	 *
+	 * _.times(2, _.noop);
+	 * // => [undefined, undefined]
+	 */
+	function noop() {
+	  // No operation performed.
+	}
+
+	module.exports = noop;
+
+
+/***/ },
+/* 790 */
+/***/ function(module, exports) {
+
+	/**
+	 * Converts `set` to an array of its values.
+	 *
+	 * @private
+	 * @param {Object} set The set to convert.
+	 * @returns {Array} Returns the values.
+	 */
+	function setToArray(set) {
+	  var index = -1,
+	      result = Array(set.size);
+
+	  set.forEach(function(value) {
+	    result[++index] = value;
+	  });
+	  return result;
+	}
+
+	module.exports = setToArray;
+
+
+/***/ },
+/* 791 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isArrayLike = __webpack_require__(706),
+	    isObjectLike = __webpack_require__(720);
+
+	/**
+	 * This method is like `_.isArrayLike` except that it also checks if `value`
+	 * is an object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an array-like object,
+	 *  else `false`.
+	 * @example
+	 *
+	 * _.isArrayLikeObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLikeObject(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLikeObject('abc');
+	 * // => false
+	 *
+	 * _.isArrayLikeObject(_.noop);
+	 * // => false
+	 */
+	function isArrayLikeObject(value) {
+	  return isObjectLike(value) && isArrayLike(value);
+	}
+
+	module.exports = isArrayLikeObject;
+
+
+/***/ },
+/* 792 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(793);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(671)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/less-loader/index.js!./Components.less", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/less-loader/index.js!./Components.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 793 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(670)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".gxaFilter .filterBody .groupName {\n  display: inline-block;\n  cursor: pointer;\n}\n.gxaFilter .filterBody .groupName:hover {\n  text-decoration: underline;\n}\n.gxaFilter .filterBody .options {\n  padding-left: 15px;\n  font-size: 85%;\n  -webkit-column-width: 180px;\n  -moz-column-width: 180px;\n  column-width: 180px;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 794 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(138);
+	var Button = __webpack_require__(389);
+	var Glyphicon = __webpack_require__(395);
+	var PropTypes = __webpack_require__(679);
+	var xor = __webpack_require__(726);
+	__webpack_require__(792);
+
+	var FilterOption = React.createClass({
+	  displayName: "FilterOption",
+
+	  propTypes: {
+	    name: React.PropTypes.string.isRequired,
+	    values: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    selected: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    isOpen: React.PropTypes.bool.isRequired,
+	    selectDisabled: React.PropTypes.bool.isRequired,
+	    closeDisabled: React.PropTypes.bool.isRequired,
+	    onToggleOpen: React.PropTypes.func.isRequired,
+	    onNewSelected: React.PropTypes.func.isRequired
+	  },
+
+	  toggleAll: function toggleAll(evt) {
+	    this.props.onNewSelected(xor(this.props.values, this.props.selected).length ? this.props.values : []);
+	  },
+	  toggleOne: function toggleOne(which, evt) {
+	    this.props.onNewSelected(xor(this.props.selected, [which]));
+	  },
+	  toggleOpen: function toggleOpen(evt) {
+	    this.props.onToggleOpen();
+	  },
+	  render: function render() {
+	    var _this = this;
+
+	    return React.createElement(
+	      "div",
+	      { className: "filterBody" },
+	      React.createElement("input", { type: "checkbox",
+	        value: this.props.name,
+	        onChange: this.toggleAll,
+	        disabled: this.props.selectDisabled,
+	        checked: this.props.values.every(function (v) {
+	          return _this.props.selected.indexOf(v) > -1;
+	        }) }),
+	      React.createElement(
+	        "div",
+	        { className: "groupName",
+	          onClick: this.props.closeDisabled ? function () {} : this.toggleOpen,
+	          href: "#" },
+	        this.props.name,
+	        !this.props.closeDisabled && React.createElement(Glyphicon, { style: { fontSize: "x-small", paddingLeft: "5px" }, glyph: this.props.isOpen ? "menu-up" : "menu-down" })
+	      ),
+	      this.props.isOpen && React.createElement(
+	        "div",
+	        { className: "options" },
+	        this.props.values.map(function (value) {
+	          return React.createElement(
+	            "div",
+	            { className: "option", key: value },
+	            React.createElement("input", { type: "checkbox",
+	              value: value,
+	              onChange: function onChange(evt) {
+	                return _this.toggleOne(value, evt);
+	              },
+	              disabled: _this.props.selectDisabled,
+	              checked: _this.props.selected.indexOf(value) > -1 }),
+	            React.createElement(
+	              "span",
+	              null,
+	              " ",
+	              value
+	            )
+	          );
+	        })
+	      )
+	    );
+	  }
+	});
+
+	var GroupedFilter = React.createClass({
+	  displayName: "GroupedFilter",
+
+	  propTypes: Object.assign({}, PropTypes.FilterProps, {
+	    propagateFilterSelection: React.PropTypes.func.isRequired,
+	    disabled: React.PropTypes.bool.isRequired
+	  }),
+
+	  getInitialState: function getInitialState() {
+	    return {
+	      groupsUserAskedToKeepOpen: []
+	    };
+	  },
+	  renderValueGrouping: function renderValueGrouping(name, values) {
+	    var _this2 = this;
+
+	    var userWantedOpen = this.state.groupsUserAskedToKeepOpen.indexOf(name) > -1;
+	    var selectedHere = this.props.selected.filter(function (e) {
+	      return values.indexOf(e) > -1;
+	    });
+	    var selectedNotHere = this.props.selected.filter(function (e) {
+	      return values.indexOf(e) == -1;
+	    });
+	    var impliedOpen = !(selectedHere.length == 0 || values.every(function (v) {
+	      return selectedHere.indexOf(v) > -1;
+	    }));
+	    return React.createElement(FilterOption, { key: name,
+	      name: name,
+	      values: values,
+	      selected: selectedHere,
+	      isOpen: userWantedOpen || impliedOpen,
+	      selectDisabled: this.props.disabled,
+	      closeDisabled: impliedOpen,
+	      onToggleOpen: function onToggleOpen() {
+	        _this2.setState(function (previousState) {
+	          return { groupsUserAskedToKeepOpen: xor(previousState.groupsUserAskedToKeepOpen, [name]) };
+	        });
+	      },
+	      onNewSelected: function onNewSelected(selectedInThisOption) {
+	        _this2.props.propagateFilterSelection(selectedNotHere.concat(selectedInThisOption));
+	      } });
+	  },
+	  render: function render() {
+	    var _this3 = this;
+
+	    return React.createElement(
+	      "div",
+	      { className: "gxaFilter" },
+	      React.createElement(
+	        "h4",
+	        null,
+	        this.props.name
+	      ),
+	      React.createElement(
+	        Button,
+	        { bsSize: "xsmall", onClick: function onClick() {
+	            _this3.props.propagateFilterSelection(_this3.props.values);
+	          } },
+	        React.createElement(Glyphicon, { glyph: "plus" }),
+	        React.createElement(
+	          "span",
+	          { style: { verticalAlign: "middle" } },
+	          " Choose all"
+	        )
+	      ),
+	      React.createElement(
+	        Button,
+	        { bsSize: "xsmall", onClick: function onClick() {
+	            _this3.props.propagateFilterSelection([]);
+	          } },
+	        React.createElement(Glyphicon, { glyph: "minus" }),
+	        React.createElement(
+	          "span",
+	          { style: { verticalAlign: "middle" } },
+	          " Remove all"
+	        )
+	      ),
+	      this.props.valueGroupings.map(function (a) {
+	        return _this3.renderValueGrouping(a[0], a[1]);
+	      })
+	    );
+	  }
+	});
+	module.exports = GroupedFilter;
+
+/***/ },
+/* 795 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIsEqual = __webpack_require__(796);
+
+	/**
+	 * Performs a deep comparison between two values to determine if they are
+	 * equivalent.
+	 *
+	 * **Note:** This method supports comparing arrays, array buffers, booleans,
+	 * date objects, error objects, maps, numbers, `Object` objects, regexes,
+	 * sets, strings, symbols, and typed arrays. `Object` objects are compared
+	 * by their own, not inherited, enumerable properties. Functions and DOM
+	 * nodes are **not** supported.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to compare.
+	 * @param {*} other The other value to compare.
+	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+	 * @example
+	 *
+	 * var object = { 'a': 1 };
+	 * var other = { 'a': 1 };
+	 *
+	 * _.isEqual(object, other);
+	 * // => true
+	 *
+	 * object === other;
+	 * // => false
+	 */
+	function isEqual(value, other) {
+	  return baseIsEqual(value, other);
+	}
+
+	module.exports = isEqual;
+
+
+/***/ },
+/* 796 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIsEqualDeep = __webpack_require__(797),
+	    isObject = __webpack_require__(714),
+	    isObjectLike = __webpack_require__(720);
+
+	/**
+	 * The base implementation of `_.isEqual` which supports partial comparisons
+	 * and tracks traversed objects.
+	 *
+	 * @private
+	 * @param {*} value The value to compare.
+	 * @param {*} other The other value to compare.
+	 * @param {Function} [customizer] The function to customize comparisons.
+	 * @param {boolean} [bitmask] The bitmask of comparison flags.
+	 *  The bitmask may be composed of the following flags:
+	 *     1 - Unordered comparison
+	 *     2 - Partial comparison
+	 * @param {Object} [stack] Tracks traversed `value` and `other` objects.
+	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+	 */
+	function baseIsEqual(value, other, customizer, bitmask, stack) {
+	  if (value === other) {
+	    return true;
+	  }
+	  if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
+	    return value !== value && other !== other;
+	  }
+	  return baseIsEqualDeep(value, other, baseIsEqual, customizer, bitmask, stack);
+	}
+
+	module.exports = baseIsEqual;
+
+
+/***/ },
+/* 797 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Stack = __webpack_require__(798),
+	    equalArrays = __webpack_require__(804),
+	    equalByTag = __webpack_require__(806),
+	    equalObjects = __webpack_require__(809),
+	    getTag = __webpack_require__(822),
+	    isArray = __webpack_require__(785),
+	    isBuffer = __webpack_require__(813),
+	    isTypedArray = __webpack_require__(815);
+
+	/** Used to compose bitmasks for comparison styles. */
+	var PARTIAL_COMPARE_FLAG = 2;
+
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]',
+	    arrayTag = '[object Array]',
+	    objectTag = '[object Object]';
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * A specialized version of `baseIsEqual` for arrays and objects which performs
+	 * deep comparisons and tracks traversed objects enabling objects with circular
+	 * references to be compared.
+	 *
+	 * @private
+	 * @param {Object} object The object to compare.
+	 * @param {Object} other The other object to compare.
+	 * @param {Function} equalFunc The function to determine equivalents of values.
+	 * @param {Function} [customizer] The function to customize comparisons.
+	 * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual`
+	 *  for more details.
+	 * @param {Object} [stack] Tracks traversed `object` and `other` objects.
+	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+	 */
+	function baseIsEqualDeep(object, other, equalFunc, customizer, bitmask, stack) {
+	  var objIsArr = isArray(object),
+	      othIsArr = isArray(other),
+	      objTag = arrayTag,
+	      othTag = arrayTag;
+
+	  if (!objIsArr) {
+	    objTag = getTag(object);
+	    objTag = objTag == argsTag ? objectTag : objTag;
+	  }
+	  if (!othIsArr) {
+	    othTag = getTag(other);
+	    othTag = othTag == argsTag ? objectTag : othTag;
+	  }
+	  var objIsObj = objTag == objectTag,
+	      othIsObj = othTag == objectTag,
+	      isSameTag = objTag == othTag;
+
+	  if (isSameTag && isBuffer(object)) {
+	    if (!isBuffer(other)) {
+	      return false;
+	    }
+	    objIsArr = true;
+	    objIsObj = false;
+	  }
+	  if (isSameTag && !objIsObj) {
+	    stack || (stack = new Stack);
+	    return (objIsArr || isTypedArray(object))
+	      ? equalArrays(object, other, equalFunc, customizer, bitmask, stack)
+	      : equalByTag(object, other, objTag, equalFunc, customizer, bitmask, stack);
+	  }
+	  if (!(bitmask & PARTIAL_COMPARE_FLAG)) {
+	    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+	        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+
+	    if (objIsWrapped || othIsWrapped) {
+	      var objUnwrapped = objIsWrapped ? object.value() : object,
+	          othUnwrapped = othIsWrapped ? other.value() : other;
+
+	      stack || (stack = new Stack);
+	      return equalFunc(objUnwrapped, othUnwrapped, customizer, bitmask, stack);
+	    }
+	  }
+	  if (!isSameTag) {
+	    return false;
+	  }
+	  stack || (stack = new Stack);
+	  return equalObjects(object, other, equalFunc, customizer, bitmask, stack);
+	}
+
+	module.exports = baseIsEqualDeep;
+
+
+/***/ },
+/* 798 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ListCache = __webpack_require__(755),
+	    stackClear = __webpack_require__(799),
+	    stackDelete = __webpack_require__(800),
+	    stackGet = __webpack_require__(801),
+	    stackHas = __webpack_require__(802),
+	    stackSet = __webpack_require__(803);
+
+	/**
+	 * Creates a stack cache object to store key-value pairs.
+	 *
+	 * @private
+	 * @constructor
+	 * @param {Array} [entries] The key-value pairs to cache.
+	 */
+	function Stack(entries) {
+	  var data = this.__data__ = new ListCache(entries);
+	  this.size = data.size;
+	}
+
+	// Add methods to `Stack`.
+	Stack.prototype.clear = stackClear;
+	Stack.prototype['delete'] = stackDelete;
+	Stack.prototype.get = stackGet;
+	Stack.prototype.has = stackHas;
+	Stack.prototype.set = stackSet;
+
+	module.exports = Stack;
+
+
+/***/ },
+/* 799 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ListCache = __webpack_require__(755);
+
+	/**
+	 * Removes all key-value entries from the stack.
+	 *
+	 * @private
+	 * @name clear
+	 * @memberOf Stack
+	 */
+	function stackClear() {
+	  this.__data__ = new ListCache;
+	  this.size = 0;
+	}
+
+	module.exports = stackClear;
+
+
+/***/ },
+/* 800 */
+/***/ function(module, exports) {
+
+	/**
+	 * Removes `key` and its value from the stack.
+	 *
+	 * @private
+	 * @name delete
+	 * @memberOf Stack
+	 * @param {string} key The key of the value to remove.
+	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+	 */
+	function stackDelete(key) {
+	  var data = this.__data__,
+	      result = data['delete'](key);
+
+	  this.size = data.size;
+	  return result;
+	}
+
+	module.exports = stackDelete;
+
+
+/***/ },
+/* 801 */
+/***/ function(module, exports) {
+
+	/**
+	 * Gets the stack value for `key`.
+	 *
+	 * @private
+	 * @name get
+	 * @memberOf Stack
+	 * @param {string} key The key of the value to get.
+	 * @returns {*} Returns the entry value.
+	 */
+	function stackGet(key) {
+	  return this.__data__.get(key);
+	}
+
+	module.exports = stackGet;
+
+
+/***/ },
+/* 802 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if a stack value for `key` exists.
+	 *
+	 * @private
+	 * @name has
+	 * @memberOf Stack
+	 * @param {string} key The key of the entry to check.
+	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+	 */
+	function stackHas(key) {
+	  return this.__data__.has(key);
+	}
+
+	module.exports = stackHas;
+
+
+/***/ },
+/* 803 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ListCache = __webpack_require__(755),
+	    Map = __webpack_require__(762),
+	    MapCache = __webpack_require__(746);
+
+	/** Used as the size to enable large array optimizations. */
+	var LARGE_ARRAY_SIZE = 200;
+
+	/**
+	 * Sets the stack `key` to `value`.
+	 *
+	 * @private
+	 * @name set
+	 * @memberOf Stack
+	 * @param {string} key The key of the value to set.
+	 * @param {*} value The value to set.
+	 * @returns {Object} Returns the stack cache instance.
+	 */
+	function stackSet(key, value) {
+	  var data = this.__data__;
+	  if (data instanceof ListCache) {
+	    var pairs = data.__data__;
+	    if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
+	      pairs.push([key, value]);
+	      this.size = ++data.size;
+	      return this;
+	    }
+	    data = this.__data__ = new MapCache(pairs);
+	  }
+	  data.set(key, value);
+	  this.size = data.size;
+	  return this;
+	}
+
+	module.exports = stackSet;
+
+
+/***/ },
+/* 804 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SetCache = __webpack_require__(745),
+	    arraySome = __webpack_require__(805),
+	    cacheHas = __webpack_require__(779);
+
+	/** Used to compose bitmasks for comparison styles. */
+	var UNORDERED_COMPARE_FLAG = 1,
+	    PARTIAL_COMPARE_FLAG = 2;
+
+	/**
+	 * A specialized version of `baseIsEqualDeep` for arrays with support for
+	 * partial deep comparisons.
+	 *
+	 * @private
+	 * @param {Array} array The array to compare.
+	 * @param {Array} other The other array to compare.
+	 * @param {Function} equalFunc The function to determine equivalents of values.
+	 * @param {Function} customizer The function to customize comparisons.
+	 * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
+	 *  for more details.
+	 * @param {Object} stack Tracks traversed `array` and `other` objects.
+	 * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
+	 */
+	function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
+	  var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
+	      arrLength = array.length,
+	      othLength = other.length;
+
+	  if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
+	    return false;
+	  }
+	  // Assume cyclic values are equal.
+	  var stacked = stack.get(array);
+	  if (stacked && stack.get(other)) {
+	    return stacked == other;
+	  }
+	  var index = -1,
+	      result = true,
+	      seen = (bitmask & UNORDERED_COMPARE_FLAG) ? new SetCache : undefined;
+
+	  stack.set(array, other);
+	  stack.set(other, array);
+
+	  // Ignore non-index properties.
+	  while (++index < arrLength) {
+	    var arrValue = array[index],
+	        othValue = other[index];
+
+	    if (customizer) {
+	      var compared = isPartial
+	        ? customizer(othValue, arrValue, index, other, array, stack)
+	        : customizer(arrValue, othValue, index, array, other, stack);
+	    }
+	    if (compared !== undefined) {
+	      if (compared) {
+	        continue;
+	      }
+	      result = false;
+	      break;
+	    }
+	    // Recursively compare arrays (susceptible to call stack limits).
+	    if (seen) {
+	      if (!arraySome(other, function(othValue, othIndex) {
+	            if (!cacheHas(seen, othIndex) &&
+	                (arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack))) {
+	              return seen.push(othIndex);
+	            }
+	          })) {
+	        result = false;
+	        break;
+	      }
+	    } else if (!(
+	          arrValue === othValue ||
+	            equalFunc(arrValue, othValue, customizer, bitmask, stack)
+	        )) {
+	      result = false;
+	      break;
+	    }
+	  }
+	  stack['delete'](array);
+	  stack['delete'](other);
+	  return result;
+	}
+
+	module.exports = equalArrays;
+
+
+/***/ },
+/* 805 */
+/***/ function(module, exports) {
+
+	/**
+	 * A specialized version of `_.some` for arrays without support for iteratee
+	 * shorthands.
+	 *
+	 * @private
+	 * @param {Array} [array] The array to iterate over.
+	 * @param {Function} predicate The function invoked per iteration.
+	 * @returns {boolean} Returns `true` if any element passes the predicate check,
+	 *  else `false`.
+	 */
+	function arraySome(array, predicate) {
+	  var index = -1,
+	      length = array == null ? 0 : array.length;
+
+	  while (++index < length) {
+	    if (predicate(array[index], index, array)) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+
+	module.exports = arraySome;
+
+
+/***/ },
+/* 806 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Symbol = __webpack_require__(709),
+	    Uint8Array = __webpack_require__(807),
+	    eq = __webpack_require__(705),
+	    equalArrays = __webpack_require__(804),
+	    mapToArray = __webpack_require__(808),
+	    setToArray = __webpack_require__(790);
+
+	/** Used to compose bitmasks for comparison styles. */
+	var UNORDERED_COMPARE_FLAG = 1,
+	    PARTIAL_COMPARE_FLAG = 2;
+
+	/** `Object#toString` result references. */
+	var boolTag = '[object Boolean]',
+	    dateTag = '[object Date]',
+	    errorTag = '[object Error]',
+	    mapTag = '[object Map]',
+	    numberTag = '[object Number]',
+	    regexpTag = '[object RegExp]',
+	    setTag = '[object Set]',
+	    stringTag = '[object String]',
+	    symbolTag = '[object Symbol]';
+
+	var arrayBufferTag = '[object ArrayBuffer]',
+	    dataViewTag = '[object DataView]';
+
+	/** Used to convert symbols to primitives and strings. */
+	var symbolProto = Symbol ? Symbol.prototype : undefined,
+	    symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
+
+	/**
+	 * A specialized version of `baseIsEqualDeep` for comparing objects of
+	 * the same `toStringTag`.
+	 *
+	 * **Note:** This function only supports comparing values with tags of
+	 * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+	 *
+	 * @private
+	 * @param {Object} object The object to compare.
+	 * @param {Object} other The other object to compare.
+	 * @param {string} tag The `toStringTag` of the objects to compare.
+	 * @param {Function} equalFunc The function to determine equivalents of values.
+	 * @param {Function} customizer The function to customize comparisons.
+	 * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
+	 *  for more details.
+	 * @param {Object} stack Tracks traversed `object` and `other` objects.
+	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+	 */
+	function equalByTag(object, other, tag, equalFunc, customizer, bitmask, stack) {
+	  switch (tag) {
+	    case dataViewTag:
+	      if ((object.byteLength != other.byteLength) ||
+	          (object.byteOffset != other.byteOffset)) {
+	        return false;
+	      }
+	      object = object.buffer;
+	      other = other.buffer;
+
+	    case arrayBufferTag:
+	      if ((object.byteLength != other.byteLength) ||
+	          !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
+	        return false;
+	      }
+	      return true;
+
+	    case boolTag:
+	    case dateTag:
+	    case numberTag:
+	      // Coerce booleans to `1` or `0` and dates to milliseconds.
+	      // Invalid dates are coerced to `NaN`.
+	      return eq(+object, +other);
+
+	    case errorTag:
+	      return object.name == other.name && object.message == other.message;
+
+	    case regexpTag:
+	    case stringTag:
+	      // Coerce regexes to strings and treat strings, primitives and objects,
+	      // as equal. See http://www.ecma-international.org/ecma-262/7.0/#sec-regexp.prototype.tostring
+	      // for more details.
+	      return object == (other + '');
+
+	    case mapTag:
+	      var convert = mapToArray;
+
+	    case setTag:
+	      var isPartial = bitmask & PARTIAL_COMPARE_FLAG;
+	      convert || (convert = setToArray);
+
+	      if (object.size != other.size && !isPartial) {
+	        return false;
+	      }
+	      // Assume cyclic values are equal.
+	      var stacked = stack.get(object);
+	      if (stacked) {
+	        return stacked == other;
+	      }
+	      bitmask |= UNORDERED_COMPARE_FLAG;
+
+	      // Recursively compare objects (susceptible to call stack limits).
+	      stack.set(object, other);
+	      var result = equalArrays(convert(object), convert(other), equalFunc, customizer, bitmask, stack);
+	      stack['delete'](object);
+	      return result;
+
+	    case symbolTag:
+	      if (symbolValueOf) {
+	        return symbolValueOf.call(object) == symbolValueOf.call(other);
+	      }
+	  }
+	  return false;
+	}
+
+	module.exports = equalByTag;
+
+
+/***/ },
+/* 807 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var root = __webpack_require__(710);
+
+	/** Built-in value references. */
+	var Uint8Array = root.Uint8Array;
+
+	module.exports = Uint8Array;
+
+
+/***/ },
+/* 808 */
+/***/ function(module, exports) {
+
+	/**
+	 * Converts `map` to its key-value pairs.
+	 *
+	 * @private
+	 * @param {Object} map The map to convert.
+	 * @returns {Array} Returns the key-value pairs.
+	 */
+	function mapToArray(map) {
+	  var index = -1,
+	      result = Array(map.size);
+
+	  map.forEach(function(value, key) {
+	    result[++index] = [key, value];
+	  });
+	  return result;
+	}
+
+	module.exports = mapToArray;
+
+
+/***/ },
+/* 809 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var keys = __webpack_require__(810);
+
+	/** Used to compose bitmasks for comparison styles. */
+	var PARTIAL_COMPARE_FLAG = 2;
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * A specialized version of `baseIsEqualDeep` for objects with support for
+	 * partial deep comparisons.
+	 *
+	 * @private
+	 * @param {Object} object The object to compare.
+	 * @param {Object} other The other object to compare.
+	 * @param {Function} equalFunc The function to determine equivalents of values.
+	 * @param {Function} customizer The function to customize comparisons.
+	 * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
+	 *  for more details.
+	 * @param {Object} stack Tracks traversed `object` and `other` objects.
+	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+	 */
+	function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
+	  var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
+	      objProps = keys(object),
+	      objLength = objProps.length,
+	      othProps = keys(other),
+	      othLength = othProps.length;
+
+	  if (objLength != othLength && !isPartial) {
+	    return false;
+	  }
+	  var index = objLength;
+	  while (index--) {
+	    var key = objProps[index];
+	    if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
+	      return false;
+	    }
+	  }
+	  // Assume cyclic values are equal.
+	  var stacked = stack.get(object);
+	  if (stacked && stack.get(other)) {
+	    return stacked == other;
+	  }
+	  var result = true;
+	  stack.set(object, other);
+	  stack.set(other, object);
+
+	  var skipCtor = isPartial;
+	  while (++index < objLength) {
+	    key = objProps[index];
+	    var objValue = object[key],
+	        othValue = other[key];
+
+	    if (customizer) {
+	      var compared = isPartial
+	        ? customizer(othValue, objValue, key, other, object, stack)
+	        : customizer(objValue, othValue, key, object, other, stack);
+	    }
+	    // Recursively compare objects (susceptible to call stack limits).
+	    if (!(compared === undefined
+	          ? (objValue === othValue || equalFunc(objValue, othValue, customizer, bitmask, stack))
+	          : compared
+	        )) {
+	      result = false;
+	      break;
+	    }
+	    skipCtor || (skipCtor = key == 'constructor');
+	  }
+	  if (result && !skipCtor) {
+	    var objCtor = object.constructor,
+	        othCtor = other.constructor;
+
+	    // Non `Object` object instances with different constructors are not equal.
+	    if (objCtor != othCtor &&
+	        ('constructor' in object && 'constructor' in other) &&
+	        !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
+	          typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+	      result = false;
+	    }
+	  }
+	  stack['delete'](object);
+	  stack['delete'](other);
+	  return result;
+	}
+
+	module.exports = equalObjects;
+
+
+/***/ },
+/* 810 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var arrayLikeKeys = __webpack_require__(811),
+	    baseKeys = __webpack_require__(818),
+	    isArrayLike = __webpack_require__(706);
+
+	/**
+	 * Creates an array of the own enumerable property names of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects. See the
+	 * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+	 * for more details.
+	 *
+	 * @static
+	 * @since 0.1.0
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.keys(new Foo);
+	 * // => ['a', 'b'] (iteration order is not guaranteed)
+	 *
+	 * _.keys('hi');
+	 * // => ['0', '1']
+	 */
+	function keys(object) {
+	  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
+	}
+
+	module.exports = keys;
+
+
+/***/ },
+/* 811 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseTimes = __webpack_require__(812),
+	    isArguments = __webpack_require__(783),
+	    isArray = __webpack_require__(785),
+	    isBuffer = __webpack_require__(813),
+	    isIndex = __webpack_require__(716),
+	    isTypedArray = __webpack_require__(815);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Creates an array of the enumerable property names of the array-like `value`.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @param {boolean} inherited Specify returning inherited property names.
+	 * @returns {Array} Returns the array of property names.
+	 */
+	function arrayLikeKeys(value, inherited) {
+	  var isArr = isArray(value),
+	      isArg = !isArr && isArguments(value),
+	      isBuff = !isArr && !isArg && isBuffer(value),
+	      isType = !isArr && !isArg && !isBuff && isTypedArray(value),
+	      skipIndexes = isArr || isArg || isBuff || isType,
+	      result = skipIndexes ? baseTimes(value.length, String) : [],
+	      length = result.length;
+
+	  for (var key in value) {
+	    if ((inherited || hasOwnProperty.call(value, key)) &&
+	        !(skipIndexes && (
+	           // Safari 9 has enumerable `arguments.length` in strict mode.
+	           key == 'length' ||
+	           // Node.js 0.10 has enumerable non-index properties on buffers.
+	           (isBuff && (key == 'offset' || key == 'parent')) ||
+	           // PhantomJS 2 has enumerable non-index properties on typed arrays.
+	           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||
+	           // Skip index properties.
+	           isIndex(key, length)
+	        ))) {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = arrayLikeKeys;
+
+
+/***/ },
+/* 812 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of `_.times` without support for iteratee shorthands
+	 * or max array length checks.
+	 *
+	 * @private
+	 * @param {number} n The number of times to invoke `iteratee`.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Array} Returns the array of results.
+	 */
+	function baseTimes(n, iteratee) {
+	  var index = -1,
+	      result = Array(n);
+
+	  while (++index < n) {
+	    result[index] = iteratee(index);
+	  }
+	  return result;
+	}
+
+	module.exports = baseTimes;
+
+
+/***/ },
+/* 813 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(710),
+	    stubFalse = __webpack_require__(814);
+
+	/** Detect free variable `exports`. */
+	var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
+
+	/** Detect free variable `module`. */
+	var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
+
+	/** Detect the popular CommonJS extension `module.exports`. */
+	var moduleExports = freeModule && freeModule.exports === freeExports;
+
+	/** Built-in value references. */
+	var Buffer = moduleExports ? root.Buffer : undefined;
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
+
+	/**
+	 * Checks if `value` is a buffer.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.3.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
+	 * @example
+	 *
+	 * _.isBuffer(new Buffer(2));
+	 * // => true
+	 *
+	 * _.isBuffer(new Uint8Array(2));
+	 * // => false
+	 */
+	var isBuffer = nativeIsBuffer || stubFalse;
+
+	module.exports = isBuffer;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module)))
+
+/***/ },
+/* 814 */
+/***/ function(module, exports) {
+
+	/**
+	 * This method returns `false`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.13.0
+	 * @category Util
+	 * @returns {boolean} Returns `false`.
+	 * @example
+	 *
+	 * _.times(2, _.stubFalse);
+	 * // => [false, false]
+	 */
+	function stubFalse() {
+	  return false;
+	}
+
+	module.exports = stubFalse;
+
+
+/***/ },
+/* 815 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIsTypedArray = __webpack_require__(816),
+	    baseUnary = __webpack_require__(778),
+	    nodeUtil = __webpack_require__(817);
+
+	/* Node.js helper references. */
+	var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
+
+	/**
+	 * Checks if `value` is classified as a typed array.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 3.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
+	 * @example
+	 *
+	 * _.isTypedArray(new Uint8Array);
+	 * // => true
+	 *
+	 * _.isTypedArray([]);
+	 * // => false
+	 */
+	var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
+
+	module.exports = isTypedArray;
+
+
+/***/ },
+/* 816 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseGetTag = __webpack_require__(708),
+	    isLength = __webpack_require__(715),
+	    isObjectLike = __webpack_require__(720);
+
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]',
+	    arrayTag = '[object Array]',
+	    boolTag = '[object Boolean]',
+	    dateTag = '[object Date]',
+	    errorTag = '[object Error]',
+	    funcTag = '[object Function]',
+	    mapTag = '[object Map]',
+	    numberTag = '[object Number]',
+	    objectTag = '[object Object]',
+	    regexpTag = '[object RegExp]',
+	    setTag = '[object Set]',
+	    stringTag = '[object String]',
+	    weakMapTag = '[object WeakMap]';
+
+	var arrayBufferTag = '[object ArrayBuffer]',
+	    dataViewTag = '[object DataView]',
+	    float32Tag = '[object Float32Array]',
+	    float64Tag = '[object Float64Array]',
+	    int8Tag = '[object Int8Array]',
+	    int16Tag = '[object Int16Array]',
+	    int32Tag = '[object Int32Array]',
+	    uint8Tag = '[object Uint8Array]',
+	    uint8ClampedTag = '[object Uint8ClampedArray]',
+	    uint16Tag = '[object Uint16Array]',
+	    uint32Tag = '[object Uint32Array]';
+
+	/** Used to identify `toStringTag` values of typed arrays. */
+	var typedArrayTags = {};
+	typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
+	typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
+	typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
+	typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
+	typedArrayTags[uint32Tag] = true;
+	typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
+	typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
+	typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
+	typedArrayTags[errorTag] = typedArrayTags[funcTag] =
+	typedArrayTags[mapTag] = typedArrayTags[numberTag] =
+	typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
+	typedArrayTags[setTag] = typedArrayTags[stringTag] =
+	typedArrayTags[weakMapTag] = false;
+
+	/**
+	 * The base implementation of `_.isTypedArray` without Node.js optimizations.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
+	 */
+	function baseIsTypedArray(value) {
+	  return isObjectLike(value) &&
+	    isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
+	}
+
+	module.exports = baseIsTypedArray;
+
+
+/***/ },
+/* 817 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(711);
+
+	/** Detect free variable `exports`. */
+	var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
+
+	/** Detect free variable `module`. */
+	var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
+
+	/** Detect the popular CommonJS extension `module.exports`. */
+	var moduleExports = freeModule && freeModule.exports === freeExports;
+
+	/** Detect free variable `process` from Node.js. */
+	var freeProcess = moduleExports && freeGlobal.process;
+
+	/** Used to access faster Node.js helpers. */
+	var nodeUtil = (function() {
+	  try {
+	    return freeProcess && freeProcess.binding('util');
+	  } catch (e) {}
+	}());
+
+	module.exports = nodeUtil;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module)))
+
+/***/ },
+/* 818 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isPrototype = __webpack_require__(819),
+	    nativeKeys = __webpack_require__(820);
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 */
+	function baseKeys(object) {
+	  if (!isPrototype(object)) {
+	    return nativeKeys(object);
+	  }
+	  var result = [];
+	  for (var key in Object(object)) {
+	    if (hasOwnProperty.call(object, key) && key != 'constructor') {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = baseKeys;
+
+
+/***/ },
+/* 819 */
+/***/ function(module, exports) {
+
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+
+	/**
+	 * Checks if `value` is likely a prototype object.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+	 */
+	function isPrototype(value) {
+	  var Ctor = value && value.constructor,
+	      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+
+	  return value === proto;
+	}
+
+	module.exports = isPrototype;
+
+
+/***/ },
+/* 820 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var overArg = __webpack_require__(821);
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeKeys = overArg(Object.keys, Object);
+
+	module.exports = nativeKeys;
+
+
+/***/ },
+/* 821 */
+/***/ function(module, exports) {
+
+	/**
+	 * Creates a unary function that invokes `func` with its argument transformed.
+	 *
+	 * @private
+	 * @param {Function} func The function to wrap.
+	 * @param {Function} transform The argument transform.
+	 * @returns {Function} Returns the new function.
+	 */
+	function overArg(func, transform) {
+	  return function(arg) {
+	    return func(transform(arg));
+	  };
+	}
+
+	module.exports = overArg;
+
+
+/***/ },
+/* 822 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var DataView = __webpack_require__(823),
+	    Map = __webpack_require__(762),
+	    Promise = __webpack_require__(824),
+	    Set = __webpack_require__(788),
+	    WeakMap = __webpack_require__(825),
+	    baseGetTag = __webpack_require__(708),
+	    toSource = __webpack_require__(740);
+
+	/** `Object#toString` result references. */
+	var mapTag = '[object Map]',
+	    objectTag = '[object Object]',
+	    promiseTag = '[object Promise]',
+	    setTag = '[object Set]',
+	    weakMapTag = '[object WeakMap]';
+
+	var dataViewTag = '[object DataView]';
+
+	/** Used to detect maps, sets, and weakmaps. */
+	var dataViewCtorString = toSource(DataView),
+	    mapCtorString = toSource(Map),
+	    promiseCtorString = toSource(Promise),
+	    setCtorString = toSource(Set),
+	    weakMapCtorString = toSource(WeakMap);
+
+	/**
+	 * Gets the `toStringTag` of `value`.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @returns {string} Returns the `toStringTag`.
+	 */
+	var getTag = baseGetTag;
+
+	// Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
+	if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
+	    (Map && getTag(new Map) != mapTag) ||
+	    (Promise && getTag(Promise.resolve()) != promiseTag) ||
+	    (Set && getTag(new Set) != setTag) ||
+	    (WeakMap && getTag(new WeakMap) != weakMapTag)) {
+	  getTag = function(value) {
+	    var result = baseGetTag(value),
+	        Ctor = result == objectTag ? value.constructor : undefined,
+	        ctorString = Ctor ? toSource(Ctor) : '';
+
+	    if (ctorString) {
+	      switch (ctorString) {
+	        case dataViewCtorString: return dataViewTag;
+	        case mapCtorString: return mapTag;
+	        case promiseCtorString: return promiseTag;
+	        case setCtorString: return setTag;
+	        case weakMapCtorString: return weakMapTag;
+	      }
+	    }
+	    return result;
+	  };
+	}
+
+	module.exports = getTag;
+
+
+/***/ },
+/* 823 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(736),
+	    root = __webpack_require__(710);
+
+	/* Built-in method references that are verified to be native. */
+	var DataView = getNative(root, 'DataView');
+
+	module.exports = DataView;
+
+
+/***/ },
+/* 824 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(736),
+	    root = __webpack_require__(710);
+
+	/* Built-in method references that are verified to be native. */
+	var Promise = getNative(root, 'Promise');
+
+	module.exports = Promise;
+
+
+/***/ },
+/* 825 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(736),
+	    root = __webpack_require__(710);
+
+	/* Built-in method references that are verified to be native. */
+	var WeakMap = getNative(root, 'WeakMap');
+
+	module.exports = WeakMap;
+
+
+/***/ },
+/* 826 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	/*
+	This class is a wrapper around react-tooltip that lets us have one big tooltip.
+	The tooltip gets hidden when you hover off, and changes content when you change what you hover on.
+	Hack 1:
+	I wanted the component to store the tooltip content, and then pass it as a child to react-tooltip.
+	This didn't really work because I also need to put display:none on the tooltip when we hover off, not just an empty white tooltip.
+	Hack 2:
+	Additionally we use the freeze feature of react-tooltip- passed inside through props- and want to unfreeze after click outside.
+	But that unfreeze also fired on clicking the column that turned freeze on in the first place, hence counting clicks.
+	*/
+	//*------------------------------------------------------------------*
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var React = __webpack_require__(138);
+	var ReactTooltip = __webpack_require__(827);
+	__webpack_require__(838);
+	//*------------------------------------------------------------------*
+
+	var TooltipStateManager = React.createClass({
+	  displayName: 'TooltipStateManager',
+
+	  propTypes: {
+	    onUserSelectsRow: React.PropTypes.func.isRequired,
+	    onUserSelectsColumn: React.PropTypes.func.isRequired,
+	    onUserSelectsPoint: React.PropTypes.func.isRequired,
+	    tooltips: React.PropTypes.shape({
+	      row: React.PropTypes.func,
+	      column: React.PropTypes.func,
+	      point: React.PropTypes.func
+	    }).isRequired,
+	    managedComponent: React.PropTypes.any.isRequired,
+	    managedComponentProps: React.PropTypes.object.isRequired,
+	    enableFreeze: React.PropTypes.bool.isRequired
+	  },
+
+	  getInitialState: function getInitialState() {
+	    return {
+	      tooltipFrozen: false,
+	      clickCount: 0
+	    };
+	  },
+
+	  _onUserSelectsRow: function _onUserSelectsRow(rowLabel) {
+	    if (this.state.tooltipFrozen) return;
+	    this.refs["tooltip"].setState(rowLabel ? { placeholder: this.props.tooltips.row(rowLabel),
+	      place: "right",
+	      extraClass: "gxaGlobalTooltipContent" } : { extraClass: "gxaDisabled" });
+	    this.props.onUserSelectsRow(rowLabel);
+	  },
+	  _onUserSelectsColumn: function _onUserSelectsColumn(columnLabel) {
+	    if (this.state.tooltipFrozen) return;
+	    this.refs["tooltip"].setState(columnLabel ? { placeholder: this.props.tooltips.column(columnLabel),
+	      place: "bottom",
+	      extraClass: "gxaGlobalTooltipContent" } : { extraClass: "gxaDisabled" });
+	    this.props.onUserSelectsColumn(columnLabel);
+	  },
+	  _onUserSelectsPoint: function _onUserSelectsPoint(__args__) {
+	    /*
+	    //We let Highcharts manage the point formatter for now since we're not disappointed.
+	    this.refs["tooltip"].setState(
+	      hoveredPoint
+	      ? {placeholder: this.props.tooltips.point(hoveredPoint),
+	        extraClass:"gxaGlobalTooltipContent"}
+	      : {extraClass:"gxaDisabled"}
+	    );
+	    */
+	    this.props.onUserSelectsPoint.apply({}, arguments);
+	  },
+
+	  _dismissTooltip: function _dismissTooltip() {
+	    if (this.state.clickCount > 0) {
+	      this.setState({ tooltipFrozen: false, clickCount: 0 });
+	      this.refs["tooltip"].setState({ extraClass: "gxaDisabled" });
+	    }
+	    this.setState(function (previousState) {
+	      return { clickCount: previousState.clickCount + 1 };
+	    });
+	  },
+
+	  _onUserClicksColumn: function _onUserClicksColumn(columnLabel) {
+	    if (this.props.enableFreeze) {
+	      this.setState(function (previousState) {
+	        return { tooltipFrozen: !previousState.tooltipFrozen, clickCount: 0 };
+	      });
+	    }
+	    this._onUserSelectsColumn(columnLabel);
+	  },
+
+	  render: function render() {
+	    var ManagedComponent = this.props.managedComponent;
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'div',
+	        _extends({
+	          'data-tip': true,
+	          'data-for': 'gxaGlobalTooltipOverManagedComponent'
+	        }, this.state.tooltipFrozen ? {
+	          className: "gxaFadeBackgroundForOpenTooltip"
+	        } : {}),
+	        React.createElement(ManagedComponent, Object.assign({}, this.props.managedComponentProps, { onUserSelectsRow: this._onUserSelectsRow,
+	          onUserSelectsColumn: this._onUserSelectsColumn,
+	          onUserSelectsPoint: this._onUserSelectsPoint,
+	          onUserClicksColumn: this._onUserClicksColumn,
+	          "data-tip": true
+	        }))
+	      ),
+	      React.createElement(
+	        ReactTooltip,
+	        {
+	          ref: 'tooltip',
+	          id: 'gxaGlobalTooltipOverManagedComponent',
+	          type: 'light',
+	          frozen: !!this.state.tooltipFrozen,
+	          onClickOutside: this.props.enableFreeze ? this._dismissTooltip : undefined,
+	          'class': "gxaDisabled" },
+	        React.createElement('div', null)
+	      )
+	    );
+	  }
+	});
+
+	module.exports = TooltipStateManager;
+
+/***/ },
+/* 827 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _class, _class2, _temp;
+
+	/* Decoraters */
+
+
+	/* Utils */
+
+
+	/* CSS */
+
+
+	var _react = __webpack_require__(138);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(299);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _classnames = __webpack_require__(828);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _staticMethods = __webpack_require__(829);
+
+	var _staticMethods2 = _interopRequireDefault(_staticMethods);
+
+	var _windowListener = __webpack_require__(831);
+
+	var _windowListener2 = _interopRequireDefault(_windowListener);
+
+	var _customEvent = __webpack_require__(832);
+
+	var _customEvent2 = _interopRequireDefault(_customEvent);
+
+	var _isCapture = __webpack_require__(833);
+
+	var _isCapture2 = _interopRequireDefault(_isCapture);
+
+	var _getPosition = __webpack_require__(834);
+
+	var _getPosition2 = _interopRequireDefault(_getPosition);
+
+	var _getTipContent = __webpack_require__(835);
+
+	var _getTipContent2 = _interopRequireDefault(_getTipContent);
+
+	var _aria = __webpack_require__(836);
+
+	var _style = __webpack_require__(837);
+
+	var _style2 = _interopRequireDefault(_style);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var ReactTooltip = (0, _staticMethods2.default)(_class = (0, _windowListener2.default)(_class = (0, _customEvent2.default)(_class = (0, _isCapture2.default)(_class = (_temp = _class2 = function (_Component) {
+	  _inherits(ReactTooltip, _Component);
+
+	  function ReactTooltip(props) {
+	    _classCallCheck(this, ReactTooltip);
+
+	    var _this = _possibleConstructorReturn(this, (ReactTooltip.__proto__ || Object.getPrototypeOf(ReactTooltip)).call(this, props));
+
+	    _this.onClickOutsideFrozenTooltip = function (e) {
+	      var _this$props = _this.props;
+	      var frozen = _this$props.frozen;
+	      var onClickOutside = _this$props.onClickOutside;
+	      var currentTarget = _this.state.currentTarget;
+
+	      if (frozen && onClickOutside && !_reactDom2.default.findDOMNode(_this).contains(e.target) && e.target !== currentTarget) {
+	        onClickOutside();
+	      }
+	    };
+
+	    _this.state = {
+	      place: 'top', // Direction of tooltip
+	      type: 'dark', // Color theme of tooltip
+	      effect: 'float', // float or fixed
+	      show: false,
+	      border: false,
+	      placeholder: '',
+	      offset: {},
+	      extraClass: '',
+	      html: false,
+	      delayHide: 0,
+	      delayShow: 0,
+	      event: props.event || null,
+	      eventOff: props.eventOff || null,
+	      currentEvent: null, // Current mouse event
+	      currentTarget: null, // Current target of mouse event
+	      ariaProps: (0, _aria.parseAria)(props), // aria- and role attributes
+	      afterUnfreeze: function afterUnfreeze() {},
+	      isEmptyTip: false,
+	      disable: false
+	    };
+
+	    _this.bind(['showTooltip', 'updateTooltip', 'hideTooltip', 'globalRebuild', 'globalShow', 'globalHide', 'onWindowResize']);
+
+	    _this.mount = true;
+	    _this.delayShowLoop = null;
+	    _this.delayHideLoop = null;
+	    _this.intervalUpdateContent = null;
+	    return _this;
+	  }
+
+	  /**
+	   * For unify the bind and unbind listener
+	   */
+
+
+	  _createClass(ReactTooltip, [{
+	    key: 'bind',
+	    value: function bind(methodArray) {
+	      var _this2 = this;
+
+	      methodArray.forEach(function (method) {
+	        _this2[method] = _this2[method].bind(_this2);
+	      });
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.setStyleHeader(); // Set the style to the <link>
+	      this.bindListener(); // Bind listener for tooltip
+	      this.bindWindowEvents(this.props.resizeHide); // Bind global event for static method
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(props) {
+	      if (!props.frozen && this.props.frozen) {
+	        this.state.afterUnfreeze();
+	      }
+	      var ariaProps = this.state.ariaProps;
+
+	      var newAriaProps = (0, _aria.parseAria)(props);
+
+	      var isChanged = Object.keys(newAriaProps).some(function (props) {
+	        return newAriaProps[props] !== ariaProps[props];
+	      });
+	      if (isChanged) {
+	        this.setState({ ariaProps: newAriaProps });
+	      }
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.mount = false;
+
+	      this.clearTimer();
+
+	      this.unbindListener();
+	      this.removeScrollListener();
+	      this.unbindWindowEvents();
+	    }
+
+	    /**
+	     * Pick out corresponded target elements
+	     */
+
+	  }, {
+	    key: 'getTargetArray',
+	    value: function getTargetArray(id) {
+	      var targetArray = void 0;
+
+	      if (!id) {
+	        targetArray = document.querySelectorAll('[data-tip]:not([data-for])');
+	      } else {
+	        targetArray = document.querySelectorAll('[data-tip][data-for="' + id + '"]');
+	      }
+
+	      // targetArray is a NodeList, convert it to a real array
+	      // I hope I can use Object.values...
+	      return Object.keys(targetArray).filter(function (key) {
+	        return key !== 'length';
+	      }).map(function (key) {
+	        return targetArray[key];
+	      });
+	    }
+
+	    /**
+	     * Bind listener to the target elements
+	     * These listeners used to trigger showing or hiding the tooltip
+	     */
+
+	  }, {
+	    key: 'bindListener',
+	    value: function bindListener() {
+	      var _this3 = this;
+
+	      var _props = this.props;
+	      var id = _props.id;
+	      var globalEventOff = _props.globalEventOff;
+
+	      var targetArray = this.getTargetArray(id);
+
+	      targetArray.forEach(function (target) {
+	        var isCaptureMode = _this3.isCapture(target);
+	        if (target.getAttribute('currentItem') === null) {
+	          target.setAttribute('currentItem', 'false');
+	        }
+	        _this3.unbindBasicListener(target);
+
+	        if (_this3.isCustomEvent(target)) {
+	          _this3.customBindListener(target);
+	          return;
+	        }
+
+	        target.addEventListener('mouseenter', _this3.showTooltip, isCaptureMode);
+	        if (_this3.state.effect === 'float') {
+	          target.addEventListener('mousemove', _this3.updateTooltip, isCaptureMode);
+	        }
+	        target.addEventListener('mouseleave', _this3.hideTooltip, isCaptureMode);
+	      });
+
+	      // Global event to hide tooltip
+	      if (globalEventOff) {
+	        window.removeEventListener(globalEventOff, this.hideTooltip);
+	        window.addEventListener(globalEventOff, this.hideTooltip, false);
+	      }
+
+	      if (this.props.onClickOutside) {
+	        window.addEventListener('click', this.onClickOutsideFrozenTooltip);
+	      }
+	    }
+
+	    /**
+	     * Unbind listeners on target elements
+	     */
+
+	  }, {
+	    key: 'unbindListener',
+	    value: function unbindListener() {
+	      var _this4 = this;
+
+	      var _props2 = this.props;
+	      var id = _props2.id;
+	      var globalEventOff = _props2.globalEventOff;
+
+	      var targetArray = this.getTargetArray(id);
+	      targetArray.forEach(function (target) {
+	        _this4.unbindBasicListener(target);
+	        if (_this4.isCustomEvent(target)) _this4.customUnbindListener(target);
+	      });
+
+	      if (globalEventOff) window.removeEventListener(globalEventOff, this.hideTooltip);
+	      window.removeEventListener('click', this.onClickOutsideFrozenTooltip);
+	    }
+
+	    /**
+	     * Invoke this before bind listener and ummount the compont
+	     * it is necessary to invloke this even when binding custom event
+	     * so that the tooltip can switch between custom and default listener
+	     */
+
+	  }, {
+	    key: 'unbindBasicListener',
+	    value: function unbindBasicListener(target) {
+	      target.removeEventListener('mouseenter', this.showTooltip);
+	      target.removeEventListener('mousemove', this.updateTooltip);
+	      target.removeEventListener('mouseleave', this.hideTooltip);
+	    }
+
+	    /**
+	     * When mouse enter, show the tooltip
+	     */
+
+	  }, {
+	    key: 'showTooltip',
+	    value: function showTooltip(e, isGlobalCall) {
+	      var _this5 = this;
+
+	      if (isGlobalCall) {
+	        // Don't trigger other elements belongs to other ReactTooltip
+	        var targetArray = this.getTargetArray(this.props.id);
+	        var isMyElement = targetArray.some(function (ele) {
+	          return ele === e.currentTarget;
+	        });
+	        if (!isMyElement || this.state.show) return;
+	      }
+	      // Get the tooltip content
+	      // calculate in this phrase so that tip width height can be detected
+	      var _props3 = this.props;
+	      var children = _props3.children;
+	      var multiline = _props3.multiline;
+	      var getContent = _props3.getContent;
+	      var frozen = _props3.frozen;
+
+	      if (frozen) return;
+	      var originTooltip = e.currentTarget.getAttribute('data-tip');
+	      var isMultiline = e.currentTarget.getAttribute('data-multiline') || multiline || false;
+
+	      // Generate tootlip content
+	      var content = void 0;
+	      if (getContent) {
+	        if (Array.isArray(getContent)) {
+	          content = getContent[0] && getContent[0]();
+	        } else {
+	          content = getContent();
+	        }
+	      }
+	      var placeholder = (0, _getTipContent2.default)(originTooltip, children, content, isMultiline);
+	      var isEmptyTip = typeof placeholder === 'string' && placeholder === '' || placeholder === null;
+
+	      // If it is focus event or called by ReactTooltip.show, switch to `solid` effect
+	      var switchToSolid = e instanceof window.FocusEvent || isGlobalCall;
+
+	      // if it need to skip adding hide listener to scroll
+	      var scrollHide = true;
+	      if (e.currentTarget.getAttribute('data-scroll-hide')) {
+	        scrollHide = e.currentTarget.getAttribute('data-scroll-hide') === 'true';
+	      } else if (this.props.scrollHide != null) {
+	        scrollHide = this.props.scrollHide;
+	      }
+
+	      this.setState({
+	        placeholder: placeholder,
+	        isEmptyTip: isEmptyTip,
+	        place: e.currentTarget.getAttribute('data-place') || this.props.place || 'top',
+	        type: e.currentTarget.getAttribute('data-type') || this.props.type || 'dark',
+	        effect: switchToSolid && 'solid' || e.currentTarget.getAttribute('data-effect') || this.props.effect || 'float',
+	        offset: e.currentTarget.getAttribute('data-offset') || this.props.offset || {},
+	        html: e.currentTarget.getAttribute('data-html') ? e.currentTarget.getAttribute('data-html') === 'true' : this.props.html || false,
+	        delayShow: e.currentTarget.getAttribute('data-delay-show') || this.props.delayShow || 0,
+	        delayHide: e.currentTarget.getAttribute('data-delay-hide') || this.props.delayHide || 0,
+	        border: e.currentTarget.getAttribute('data-border') ? e.currentTarget.getAttribute('data-border') === 'true' : this.props.border || false,
+	        extraClass: e.currentTarget.getAttribute('data-class') || this.props.class || '',
+	        disable: e.currentTarget.getAttribute('data-tip-disable') ? e.currentTarget.getAttribute('data-tip-disable') === 'true' : this.props.disable || false
+	      }, function () {
+	        if (scrollHide) _this5.addScrollListener(e);
+	        _this5.updateTooltip(e);
+
+	        if (getContent && Array.isArray(getContent)) {
+	          _this5.intervalUpdateContent = setInterval(function () {
+	            if (_this5.mount) {
+	              var _getContent = _this5.props.getContent;
+
+	              var _placeholder = (0, _getTipContent2.default)(originTooltip, _getContent[0](), isMultiline);
+	              var _isEmptyTip = typeof _placeholder === 'string' && _placeholder === '';
+	              _this5.setState({
+	                placeholder: _placeholder,
+	                isEmptyTip: _isEmptyTip
+	              });
+	            }
+	          }, getContent[1]);
+	        }
+	      });
+	    }
+
+	    /**
+	     * When mouse hover, updatetooltip
+	     */
+
+	  }, {
+	    key: 'updateTooltip',
+	    value: function updateTooltip(e) {
+	      var _this6 = this;
+
+	      var _state = this.state;
+	      var delayShow = _state.delayShow;
+	      var show = _state.show;
+	      var isEmptyTip = _state.isEmptyTip;
+	      var disable = _state.disable;
+	      var _props4 = this.props;
+	      var afterShow = _props4.afterShow;
+	      var frozen = _props4.frozen;
+	      var placeholder = this.state.placeholder;
+
+	      var delayTime = show ? 0 : parseInt(delayShow, 10);
+	      var eventTarget = e.currentTarget;
+
+	      if (isEmptyTip || disable) return; // if the tooltip is empty, disable the tooltip
+	      var updateState = function updateState() {
+	        if (Array.isArray(placeholder) && placeholder.length > 0 || placeholder) {
+	          (function () {
+	            var isInvisible = !_this6.state.show;
+	            _this6.setState({
+	              currentEvent: e,
+	              currentTarget: eventTarget,
+	              show: true
+	            }, function () {
+	              _this6.updatePosition();
+	              if (isInvisible && afterShow) afterShow();
+	            });
+	          })();
+	        }
+	      };
+
+	      clearTimeout(this.delayShowLoop);
+	      if (frozen) {
+	        this.setState({ afterUnfreeze: updateState });
+	      } else if (delayShow) {
+	        this.delayShowLoop = setTimeout(updateState, delayTime);
+	      } else {
+	        updateState();
+	      }
+	    }
+	  }, {
+	    key: 'hideTooltip',
+
+
+	    /**
+	     * When mouse leave, hide tooltip
+	     */
+	    value: function hideTooltip(e, hasTarget) {
+	      var _this7 = this;
+
+	      var _state2 = this.state;
+	      var delayHide = _state2.delayHide;
+	      var isEmptyTip = _state2.isEmptyTip;
+	      var disable = _state2.disable;
+	      var _props5 = this.props;
+	      var afterHide = _props5.afterHide;
+	      var frozen = _props5.frozen;
+
+	      if (!this.mount) return;
+	      if (isEmptyTip || disable) return; // if the tooltip is empty, disable the tooltip
+	      if (hasTarget) {
+	        // Don't trigger other elements belongs to other ReactTooltip
+	        var targetArray = this.getTargetArray(this.props.id);
+	        var isMyElement = targetArray.some(function (ele) {
+	          return ele === e.currentTarget;
+	        });
+	        if (!isMyElement || !this.state.show) return;
+	      }
+	      var resetState = function resetState() {
+	        var isVisible = _this7.state.show;
+	        _this7.setState({
+	          show: false
+	        }, function () {
+	          _this7.removeScrollListener();
+	          if (isVisible && afterHide) afterHide();
+	        });
+	      };
+
+	      this.clearTimer();
+	      if (frozen) {
+	        this.setState({ afterUnfreeze: resetState });
+	      } else if (delayHide) {
+	        this.delayHideLoop = setTimeout(resetState, parseInt(delayHide, 10));
+	      } else {
+	        resetState();
+	      }
+	    }
+
+	    /**
+	     * Add scroll eventlistener when tooltip show
+	     * automatically hide the tooltip when scrolling
+	     */
+
+	  }, {
+	    key: 'addScrollListener',
+	    value: function addScrollListener(e) {
+	      var isCaptureMode = this.isCapture(e.currentTarget);
+	      window.addEventListener('scroll', this.hideTooltip, isCaptureMode);
+	    }
+	  }, {
+	    key: 'removeScrollListener',
+	    value: function removeScrollListener() {
+	      window.removeEventListener('scroll', this.hideTooltip);
+	    }
+
+	    // Calculate the position
+
+	  }, {
+	    key: 'updatePosition',
+	    value: function updatePosition() {
+	      var _this8 = this;
+
+	      var _state3 = this.state;
+	      var currentEvent = _state3.currentEvent;
+	      var currentTarget = _state3.currentTarget;
+	      var place = _state3.place;
+	      var effect = _state3.effect;
+	      var offset = _state3.offset;
+
+	      var node = _reactDom2.default.findDOMNode(this);
+	      var result = (0, _getPosition2.default)(currentEvent, currentTarget, node, place, effect, offset);
+
+	      if (result.isNewState) {
+	        // Switch to reverse placement
+	        return this.setState(result.newState, function () {
+	          _this8.updatePosition();
+	        });
+	      }
+	      // Set tooltip position
+	      node.style.left = result.position.left + 'px';
+	      node.style.top = result.position.top + 'px';
+	    }
+
+	    /**
+	     * Set style tag in header
+	     * in this way we can insert default css
+	     */
+
+	  }, {
+	    key: 'setStyleHeader',
+	    value: function setStyleHeader() {
+	      if (!document.getElementsByTagName('head')[0].querySelector('style[id="react-tooltip"]')) {
+	        var tag = document.createElement('style');
+	        tag.id = 'react-tooltip';
+	        tag.innerHTML = _style2.default;
+	        document.getElementsByTagName('head')[0].appendChild(tag);
+	      }
+	    }
+
+	    /**
+	     * CLear all kinds of timeout of interval
+	     */
+
+	  }, {
+	    key: 'clearTimer',
+	    value: function clearTimer() {
+	      clearTimeout(this.delayShowLoop);
+	      clearTimeout(this.delayHideLoop);
+	      clearInterval(this.intervalUpdateContent);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _state4 = this.state;
+	      var placeholder = _state4.placeholder;
+	      var extraClass = _state4.extraClass;
+	      var html = _state4.html;
+	      var ariaProps = _state4.ariaProps;
+	      var disable = _state4.disable;
+	      var isEmptyTip = _state4.isEmptyTip;
+
+	      var tooltipClass = (0, _classnames2.default)('__react_component_tooltip', { 'show': this.state.show && !disable && !isEmptyTip }, { 'frozen': this.props.frozen }, { 'border': this.state.border }, { 'place-top': this.state.place === 'top' }, { 'place-bottom': this.state.place === 'bottom' }, { 'place-left': this.state.place === 'left' }, { 'place-right': this.state.place === 'right' }, { 'type-dark': this.state.type === 'dark' }, { 'type-success': this.state.type === 'success' }, { 'type-warning': this.state.type === 'warning' }, { 'type-error': this.state.type === 'error' }, { 'type-info': this.state.type === 'info' }, { 'type-light': this.state.type === 'light' });
+	      if (html) {
+	        return _react2.default.createElement('div', _extends({ className: tooltipClass + ' ' + extraClass
+	        }, ariaProps, {
+	          'data-id': 'tooltip',
+	          dangerouslySetInnerHTML: { __html: placeholder } }));
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          _extends({ className: tooltipClass + ' ' + extraClass
+	          }, ariaProps, {
+	            'data-id': 'tooltip' }),
+	          placeholder
+	        );
+	      }
+	    }
+	  }]);
+
+	  return ReactTooltip;
+	}(_react.Component), _class2.propTypes = {
+	  children: _react.PropTypes.any,
+	  place: _react.PropTypes.string,
+	  type: _react.PropTypes.string,
+	  effect: _react.PropTypes.string,
+	  offset: _react.PropTypes.object,
+	  multiline: _react.PropTypes.bool,
+	  border: _react.PropTypes.bool,
+	  class: _react.PropTypes.string,
+	  id: _react.PropTypes.string,
+	  html: _react.PropTypes.bool,
+	  delayHide: _react.PropTypes.number,
+	  delayShow: _react.PropTypes.number,
+	  event: _react.PropTypes.string,
+	  eventOff: _react.PropTypes.string,
+	  watchWindow: _react.PropTypes.bool,
+	  isCapture: _react.PropTypes.bool,
+	  globalEventOff: _react.PropTypes.string,
+	  getContent: _react.PropTypes.any,
+	  afterShow: _react.PropTypes.func,
+	  afterHide: _react.PropTypes.func,
+	  disable: _react.PropTypes.bool,
+	  frozen: _react.PropTypes.bool,
+	  onClickOutside: _react.PropTypes.func,
+	  scrollHide: _react.PropTypes.bool,
+	  resizeHide: _react.PropTypes.bool
+	}, _class2.defaultProps = {
+	  resizeHide: true
+	}, _temp)) || _class) || _class) || _class) || _class;
+
+	/* export default not fit for standalone, it will exports {default:...} */
+
+
+	module.exports = ReactTooltip;
+
+/***/ },
+/* 828 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames () {
+			var classes = [];
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg;
+
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+
+			return classes.join(' ');
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 829 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (target) {
+	  /**
+	   * Hide all tooltip
+	   * @trigger ReactTooltip.hide()
+	   */
+	  target.hide = function (target) {
+	    dispatchGlobalEvent(_constant2.default.GLOBAL.HIDE, { target: target });
+	  };
+
+	  /**
+	   * Rebuild all tooltip
+	   * @trigger ReactTooltip.rebuild()
+	   */
+	  target.rebuild = function () {
+	    dispatchGlobalEvent(_constant2.default.GLOBAL.REBUILD);
+	  };
+
+	  /**
+	   * Show specific tooltip
+	   * @trigger ReactTooltip.show()
+	   */
+	  target.show = function (target) {
+	    dispatchGlobalEvent(_constant2.default.GLOBAL.SHOW, { target: target });
+	  };
+
+	  target.prototype.globalRebuild = function () {
+	    if (this.mount) {
+	      this.unbindListener();
+	      this.bindListener();
+	    }
+	  };
+
+	  target.prototype.globalShow = function (event) {
+	    if (this.mount) {
+	      // Create a fake event, specific show will limit the type to `solid`
+	      // only `float` type cares e.clientX e.clientY
+	      var e = { currentTarget: event.detail.target };
+	      this.showTooltip(e, true);
+	    }
+	  };
+
+	  target.prototype.globalHide = function (event) {
+	    if (this.mount) {
+	      var hasTarget = event && event.detail && event.detail.target && true || false;
+	      this.hideTooltip({ currentTarget: hasTarget && event.detail.target }, hasTarget);
+	    }
+	  };
+	};
+
+	var _constant = __webpack_require__(830);
+
+	var _constant2 = _interopRequireDefault(_constant);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var dispatchGlobalEvent = function dispatchGlobalEvent(eventName, opts) {
+	  // Compatibale with IE
+	  // @see http://stackoverflow.com/questions/26596123/internet-explorer-9-10-11-event-constructor-doesnt-work
+	  var event = void 0;
+
+	  if (typeof window.CustomEvent === 'function') {
+	    event = new window.CustomEvent(eventName, { detail: opts });
+	  } else {
+	    event = document.createEvent('Event');
+	    event.initEvent(eventName, false, true, opts);
+	  }
+
+	  window.dispatchEvent(event);
+	}; /**
+	    * Static methods for react-tooltip
+	    */
+
+/***/ },
+/* 830 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = {
+
+	  GLOBAL: {
+	    HIDE: '__react_tooltip_hide_event',
+	    REBUILD: '__react_tooltip_rebuild_event',
+	    SHOW: '__react_tooltip_show_event'
+	  }
+	};
+
+/***/ },
+/* 831 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (target) {
+	  target.prototype.bindWindowEvents = function (resizeHide) {
+	    // ReactTooltip.hide
+	    window.removeEventListener(_constant2.default.GLOBAL.HIDE, this.globalHide);
+	    window.addEventListener(_constant2.default.GLOBAL.HIDE, this.globalHide, false);
+
+	    // ReactTooltip.rebuild
+	    window.removeEventListener(_constant2.default.GLOBAL.REBUILD, this.globalRebuild);
+	    window.addEventListener(_constant2.default.GLOBAL.REBUILD, this.globalRebuild, false);
+
+	    // ReactTooltip.show
+	    window.removeEventListener(_constant2.default.GLOBAL.SHOW, this.globalShow);
+	    window.addEventListener(_constant2.default.GLOBAL.SHOW, this.globalShow, false);
+
+	    // Resize
+	    if (resizeHide) {
+	      window.removeEventListener('resize', this.onWindowResize);
+	      window.addEventListener('resize', this.onWindowResize, false);
+	    }
+	  };
+
+	  target.prototype.unbindWindowEvents = function () {
+	    window.removeEventListener(_constant2.default.GLOBAL.HIDE, this.globalHide);
+	    window.removeEventListener(_constant2.default.GLOBAL.REBUILD, this.globalRebuild);
+	    window.removeEventListener(_constant2.default.GLOBAL.SHOW, this.globalShow);
+	    window.removeEventListener('resize', this.onWindowResize);
+	  };
+
+	  /**
+	   * invoked by resize event of window
+	   */
+	  target.prototype.onWindowResize = function () {
+	    if (!this.mount) return;
+	    this.hideTooltip();
+	  };
+	};
+
+	var _constant = __webpack_require__(830);
+
+	var _constant2 = _interopRequireDefault(_constant);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ },
+/* 832 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (target) {
+	  target.prototype.isCustomEvent = function (ele) {
+	    var event = this.state.event;
+
+	    return event || !!ele.getAttribute('data-event');
+	  };
+
+	  /* Bind listener for custom event */
+	  target.prototype.customBindListener = function (ele) {
+	    var _this = this;
+
+	    var _state = this.state;
+	    var event = _state.event;
+	    var eventOff = _state.eventOff;
+
+	    var dataEvent = ele.getAttribute('data-event') || event;
+	    var dataEventOff = ele.getAttribute('data-event-off') || eventOff;
+
+	    dataEvent.split(' ').forEach(function (event) {
+	      ele.removeEventListener(event, customListener);
+	      customListener = checkStatus.bind(_this, dataEventOff);
+	      ele.addEventListener(event, customListener, false);
+	    });
+	    if (dataEventOff) {
+	      dataEventOff.split(' ').forEach(function (event) {
+	        ele.removeEventListener(event, _this.hideTooltip);
+	        ele.addEventListener(event, _this.hideTooltip, false);
+	      });
+	    }
+	  };
+
+	  /* Unbind listener for custom event */
+	  target.prototype.customUnbindListener = function (ele) {
+	    var _state2 = this.state;
+	    var event = _state2.event;
+	    var eventOff = _state2.eventOff;
+
+	    var dataEvent = event || ele.getAttribute('data-event');
+	    var dataEventOff = eventOff || ele.getAttribute('data-event-off');
+
+	    ele.removeEventListener(dataEvent, customListener);
+	    if (dataEventOff) ele.removeEventListener(dataEventOff, this.hideTooltip);
+	  };
+	};
+
+	/**
+	 * Custom events to control showing and hiding of tooltip
+	 *
+	 * @attributes
+	 * - `event` {String}
+	 * - `eventOff` {String}
+	 */
+
+	var checkStatus = function checkStatus(dataEventOff, e) {
+	  var show = this.state.show;
+	  var id = this.props.id;
+
+	  var dataIsCapture = e.currentTarget.getAttribute('data-iscapture');
+	  var isCapture = dataIsCapture && dataIsCapture === 'true' || this.props.isCapture;
+	  var currentItem = e.currentTarget.getAttribute('currentItem');
+
+	  if (!isCapture) e.stopPropagation();
+	  if (show && currentItem === 'true') {
+	    if (!dataEventOff) this.hideTooltip(e);
+	  } else {
+	    e.currentTarget.setAttribute('currentItem', 'true');
+	    setUntargetItems(e.currentTarget, this.getTargetArray(id));
+	    this.showTooltip(e);
+	  }
+	};
+
+	var setUntargetItems = function setUntargetItems(currentTarget, targetArray) {
+	  for (var i = 0; i < targetArray.length; i++) {
+	    if (currentTarget !== targetArray[i]) {
+	      targetArray[i].setAttribute('currentItem', 'false');
+	    } else {
+	      targetArray[i].setAttribute('currentItem', 'true');
+	    }
+	  }
+	};
+
+	var customListener = void 0;
+
+/***/ },
+/* 833 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (target) {
+	  target.prototype.isCapture = function (currentTarget) {
+	    var dataIsCapture = currentTarget.getAttribute('data-iscapture');
+	    return dataIsCapture && dataIsCapture === 'true' || this.props.isCapture || false;
+	  };
+	};
+
+/***/ },
+/* 834 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (e, target, node, place, effect, offset) {
+	  var tipWidth = node.clientWidth;
+	  var tipHeight = node.clientHeight;
+
+	  var _getCurrentOffset = getCurrentOffset(e, target, effect);
+
+	  var mouseX = _getCurrentOffset.mouseX;
+	  var mouseY = _getCurrentOffset.mouseY;
+
+	  var defaultOffset = getDefaultPosition(effect, target.clientWidth, target.clientHeight, tipWidth, tipHeight);
+
+	  var _calculateOffset = calculateOffset(offset);
+
+	  var extraOffset_X = _calculateOffset.extraOffset_X;
+	  var extraOffset_Y = _calculateOffset.extraOffset_Y;
+
+
+	  var windowWidth = window.innerWidth;
+	  var windowHeight = window.innerHeight;
+
+	  var _getParent = getParent(node);
+
+	  var parentTop = _getParent.parentTop;
+	  var parentLeft = _getParent.parentLeft;
+
+	  // Get the edge offset of the tooltip
+
+	  var getTipOffsetLeft = function getTipOffsetLeft(place) {
+	    var offset_X = defaultOffset[place].l;
+	    return mouseX + offset_X + extraOffset_X;
+	  };
+	  var getTipOffsetRight = function getTipOffsetRight(place) {
+	    var offset_X = defaultOffset[place].r;
+	    return mouseX + offset_X + extraOffset_X;
+	  };
+	  var getTipOffsetTop = function getTipOffsetTop(place) {
+	    var offset_Y = defaultOffset[place].t;
+	    return mouseY + offset_Y + extraOffset_Y;
+	  };
+	  var getTipOffsetBottom = function getTipOffsetBottom(place) {
+	    var offset_Y = defaultOffset[place].b;
+	    return mouseY + offset_Y + extraOffset_Y;
+	  };
+
+	  // Judge if the tooltip has over the window(screen)
+	  var outsideVertical = function outsideVertical() {
+	    var result = false;
+	    var newPlace = void 0;
+	    if (getTipOffsetTop('left') < 0 && getTipOffsetBottom('left') <= windowHeight && getTipOffsetBottom('bottom') <= windowHeight) {
+	      result = true;
+	      newPlace = 'bottom';
+	    } else if (getTipOffsetBottom('left') > windowHeight && getTipOffsetTop('left') >= 0 && getTipOffsetTop('top') >= 0) {
+	      result = true;
+	      newPlace = 'top';
+	    }
+	    return { result: result, newPlace: newPlace };
+	  };
+	  var outsideLeft = function outsideLeft() {
+	    var _outsideVertical = outsideVertical();
+
+	    var result = _outsideVertical.result;
+	    var newPlace = _outsideVertical.newPlace; // Deal with vertical as first priority
+
+	    if (result && outsideHorizontal().result) {
+	      return { result: false }; // No need to change, if change to vertical will out of space
+	    }
+	    if (!result && getTipOffsetLeft('left') < 0 && getTipOffsetRight('right') <= windowWidth) {
+	      result = true; // If vertical ok, but let out of side and right won't out of side
+	      newPlace = 'right';
+	    }
+	    return { result: result, newPlace: newPlace };
+	  };
+	  var outsideRight = function outsideRight() {
+	    var _outsideVertical2 = outsideVertical();
+
+	    var result = _outsideVertical2.result;
+	    var newPlace = _outsideVertical2.newPlace;
+
+	    if (result && outsideHorizontal().result) {
+	      return { result: false }; // No need to change, if change to vertical will out of space
+	    }
+	    if (!result && getTipOffsetRight('right') > windowWidth && getTipOffsetLeft('left') >= 0) {
+	      result = true;
+	      newPlace = 'left';
+	    }
+	    return { result: result, newPlace: newPlace };
+	  };
+
+	  var outsideHorizontal = function outsideHorizontal() {
+	    var result = false;
+	    var newPlace = void 0;
+	    if (getTipOffsetLeft('top') < 0 && getTipOffsetRight('top') <= windowWidth && getTipOffsetRight('right') <= windowWidth) {
+	      result = true;
+	      newPlace = 'right';
+	    } else if (getTipOffsetRight('top') > windowWidth && getTipOffsetLeft('top') >= 0 && getTipOffsetLeft('left') >= 0) {
+	      result = true;
+	      newPlace = 'left';
+	    }
+	    return { result: result, newPlace: newPlace };
+	  };
+	  var outsideTop = function outsideTop() {
+	    var _outsideHorizontal = outsideHorizontal();
+
+	    var result = _outsideHorizontal.result;
+	    var newPlace = _outsideHorizontal.newPlace;
+
+	    if (result && outsideVertical().result) {
+	      return { result: false };
+	    }
+	    if (!result && getTipOffsetTop('top') < 0 && getTipOffsetBottom('bottom') <= windowHeight) {
+	      result = true;
+	      newPlace = 'bottom';
+	    }
+	    return { result: result, newPlace: newPlace };
+	  };
+	  var outsideBottom = function outsideBottom() {
+	    var _outsideHorizontal2 = outsideHorizontal();
+
+	    var result = _outsideHorizontal2.result;
+	    var newPlace = _outsideHorizontal2.newPlace;
+
+	    if (result && outsideVertical().result) {
+	      return { result: false };
+	    }
+	    if (!result && getTipOffsetBottom('bottom') > windowHeight && getTipOffsetTop('top') >= 0) {
+	      result = true;
+	      newPlace = 'top';
+	    }
+	    return { result: result, newPlace: newPlace };
+	  };
+
+	  // Return new state to change the placement to the reverse if possible
+	  var outsideLeftResult = outsideLeft();
+	  var outsideRightResult = outsideRight();
+	  var outsideTopResult = outsideTop();
+	  var outsideBottomResult = outsideBottom();
+
+	  if (place === 'left' && outsideLeftResult.result) {
+	    return {
+	      isNewState: true,
+	      newState: { place: outsideLeftResult.newPlace }
+	    };
+	  } else if (place === 'right' && outsideRightResult.result) {
+	    return {
+	      isNewState: true,
+	      newState: { place: outsideRightResult.newPlace }
+	    };
+	  } else if (place === 'top' && outsideTopResult.result) {
+	    return {
+	      isNewState: true,
+	      newState: { place: outsideTopResult.newPlace }
+	    };
+	  } else if (place === 'bottom' && outsideBottomResult.result) {
+	    return {
+	      isNewState: true,
+	      newState: { place: outsideBottomResult.newPlace }
+	    };
+	  }
+
+	  // Return tooltip offset position
+	  return {
+	    isNewState: false,
+	    position: {
+	      left: parseInt(getTipOffsetLeft(place) - parentLeft, 10),
+	      top: parseInt(getTipOffsetTop(place) - parentTop, 10)
+	    }
+	  };
+	};
+
+	// Get current mouse offset
+	var getCurrentOffset = function getCurrentOffset(e, currentTarget, effect) {
+	  var boundingClientRect = currentTarget.getBoundingClientRect();
+	  var targetTop = boundingClientRect.top;
+	  var targetLeft = boundingClientRect.left;
+	  var targetWidth = currentTarget.clientWidth;
+	  var targetHeight = currentTarget.clientHeight;
+
+	  if (effect === 'float') {
+	    return {
+	      mouseX: e.clientX,
+	      mouseY: e.clientY
+	    };
+	  }
+	  return {
+	    mouseX: targetLeft + targetWidth / 2,
+	    mouseY: targetTop + targetHeight / 2
+	  };
+	};
+
+	// List all possibility of tooltip final offset
+	// This is useful in judging if it is necessary for tooltip to switch position when out of window
+	/**
+	 * Calculate the position of tooltip
+	 *
+	 * @params
+	 * - `e` {Event} the event of current mouse
+	 * - `target` {Element} the currentTarget of the event
+	 * - `node` {DOM} the react-tooltip object
+	 * - `place` {String} top / right / bottom / left
+	 * - `effect` {String} float / solid
+	 * - `offset` {Object} the offset to default position
+	 *
+	 * @return {Object
+	 * - `isNewState` {Bool} required
+	 * - `newState` {Object}
+	 * - `position` {OBject} {left: {Number}, top: {Number}}
+	 */
+	var getDefaultPosition = function getDefaultPosition(effect, targetWidth, targetHeight, tipWidth, tipHeight) {
+	  var top = void 0;
+	  var right = void 0;
+	  var bottom = void 0;
+	  var left = void 0;
+	  var disToMouse = 3;
+	  var triangleHeight = 2;
+	  var cursorHeight = 12; // Optimize for float bottom only, cause the cursor will hide the tooltip
+
+	  if (effect === 'float') {
+	    top = {
+	      l: -(tipWidth / 2),
+	      r: tipWidth / 2,
+	      t: -(tipHeight + disToMouse + triangleHeight),
+	      b: -disToMouse
+	    };
+	    bottom = {
+	      l: -(tipWidth / 2),
+	      r: tipWidth / 2,
+	      t: disToMouse + cursorHeight,
+	      b: tipHeight + disToMouse + triangleHeight + cursorHeight
+	    };
+	    left = {
+	      l: -(tipWidth + disToMouse + triangleHeight),
+	      r: -disToMouse,
+	      t: -(tipHeight / 2),
+	      b: tipHeight / 2
+	    };
+	    right = {
+	      l: disToMouse,
+	      r: tipWidth + disToMouse + triangleHeight,
+	      t: -(tipHeight / 2),
+	      b: tipHeight / 2
+	    };
+	  } else if (effect === 'solid') {
+	    top = {
+	      l: -(tipWidth / 2),
+	      r: tipWidth / 2,
+	      t: -(targetHeight / 2 + tipHeight + triangleHeight),
+	      b: -(targetHeight / 2)
+	    };
+	    bottom = {
+	      l: -(tipWidth / 2),
+	      r: tipWidth / 2,
+	      t: targetHeight / 2,
+	      b: targetHeight / 2 + tipHeight + triangleHeight
+	    };
+	    left = {
+	      l: -(tipWidth + targetWidth / 2 + triangleHeight),
+	      r: -(targetWidth / 2),
+	      t: -(tipHeight / 2),
+	      b: tipHeight / 2
+	    };
+	    right = {
+	      l: targetWidth / 2,
+	      r: tipWidth + targetWidth / 2 + triangleHeight,
+	      t: -(tipHeight / 2),
+	      b: tipHeight / 2
+	    };
+	  }
+
+	  return { top: top, bottom: bottom, left: left, right: right };
+	};
+
+	// Consider additional offset into position calculation
+	var calculateOffset = function calculateOffset(offset) {
+	  var extraOffset_X = 0;
+	  var extraOffset_Y = 0;
+
+	  if (Object.prototype.toString.apply(offset) === '[object String]') {
+	    offset = JSON.parse(offset.toString().replace(/\'/g, '\"'));
+	  }
+	  for (var key in offset) {
+	    if (key === 'top') {
+	      extraOffset_Y -= parseInt(offset[key], 10);
+	    } else if (key === 'bottom') {
+	      extraOffset_Y += parseInt(offset[key], 10);
+	    } else if (key === 'left') {
+	      extraOffset_X -= parseInt(offset[key], 10);
+	    } else if (key === 'right') {
+	      extraOffset_X += parseInt(offset[key], 10);
+	    }
+	  }
+
+	  return { extraOffset_X: extraOffset_X, extraOffset_Y: extraOffset_Y };
+	};
+
+	// Get the offset of the parent elements
+	var getParent = function getParent(currentTarget) {
+	  var currentParent = currentTarget;
+	  while (currentParent) {
+	    if (window.getComputedStyle(currentParent).getPropertyValue('transform') !== 'none') break;
+	    currentParent = currentParent.parentElement;
+	  }
+
+	  var parentTop = currentParent && currentParent.getBoundingClientRect().top || 0;
+	  var parentLeft = currentParent && currentParent.getBoundingClientRect().left || 0;
+
+	  return { parentTop: parentTop, parentLeft: parentLeft };
+	};
+
+/***/ },
+/* 835 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (tip, children, getContent, multiline) {
+	  if (children) return children;
+	  if (getContent !== undefined && getContent !== null) return getContent; // getContent can be 0, '', etc.
+	  if (getContent === null) return null; // Tip not exist and childern is null or undefined
+
+	  var regexp = /<br\s*\/?>/;
+	  if (!multiline || multiline === 'false' || !regexp.test(tip)) {
+	    // No trim(), so that user can keep their input
+	    return tip;
+	  }
+
+	  // Multiline tooltip content
+	  return tip.split(regexp).map(function (d, i) {
+	    return _react2.default.createElement(
+	      'span',
+	      { key: i, className: 'multi-line' },
+	      d
+	    );
+	  });
+	};
+
+	var _react = __webpack_require__(138);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ },
+/* 836 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.parseAria = parseAria;
+	/**
+	 * Support aria- and role in ReactTooltip
+	 *
+	 * @params props {Object}
+	 * @return {Object}
+	 */
+	function parseAria(props) {
+	  var ariaObj = {};
+	  Object.keys(props).filter(function (prop) {
+	    // aria-xxx and role is acceptable
+	    return (/(^aria-\w+$|^role$)/.test(prop)
+	    );
+	  }).forEach(function (prop) {
+	    ariaObj[prop] = props[prop];
+	  });
+
+	  return ariaObj;
+	}
+
+/***/ },
+/* 837 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = '.__react_component_tooltip{border-radius:3px;display:inline-block;font-size:13px;left:-999em;opacity:0;padding:8px 21px;position:fixed;pointer-events:none;transition:opacity 0.3s ease-out;top:-999em;visibility:hidden;z-index:999}.__react_component_tooltip:before,.__react_component_tooltip:after{content:"";width:0;height:0;position:absolute}.__react_component_tooltip.show{opacity:0.9;margin-top:0px;margin-left:0px;visibility:visible}.__react_component_tooltip.frozen{pointer-events:auto}.__react_component_tooltip.type-dark{color:#fff;background-color:#222}.__react_component_tooltip.type-dark.place-top:after{border-top-color:#222;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-dark.place-bottom:after{border-bottom-color:#222;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-dark.place-left:after{border-left-color:#222;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-dark.place-right:after{border-right-color:#222;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-dark.border{border:1px solid #fff}.__react_component_tooltip.type-dark.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-dark.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-dark.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-dark.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-success{color:#fff;background-color:#8DC572}.__react_component_tooltip.type-success.place-top:after{border-top-color:#8DC572;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-success.place-bottom:after{border-bottom-color:#8DC572;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-success.place-left:after{border-left-color:#8DC572;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-success.place-right:after{border-right-color:#8DC572;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-success.border{border:1px solid #fff}.__react_component_tooltip.type-success.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-success.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-success.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-success.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-warning{color:#fff;background-color:#F0AD4E}.__react_component_tooltip.type-warning.place-top:after{border-top-color:#F0AD4E;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-warning.place-bottom:after{border-bottom-color:#F0AD4E;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-warning.place-left:after{border-left-color:#F0AD4E;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-warning.place-right:after{border-right-color:#F0AD4E;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-warning.border{border:1px solid #fff}.__react_component_tooltip.type-warning.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-warning.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-warning.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-warning.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-error{color:#fff;background-color:#BE6464}.__react_component_tooltip.type-error.place-top:after{border-top-color:#BE6464;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-error.place-bottom:after{border-bottom-color:#BE6464;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-error.place-left:after{border-left-color:#BE6464;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-error.place-right:after{border-right-color:#BE6464;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-error.border{border:1px solid #fff}.__react_component_tooltip.type-error.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-error.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-error.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-error.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-info{color:#fff;background-color:#337AB7}.__react_component_tooltip.type-info.place-top:after{border-top-color:#337AB7;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-info.place-bottom:after{border-bottom-color:#337AB7;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-info.place-left:after{border-left-color:#337AB7;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-info.place-right:after{border-right-color:#337AB7;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-info.border{border:1px solid #fff}.__react_component_tooltip.type-info.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-info.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-info.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-info.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-light{color:#222;background-color:#fff}.__react_component_tooltip.type-light.place-top:after{border-top-color:#fff;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-light.place-bottom:after{border-bottom-color:#fff;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-light.place-left:after{border-left-color:#fff;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-light.place-right:after{border-right-color:#fff;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-light.border{border:1px solid #222}.__react_component_tooltip.type-light.border.place-top:before{border-top:8px solid #222}.__react_component_tooltip.type-light.border.place-bottom:before{border-bottom:8px solid #222}.__react_component_tooltip.type-light.border.place-left:before{border-left:8px solid #222}.__react_component_tooltip.type-light.border.place-right:before{border-right:8px solid #222}.__react_component_tooltip.place-top{margin-top:-10px}.__react_component_tooltip.place-top:before{border-left:10px solid transparent;border-right:10px solid transparent;bottom:-8px;left:50%;margin-left:-10px}.__react_component_tooltip.place-top:after{border-left:8px solid transparent;border-right:8px solid transparent;bottom:-6px;left:50%;margin-left:-8px}.__react_component_tooltip.place-bottom{margin-top:10px}.__react_component_tooltip.place-bottom:before{border-left:10px solid transparent;border-right:10px solid transparent;top:-8px;left:50%;margin-left:-10px}.__react_component_tooltip.place-bottom:after{border-left:8px solid transparent;border-right:8px solid transparent;top:-6px;left:50%;margin-left:-8px}.__react_component_tooltip.place-left{margin-left:-10px}.__react_component_tooltip.place-left:before{border-top:6px solid transparent;border-bottom:6px solid transparent;right:-8px;top:50%;margin-top:-5px}.__react_component_tooltip.place-left:after{border-top:5px solid transparent;border-bottom:5px solid transparent;right:-6px;top:50%;margin-top:-4px}.__react_component_tooltip.place-right{margin-left:10px}.__react_component_tooltip.place-right:before{border-top:6px solid transparent;border-bottom:6px solid transparent;left:-8px;top:50%;margin-top:-5px}.__react_component_tooltip.place-right:after{border-top:5px solid transparent;border-bottom:5px solid transparent;left:-6px;top:50%;margin-top:-4px}.__react_component_tooltip .multi-line{display:block;padding:2px 0px;text-align:center}';
+
+/***/ },
+/* 838 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(839);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(671)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./TooltipStateManager.less", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./TooltipStateManager.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 839 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(670)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".gxaDisabled {\n  display: none !important;\n}\n.gxaFadeBackgroundForOpenTooltip {\n  opacity: 0.5;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 840 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var React = __webpack_require__(138);
+	var Slider = __webpack_require__(39);
+	__webpack_require__(841);
+	__webpack_require__(843);
+	var Button = __webpack_require__(389);
+	var Glyphicon = __webpack_require__(395);
+
+	var CoexpressionOption = React.createClass({
+	    displayName: "CoexpressionOption",
+
+	    propTypes: {
+	        geneName: React.PropTypes.string.isRequired,
+	        numCoexpressionsVisible: React.PropTypes.number.isRequired,
+	        numCoexpressionsAvailable: React.PropTypes.number.isRequired,
+	        showCoexpressionsCallback: React.PropTypes.func.isRequired
+	    },
+	    getInitialState: function getInitialState() {
+	        return { visible: 0 };
+	    },
+	    _chooseValue: function _chooseValue(amount) {
+	        this.setState({ visible: amount });
+	        this.props.showCoexpressionsCallback(amount);
+	    },
+
+	    _turnOnWithDefaultValue: function _turnOnWithDefaultValue() {
+	        this._chooseValue(10);
+	    },
+
+	    _showOfferToDisplay: function _showOfferToDisplay() {
+	        return React.createElement(
+	            Button,
+	            { bsSize: "small", onClick: this._turnOnWithDefaultValue },
+	            React.createElement(Glyphicon, { glyph: "plus" }),
+	            React.createElement(
+	                "span",
+	                { style: { verticalAlign: "middle" } },
+	                " Add similarly expressed genes"
+	            )
+	        );
+	    },
+
+	    _showSlider: function _showSlider() {
+	        var marks = {
+	            0: "off",
+	            10: "10"
+	        };
+	        marks[this.props.numCoexpressionsAvailable] = this.props.numCoexpressionsAvailable;
+	        return React.createElement(
+	            "div",
+	            null,
+	            React.createElement(
+	                "p",
+	                null,
+	                "Display genes with similar expressions to " + this.props.geneName + ":"
+	            ),
+	            React.createElement(
+	                "div",
+	                { className: "gxaSlider" },
+	                React.createElement(Slider, { min: 0, max: this.props.numCoexpressionsAvailable, onAfterChange: this._chooseValue,
+	                    marks: marks, included: false, defaultValue: 10 })
+	            )
+	        );
+	    },
+
+	    render: function render() {
+	        return React.createElement(
+	            "div",
+	            { className: "gxaDisplayCoexpressionOffer" },
+	            this.props.numCoexpressionsAvailable ? this.props.numCoexpressionsVisible ? this._showSlider() : this._showOfferToDisplay() : React.createElement(
+	                "span",
+	                null,
+	                "No genes with similar expressions to " + this.props.geneName + " available for display"
+	            )
+	        );
+	    }
+	});
+	module.exports = CoexpressionOption;
+
+/***/ },
+/* 841 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(842);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(671)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./CoexpressionOption.less", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./CoexpressionOption.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 842 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(670)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".gxaDisplayCoexpressionOffer {\n  margin-top: 30px;\n}\n.gxaDisplayCoexpressionOffer .gxaSlider {\n  width: 250px;\n  margin: 15px;\n  padding-bottom: 20px;\n}\n.gxaDisplayCoexpressionOffer p {\n  font-size: 93%;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 843 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(844);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(671)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../css-loader/index.js!./index.css", function() {
+				var newContent = require("!!./../../css-loader/index.js!./index.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 844 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(670)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".rc-slider {\n  position: relative;\n  height: 4px;\n  width: 100%;\n  border-radius: 6px;\n  background-color: #e9e9e9;\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n.rc-slider * {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n.rc-slider-track {\n  position: absolute;\n  left: 0;\n  height: 4px;\n  border-radius: 6px;\n  background-color: #abe2fb;\n}\n.rc-slider-handle {\n  position: absolute;\n  margin-left: -7px;\n  margin-top: -5px;\n  width: 14px;\n  height: 14px;\n  cursor: pointer;\n  border-radius: 50%;\n  border: solid 2px #96dbfa;\n  background-color: #fff;\n}\n.rc-slider-handle:hover {\n  border-color: #57c5f7;\n}\n.rc-slider-handle-active:active {\n  border-color: #57c5f7;\n  box-shadow: 0 0 5px #57c5f7;\n}\n.rc-slider-mark {\n  position: absolute;\n  top: 10px;\n  left: 0;\n  width: 100%;\n  font-size: 12px;\n}\n.rc-slider-mark-text {\n  position: absolute;\n  display: inline-block;\n  vertical-align: middle;\n  text-align: center;\n  cursor: pointer;\n  color: #999;\n}\n.rc-slider-mark-text-active {\n  color: #666;\n}\n.rc-slider-step {\n  position: absolute;\n  width: 100%;\n  height: 4px;\n  background: transparent;\n}\n.rc-slider-dot {\n  position: absolute;\n  bottom: -2px;\n  margin-left: -4px;\n  width: 8px;\n  height: 8px;\n  border: 2px solid #e9e9e9;\n  background-color: #fff;\n  cursor: pointer;\n  border-radius: 50%;\n  vertical-align: middle;\n}\n.rc-slider-dot:first-child {\n  margin-left: -4px;\n}\n.rc-slider-dot:last-child {\n  margin-left: -4px;\n}\n.rc-slider-dot-active {\n  border-color: #96dbfa;\n}\n.rc-slider-disabled {\n  background-color: #e9e9e9;\n}\n.rc-slider-disabled .rc-slider-track {\n  background-color: #ccc;\n}\n.rc-slider-disabled .rc-slider-handle,\n.rc-slider-disabled .rc-slider-dot {\n  border-color: #ccc;\n  background-color: #fff;\n  cursor: not-allowed;\n}\n.rc-slider-disabled .rc-slider-mark-text,\n.rc-slider-disabled .rc-slider-dot {\n  cursor: not-allowed !important;\n}\n.rc-slider-vertical {\n  width: 4px;\n  height: 100%;\n}\n.rc-slider-vertical .rc-slider-track {\n  bottom: 0;\n  width: 4px;\n}\n.rc-slider-vertical .rc-slider-handle {\n  position: absolute;\n  margin-left: -5px;\n  margin-bottom: -7px;\n}\n.rc-slider-vertical .rc-slider-mark {\n  top: 0;\n  left: 10px;\n  height: 100%;\n}\n.rc-slider-vertical .rc-slider-step {\n  height: 100%;\n  width: 4px;\n}\n.rc-slider-vertical .rc-slider-dot {\n  left: 2px;\n  margin-bottom: -4px;\n}\n.rc-slider-vertical .rc-slider-dot:first-child {\n  margin-bottom: -4px;\n}\n.rc-slider-vertical .rc-slider-dot:last-child {\n  margin-bottom: -4px;\n}\n.rc-slider-tooltip-zoom-down-enter,\n.rc-slider-tooltip-zoom-down-appear {\n  -webkit-animation-duration: .3s;\n          animation-duration: .3s;\n  -webkit-animation-fill-mode: both;\n          animation-fill-mode: both;\n  display: block !important;\n  -webkit-animation-play-state: paused;\n          animation-play-state: paused;\n}\n.rc-slider-tooltip-zoom-down-leave {\n  -webkit-animation-duration: .3s;\n          animation-duration: .3s;\n  -webkit-animation-fill-mode: both;\n          animation-fill-mode: both;\n  display: block !important;\n  -webkit-animation-play-state: paused;\n          animation-play-state: paused;\n}\n.rc-slider-tooltip-zoom-down-enter.rc-slider-tooltip-zoom-down-enter-active,\n.rc-slider-tooltip-zoom-down-appear.rc-slider-tooltip-zoom-down-appear-active {\n  -webkit-animation-name: rcSliderTooltipZoomDownIn;\n          animation-name: rcSliderTooltipZoomDownIn;\n  -webkit-animation-play-state: running;\n          animation-play-state: running;\n}\n.rc-slider-tooltip-zoom-down-leave.rc-slider-tooltip-zoom-down-leave-active {\n  -webkit-animation-name: rcSliderTooltipZoomDownOut;\n          animation-name: rcSliderTooltipZoomDownOut;\n  -webkit-animation-play-state: running;\n          animation-play-state: running;\n}\n.rc-slider-tooltip-zoom-down-enter,\n.rc-slider-tooltip-zoom-down-appear {\n  -webkit-transform: scale(0, 0);\n          transform: scale(0, 0);\n  -webkit-animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);\n          animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);\n}\n.rc-slider-tooltip-zoom-down-leave {\n  -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);\n          animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);\n}\n@-webkit-keyframes rcSliderTooltipZoomDownIn {\n  0% {\n    opacity: 0;\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(0, 0);\n            transform: scale(0, 0);\n  }\n  100% {\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(1, 1);\n            transform: scale(1, 1);\n  }\n}\n@keyframes rcSliderTooltipZoomDownIn {\n  0% {\n    opacity: 0;\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(0, 0);\n            transform: scale(0, 0);\n  }\n  100% {\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(1, 1);\n            transform: scale(1, 1);\n  }\n}\n@-webkit-keyframes rcSliderTooltipZoomDownOut {\n  0% {\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(1, 1);\n            transform: scale(1, 1);\n  }\n  100% {\n    opacity: 0;\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(0, 0);\n            transform: scale(0, 0);\n  }\n}\n@keyframes rcSliderTooltipZoomDownOut {\n  0% {\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(1, 1);\n            transform: scale(1, 1);\n  }\n  100% {\n    opacity: 0;\n    -webkit-transform-origin: 50% 100%;\n            transform-origin: 50% 100%;\n    -webkit-transform: scale(0, 0);\n            transform: scale(0, 0);\n  }\n}\n.rc-tooltip {\n  position: absolute;\n  left: -9999px;\n  top: -9999px;\n  visibility: visible;\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n.rc-tooltip * {\n  box-sizing: border-box;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n.rc-tooltip-hidden {\n  display: none;\n}\n.rc-tooltip-placement-top {\n  padding: 4px 0 8px 0;\n}\n.rc-tooltip-inner {\n  padding: 6px 2px;\n  min-width: 24px;\n  height: 24px;\n  font-size: 12px;\n  line-height: 1;\n  color: #fff;\n  text-align: center;\n  text-decoration: none;\n  background-color: #6c6c6c;\n  border-radius: 6px;\n  box-shadow: 0 0 4px #d9d9d9;\n}\n.rc-tooltip-arrow {\n  position: absolute;\n  width: 0;\n  height: 0;\n  border-color: transparent;\n  border-style: solid;\n}\n.rc-tooltip-placement-top .rc-tooltip-arrow {\n  bottom: 4px;\n  left: 50%;\n  margin-left: -4px;\n  border-width: 4px 4px 0;\n  border-top-color: #6c6c6c;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 845 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(846);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(671)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./SeriesLegend.less", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/less-loader/index.js!./SeriesLegend.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 846 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(670)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".gxaHeatmapLegend {\n  color: #606060;\n  margin-left: 180px;\n  border: 0 solid olive;\n}\n.gxaHeatmapLegend .legend-item {\n  display: inline-block;\n  margin-left: 8px;\n  padding: 4px;\n  vertical-align: middle;\n  cursor: default;\n}\n.gxaHeatmapLegend .legend-item.legend-item-off {\n  color: #ccc;\n}\n.gxaHeatmapLegend .legend-item.legend-item-off div {\n  background-color: #f7f7f7;\n}\n.gxaHeatmapLegend .legend-item .legend-rectangle {\n  width: 12px;\n  height: 12px;\n  border: 1px rgba(0, 0, 0, 0.2) solid;\n  display: inline-block;\n  margin-right: 4px;\n  vertical-align: middle;\n}\n.gxaHeatmapLegend .legend-item .icon-generic:before {\n  font-size: 180%;\n  color: #7e7e7e;\n}\n.gxaHeatmapLegend .legend-item:hover .icon-generic:before {\n  color: #353535;\n}\n@font-face {\n  font-family: 'EBI-Generic';\n  src: url('https://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.eot');\n  src: url('https://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.eot?#iefix') format('embedded-opentype'), url('https://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.woff') format('woff'), local('\\263A'), url('https://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.svg#EBI-Generic') format('svg'), url('https://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.ttf') format('truetype');\n  font-weight: normal;\n  font-style: normal;\n}\n.icon-generic:before {\n  font-family: 'EBI-Generic';\n  font-size: 100%;\n  color: #BBB;\n  content: attr(data-icon);\n  margin: 0 0 0 0;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 847 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	//*------------------------------------------------------------------*
+
+	/*
+	All functions in this module accept and return a following format of data:
+	{
+	  dataSeries : [info: {...: String}, data: [Point]}]
+	  xAxisCategories: [X axis label]
+	  yAxisCategories: [Y axis label]
+	}
+	*/
+
+	//*------------------------------------------------------------------*
+
+	var orderHeatmapData = function orderHeatmapData(ordering, data) {
+	  var permuteX = function permuteX(x) {
+	    return ordering.columns.indexOf(x);
+	  };
+
+	  var permuteY = function permuteY(y) {
+	    return ordering.rows.indexOf(y);
+	  };
+
+	  var permutePoint = function permutePoint(point) {
+	    return {
+	      x: permuteX(point.x),
+	      y: permuteY(point.y),
+	      value: point.value,
+	      info: point.info
+	    };
+	  };
+
+	  var permuteArray = function permuteArray(arr, permute) {
+	    return arr.map(function (el, ix) {
+	      return [el, permute(ix)];
+	    }).sort(function (l, r) {
+	      return l[1] - r[1];
+	    }).map(function (el) {
+	      return el[0];
+	    });
+	  };
+
+	  return {
+	    dataSeries: data.dataSeries.map(function (series) {
+	      return {
+	        info: series.info,
+	        data: series.data.map(permutePoint)
+	      };
+	    }),
+	    xAxisCategories: permuteArray(data.xAxisCategories, permuteX),
+	    yAxisCategories: permuteArray(data.yAxisCategories, permuteY)
+	  };
+	};
+
+	var _axisElementsForFilteredDataSeries = function _axisElementsForFilteredDataSeries(axis, conditionPerSeries, conditionPerPoint, dataSeries) {
+	  return dataSeries.filter(conditionPerSeries).map(function (e) {
+	    return e.data;
+	  }).reduce(function (l, r) {
+	    return l.concat(r);
+	  }, []).filter(conditionPerPoint).map(function (e) {
+	    return e[axis];
+	  }).filter(function (e, ix, self) {
+	    return self.indexOf(e) === ix;
+	  }).sort(function (l, r) {
+	    return l - r;
+	  });
+	};
+
+	var _filterHeatmapData = function _filterHeatmapData(keepSeries, keepPoint, data) {
+	  var allXs = _axisElementsForFilteredDataSeries("x", keepSeries, keepPoint, data.dataSeries);
+	  var allYs = _axisElementsForFilteredDataSeries("y", keepSeries, keepPoint, data.dataSeries);
+
+	  var newDataSeries = data.dataSeries.map(function (series, ix) {
+	    return keepSeries(series, ix) ? series.data.filter(keepPoint) : [];
+	  }).map(function (series) {
+	    return series.map(function (point) {
+	      return {
+	        x: allXs.indexOf(point.x),
+	        y: allYs.indexOf(point.y),
+	        value: point.value,
+	        info: point.info
+	      };
+	    }).filter(function (point) {
+	      return point.x > -1 && point.y > -1;
+	    });
+	  });
+
+	  return {
+	    dataSeries: data.dataSeries.map(function (e, ix) {
+	      return {
+	        info: e.info,
+	        data: newDataSeries[ix]
+	      };
+	    }),
+	    xAxisCategories: data.xAxisCategories.filter(function (e, ix) {
+	      return allXs.indexOf(ix) > -1;
+	    }),
+	    yAxisCategories: data.yAxisCategories.filter(function (e, ix) {
+	      return allYs.indexOf(ix) > -1;
+	    })
+	  };
+	};
+
+	var filterHeatmapData = function filterHeatmapData(keepSeries, keepRow, keepColumn, data) {
+	  return _filterHeatmapData(keepSeries, function (point) {
+	    return keepRow(data.yAxisCategories[point.y]) && keepColumn(data.xAxisCategories[point.x]);
+	  }, data);
+	};
+
+	var _calculateInserts = function _calculateInserts(fullColumns, originalColumns) {
+	  var result = [];
+	  var fullColumnsCursor = 0;
+	  var originalColumnsCursor = 0;
+	  while (fullColumnsCursor < fullColumns.length && originalColumnsCursor < originalColumns.length) {
+	    if (fullColumns.length > fullColumnsCursor && originalColumns.length > originalColumnsCursor && fullColumns[fullColumnsCursor] == originalColumns[originalColumnsCursor]) {
+	      result.push("");
+	      fullColumnsCursor++;
+	      originalColumnsCursor++;
+	    } else if (fullColumns.length > fullColumnsCursor) {
+	      result.push(fullColumns[fullColumnsCursor]);
+	      fullColumnsCursor++;
+	    } else if (originalColumns[originalColumnsCursor].length > originalColumnsCursor) {
+	      result.push("");
+	      originalColumnsCursor++;
+	    }
+	  }
+	  return result;
+	};
+
+	var _indicesForInserts = function _indicesForInserts(inserts) {
+	  var i = -1;
+	  return inserts.map(function (e) {
+	    !e && i++;
+	    return i;
+	  });
+	};
+
+	var insertEmptyColumns = function insertEmptyColumns(newColumns, data) {
+	  var fullColumns = newColumns.concat(data.xAxisCategories.filter(function (originalColumn) {
+	    return newColumns.findIndex(function (e) {
+	      return e.label == originalColumn.label;
+	    }) == -1;
+	  }));
+	  var insertIndices = _indicesForInserts(_calculateInserts(fullColumns.map(function (e) {
+	    return e.label;
+	  }), data.xAxisCategories.map(function (e) {
+	    return e.label;
+	  })));
+	  return {
+	    dataSeries: data.dataSeries.map(function (e) {
+	      return {
+	        info: e.info,
+	        data: e.data.map(function (point) {
+	          return Object.assign({}, point, { x: insertIndices.indexOf(point.x)
+	          });
+	        })
+	      };
+	    }),
+	    xAxisCategories: fullColumns,
+	    yAxisCategories: data.yAxisCategories
+	  };
+	};
+
+	exports.insertEmptyColumns = insertEmptyColumns;
+	exports.filterHeatmapData = filterHeatmapData;
+	exports.order = orderHeatmapData;
+
+	exports.manipulate = function (args, data) {
+	  return insertEmptyColumns(args.allowEmptyColumns ? orderHeatmapData(args.ordering, data).xAxisCategories : [], filterHeatmapData(args.keepSeries, args.keepRow, args.keepColumn, orderHeatmapData(args.ordering, data)));
+	};
+
+/***/ },
+/* 848 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(849);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(671)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./HighchartsHeatmapContainer.css", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./HighchartsHeatmapContainer.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 849 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(670)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".gxaInnerHeatmap {\n    position: relative;\n    overflow: hidden;\n}\n\n.gxaAside {\n    float: left;\n}\n\n.gxaInnerHeatmap:after {\n    clear: both;\n    content: \".\";\n    display: block;\n    visibility: hidden;\n}\n", ""]);
 
 	// exports
 
