@@ -13656,14 +13656,14 @@ webpackJsonp_name_([1],[
 	var getYAxisCategories = function getYAxisCategories(rows, config) {
 	  return rows.map(config.isExperimentPage ? function (profile) {
 	    return { "label": profile.name,
-	      "id": profile.id,
+	      "id": profile.uri || profile.id,
 	      "info": {
 	        trackId: profile.id,
 	        designElement: profile.designElement || ""
 	      } };
 	  } : function (profile) {
 	    return { "label": profile.name,
-	      "id": profile.id + "?geneQuery=" + config.geneQuery + (profile.serializedFilterFactors ? "&serializedFilterFactors=" + encodeURIComponent(profile.serializedFilterFactors) : ""),
+	      "id": profile.uri || profile.id + "?geneQuery=" + config.geneQuery + (profile.serializedFilterFactors ? "&serializedFilterFactors=" + encodeURIComponent(profile.serializedFilterFactors) : ""),
 	      "info": {
 	        trackId: "",
 	        designElement: ""
@@ -14148,10 +14148,11 @@ webpackJsonp_name_([1],[
 	    resourceId: React.PropTypes.string.isRequired,
 	    extra: React.PropTypes.string
 	  },
+	  //TODO: remove the "otherwise" branch when production Atlas supplies URIs for labels (expected: early 2017)
 	  render: function render() {
 	    var geneNameWithLink = React.createElement(
 	      'a',
-	      { href: this.props.config.atlasBaseURL + (this.props.config.isMultiExperiment ? "/experiments/" : "/genes/") + this.props.resourceId },
+	      { href: this.props.resourceId.startsWith("http") ? this.props.resourceId : this.props.config.atlasBaseURL + (this.props.config.isMultiExperiment ? "/experiments/" : "/genes/") + this.props.resourceId },
 	      this.props.labelText
 	    );
 	    return this.props.extra ? React.createElement(
