@@ -13113,7 +13113,7 @@ webpackJsonp_name_([1],[
 	    genomeBrowserTemplate: setupConfig.isExperimentPage ? genomeBrowserTemplate(config) : ""
 	  });
 	  Object.assign(config, {
-	    description: data.jsonExperiment ? setupConfig.isExperimentPage && data.jsonExperiment.description ? data.jsonExperiment.description : setupConfig.isReferenceExperiment && data.jsonExperiment.URL ? "Reference experiment: " + setupConfig.atlasBaseURL + data.jsonExperiment.URL : "" : setupConfig.isMultiExperiment ? "Query results: " + decodeURI(config.geneQuery) + (config.conditionQuery ? ", in conditions: " + decodeURI(config.conditionQuery) : "") + ", in species: " + config.species : ""
+	    description: data.jsonExperiment ? setupConfig.isExperimentPage && data.jsonExperiment.description ? data.jsonExperiment.description : setupConfig.isReferenceExperiment && data.jsonExperiment.URL ? "Reference experiment: " + setupConfig.atlasBaseURL + data.jsonExperiment.URL : "" : config.description ? config.description : setupConfig.isMultiExperiment ? "Query results for: " + decodeURIComponent(config.geneQuery) + (config.conditionQuery && decodeURIComponent(config.conditionQuery).length > 2 ? ", in conditions: " + decodeURIComponent(config.conditionQuery) : "") + ", in species: " + config.species : ""
 	  });
 	  Object.assign(config, {
 	    shortDescription: config.experimentAccession ? (setupConfig.isReferenceExperiment ? "ReferenceExp" : "") + config.experimentAccession : "expression-atlas-" + config.species.replace(/ +/, "-")
