@@ -1,11 +1,11 @@
-const React = require(`react`);
-const Modal = require(`react-bootstrap/lib/Modal`);
-const Button = require(`react-bootstrap/lib/Button`);
-const Glyphicon = require(`react-bootstrap/lib/Glyphicon`);
-const Disclaimers = require(`./Disclaimers.jsx`);
+const React = require('react');
+const Modal = require('react-bootstrap/lib/Modal');
+const Button = require('react-bootstrap/lib/Button');
+const Glyphicon = require('react-bootstrap/lib/Glyphicon');
+const Disclaimers = require('./Disclaimers.jsx');
 const PropTypes = require('../../PropTypes.js');
 
-const Download = require(`./Download.js`).commenceDownload;
+const Download = require('./Download.js').CommenceDownload;
 const DownloadProfilesButton = React.createClass({
     propTypes: {
         download: React.PropTypes.shape({
@@ -50,7 +50,8 @@ const DownloadProfilesButton = React.createClass({
     render() {
         return (
             <a onClick={this._afterDownloadButtonClicked}>
-                <Button bsSize="small">
+                <Button bsSize="small"
+                        style={{textTransform: `unset`, letterSpacing: `unset`, height: `unset`}}>
                     <Glyphicon glyph="download-alt"/> Download table content
                 </Button>
 

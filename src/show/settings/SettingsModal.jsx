@@ -6,7 +6,6 @@ const Glyphicon = require(`react-bootstrap/lib/Glyphicon`);
 const PropTypes = require( `../../PropTypes.js`);
 const FlatFilter = require(`./FlatFilter.jsx`);
 const GroupedFilter = require(`./GroupedFilter.jsx`);
-const deepEquals = require(`lodash/isEqual`);
 
 
 const SettingsModal = React.createClass({
@@ -89,7 +88,8 @@ const SettingsModal = React.createClass({
     render() {
         return (
             <div>
-                <Button bsSize="small" onClick={this._open} disabled={this.props.disabled} title={this.props.disabled ? `Reset zoom to enable filters` : ``}>
+                <Button bsSize="small" onClick={this._open} disabled={this.props.disabled} title={this.props.disabled ? `Reset zoom to enable filters` : ``}
+                        style={{textTransform: `unset`, letterSpacing: `unset`, height: `unset`}}>
                     <Glyphicon glyph="equalizer"/>
                     <span style={{verticalAlign: `middle`}}> Filters</span>
                 </Button>
@@ -105,8 +105,10 @@ const SettingsModal = React.createClass({
                       }
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button bsStyle="primary" onClick={this._apply}>Apply</Button>
-                        <Button onClick={this._close}>Close</Button>
+                        <Button bsStyle="primary" onClick={this._apply}
+                                style={{textTransform: `unset`, letterSpacing: `unset`, height: `unset`}}>Apply</Button>
+                        <Button onClick={this._close}
+                                style={{textTransform: `unset`, letterSpacing: `unset`, height: `unset`}}>Close</Button>
                     </Modal.Footer>
                 </Modal>
             </div>
