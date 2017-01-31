@@ -619,37 +619,68 @@ webpackJsonp_name_([1],[
 
 	'use strict';
 
-	var React = __webpack_require__(138);
-	var ReactDOM = __webpack_require__(299);
+	var React = __webpack_require__(139);
+	var ReactDOM = __webpack_require__(300);
 
 	var EventEmitter = __webpack_require__(608);
 	var HighchartsHeatmapContainer = __webpack_require__(609);
 
 	/**
-	 * @param {Object}      options
-	 * @param {string}          options.proxyPrefix - optionally set as "http(s?)://" or to proxy URL
-	 * @param {string}          options.selfHosted - Set this as true if you want to host our content yourself, but have outwards links pointing to our original site
-	 * @param {boolean=}        options.disableGoogleAnalytics - Disable Google Analytics
-	 * @param {string=}         options.atlasHost - Atlas host with protocol and port
-	 * @param {string}          options.sourceURL - Where to source the data from
-	 * *                        e.g. /json/experiments/E-PROT-1, /json/genes/ENSG00000005801, /json/genesets/GO:0000001 or a widget endpoint
-	 * @param {string}          options.params - Alternate way of sourcing data if you do not provide the sourceURL
-	 * @param {string | Object} options.target - a <div> id or a DOM element, as returned by ReactDOM.findDOMNode()
-	 * @param {function}        options.fail - Callback to run if the AJAX request to the server fails. (jqXHR, textStatus)
-	 * @param {Object}          options.anatomogramDataEventEmitter - emits events to the facets tree to signal the existence of anatomogram
-	 * @param {boolean=}        options.showAnatomogram - optionally hide the anatomogram
-	 * @param {boolean}         options.isDifferential
-	 * @param {boolean}         options.isMultiExperiment
-	 * @param {boolean=}        options.isWidget
-	 * @param {string}          options.pathToFolderWithBundledResources - use if you're serving the /svg's from an unusual location. Development only.
-	 */
+	 API of this widget
+	------------------
+	### Minimal example
+	{
+	  params:"geneQuery=zinc finger&species=mus musculus",
+	  target:"myDomElementId"
+	}
+
+	### Note
+	changes to this API will be announced to the mailing list atlas-widget@ebi.ac.uk
+
+	### Target
+	@param {string | Object} options.target - a <div> id or a DOM element, as returned by ReactDOM.findDOMNode()
+
+	### Query settings
+	@param {string}          options.params - Alternate way of sourcing data if you do not provide the sourceURL
+	e.g. 'geneQuery=[{value:"BRCA1"}, {value:"REG1B"}]&species=homo sapiens',
+	e.g. 'geneQuery=[{value:"PIP",category:"symbol"}]&species=homo sapiens',
+	e.g. 'geneQuery=zinc finger&species=mus musculus',
+	e.g. 'experiment=E-MTAB-513'
+
+	### Optional recommended alternative query settings
+	@param {string}          options.sourceURL - Where to source the data from (used by Atlas instead of options.params)
+	e.g. https://www.ebi.ac.uk/gxa/json/experiments/E-PROT-1
+	e.g. https://www.ebi.ac.uk/gxa/json/search/baselineResults?query={value:"zinc finger"}&species=homo sapiens
+	e.g. https://www.ebi.ac.uk/gxa/widgets/heatmap/baselineAnalytics?geneQuery={value:"zinc finger"}&species=homo sapiens
+	e.g. https://www.ebi.ac.uk/gxa/widgets/heatmap/referenceExperiment?experiment=E-MTAB-513
+	Note: the URL is otherwise inferred from options.params.
+	You could select this option and add yourself an integration test that checks what data the backend will serve you.
+
+	### Optional connection setup
+	@param {string}          options.proxyPrefix - proxy prefix for outbound links, optionally set as "http(s?)://" or to proxy URL e.g. "www.myproxy.org?url="
+	@param {string}         options.atlasHost - Atlas host with protocol and port - where to source the data from, default: "https://www.ebi.ac.uk"
+
+	### Optional options
+	@param {boolean}        options.disableGoogleAnalytics - Disable Google Analytics
+	@param {function}        options.fail - Callback to run if the AJAX request to the server fails. (jqXHR, textStatus)
+	@param {boolean}        options.showAnatomogram - optionally hide the anatomogram
+
+	### Advanced options
+	@param {Object}          options.anatomogramDataEventEmitter - emits events to the facets tree to signal the existence of anatomogram
+	@param {boolean}         options.isDifferential
+	@param {boolean}         options.isMultiExperiment
+	@param {boolean}        options.isWidget
+
+	### Development only
+	@param {string}          options.pathToFolderWithBundledResources - use if you're serving the /svg's from an unusual location. Development only.
+	**/
 
 	exports.render = function (options) {
+	    var atlasHost = options.atlasHost === undefined ? "https://www.ebi.ac.uk" : options.atlasHost;
+	    var atlasPath = "/gxa";
+	    var proxyPrefix = options.proxyPrefix || "https://";
 
-	    var atlasHost = options.atlasHost === undefined ? "https://www.ebi.ac.uk" : options.atlasHost,
-	        atlasPath = "/gxa";
-
-	    var atlasBaseURL = (atlasHost.indexOf("http://") === 0 || atlasHost.indexOf("https://") === 0 ? "" : options.proxyPrefix || "https://") + atlasHost + atlasPath;
+	    var atlasBaseURL = (atlasHost.indexOf("http://") === 0 || atlasHost.indexOf("https://") === 0 ? "" : proxyPrefix) + atlasHost + atlasPath;
 
 	    var linksAtlasBaseURL = options.selfHosted ? (options.proxyPrefix || "https://") + "www.ebi.ac.uk/gxa" : atlasBaseURL;
 
@@ -662,8 +693,9 @@ webpackJsonp_name_([1],[
 	    ReactDOM.render(React.createElement(HighchartsHeatmapContainer, {
 	        sourceURL: sourceURL,
 	        atlasBaseURL: atlasBaseURL,
+	        proxyPrefix: proxyPrefix,
 	        linksAtlasBaseURL: linksAtlasBaseURL,
-	        pathToFolderWithBundledResources: options.pathToFolderWithBundledResources || linksAtlasBaseURL + "/resources/js-bundles/",
+	        pathToFolderWithBundledResources: options.pathToFolderWithBundledResources || atlasBaseURL + "/resources/js-bundles/",
 	        showAnatomogram: options.showAnatomogram === undefined || options.showAnatomogram,
 	        isDifferential: !!options.isDifferential,
 	        isMultiExperiment: !!options.isMultiExperiment,
@@ -991,30 +1023,27 @@ webpackJsonp_name_([1],[
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = __webpack_require__(138);
-	var $ = __webpack_require__(17);
+	var React = __webpack_require__(139);
+	var $ = __webpack_require__(18);
 
 	var Anatomogram = __webpack_require__(610);
 
-	var Load = __webpack_require__(674);
-	var HighchartsHeatmap = __webpack_require__(686);
-	__webpack_require__(848);
+	var Load = __webpack_require__(675);
+	var HighchartsHeatmap = __webpack_require__(685);
+	__webpack_require__(817);
+
+	var outwardLink = __webpack_require__(690);
 
 	var ExperimentDescription = React.createClass({
 	    displayName: "ExperimentDescription",
 
 	    propTypes: {
-	        linksAtlasBaseURL: React.PropTypes.string.isRequired,
-	        experiment: React.PropTypes.shape({
-	            URL: React.PropTypes.string.isRequired,
-	            description: React.PropTypes.string.isRequired,
-	            species: React.PropTypes.string.isRequired
-	        }).isRequired
+	        url: React.PropTypes.string.isRequired,
+	        description: React.PropTypes.string.isRequired,
+	        species: React.PropTypes.string.isRequired
 	    },
 
 	    render: function render() {
-	        var experimentURL = this.props.linksAtlasBaseURL + this.props.experiment.URL;
-
 	        return React.createElement(
 	            "div",
 	            { style: { width: "100%", paddingBottom: "20px" } },
@@ -1023,8 +1052,8 @@ webpackJsonp_name_([1],[
 	                { id: "experimentDescription" },
 	                React.createElement(
 	                    "a",
-	                    { id: "goto-experiment", className: "gxaThickLink", title: "Experiment Page", href: experimentURL },
-	                    this.props.experiment.description
+	                    { id: "goto-experiment", className: "gxaThickLink", title: "Experiment Page", href: this.props.url },
+	                    this.props.description
 	                )
 	            ),
 	            React.createElement(
@@ -1034,7 +1063,7 @@ webpackJsonp_name_([1],[
 	                React.createElement(
 	                    "span",
 	                    { style: { fontStyle: "italic" } },
-	                    this.props.experiment.species
+	                    this.props.species
 	                )
 	            )
 	        );
@@ -1104,7 +1133,7 @@ webpackJsonp_name_([1],[
 	        pathToFolderWithBundledResources: React.PropTypes.string.isRequired,
 	        sourceURL: React.PropTypes.string.isRequired,
 	        atlasBaseURL: React.PropTypes.string.isRequired,
-	        linksAtlasBaseURL: React.PropTypes.string.isRequired,
+	        proxyPrefix: React.PropTypes.string.isRequired,
 	        showAnatomogram: React.PropTypes.bool.isRequired,
 	        isDifferential: React.PropTypes.bool.isRequired,
 	        isMultiExperiment: React.PropTypes.bool.isRequired,
@@ -1116,13 +1145,13 @@ webpackJsonp_name_([1],[
 	    },
 
 	    render: function render() {
-
-	        var geneURL = this.props.linksAtlasBaseURL + (this.state.loadResult.heatmapConfig.geneURL || "");
-
 	        return React.createElement(
 	            "div",
 	            null,
-	            this._isReferenceExperiment() && this.state.experimentData ? React.createElement(ExperimentDescription, { experiment: this.state.experimentData, linksAtlasBaseURL: this.props.linksAtlasBaseURL }) : null,
+	            this._isReferenceExperiment() && this.state.experimentData ? React.createElement(ExperimentDescription, {
+	                url: this.state.loadResult.heatmapConfig.moreInformationLink,
+	                description: this.state.experimentData.description,
+	                species: this.state.experimentData.species }) : null,
 	            this.state.ajaxCompleted ? this.state.error ? React.createElement(
 	                "div",
 	                { ref: "gxaError" },
@@ -1140,14 +1169,14 @@ webpackJsonp_name_([1],[
 	                    null,
 	                    React.createElement(
 	                        "a",
-	                        { href: geneURL },
-	                        "See more expression data at Expression Atlas."
+	                        { href: outwardLink(this.props.proxyPrefix, this.state.ajaxCompleted ? this.state.loadResult.heatmapConfig.moreInformationLink : this.props.atlasBaseURL) },
+	                        " See more expression data at Expression Atlas."
 	                    ),
 	                    React.createElement("br", null),
 	                    "This expression view is provided by ",
 	                    React.createElement(
 	                        "a",
-	                        { href: this.props.linksAtlasBaseURL },
+	                        { href: outwardLink(this.props.proxyPrefix, this.props.atlasBaseURL) },
 	                        "Expression Atlas"
 	                    ),
 	                    ".",
@@ -1209,6 +1238,8 @@ webpackJsonp_name_([1],[
 	            this._handleAjaxFailure(jqXHR, textStatus, "DOM element not mounted!");
 	        } else if (data.hasOwnProperty("error")) {
 	            this._handleAjaxFailure(jqXHR, textStatus, data.error);
+	        } else if (!data.profiles) {
+	            this._handleAjaxFailure(jqXHR, textStatus, "No table data present in the response to query.");
 	        } else {
 	            this.onAjaxSuccessful(data);
 	        }
@@ -1227,6 +1258,7 @@ webpackJsonp_name_([1],[
 	            isReferenceExperiment: this._isReferenceExperiment(),
 	            isDifferential: this.props.isDifferential,
 	            atlasBaseURL: this.props.atlasBaseURL,
+	            proxyPrefix: this.props.proxyPrefix,
 	            pathToFolderWithBundledResources: this.props.pathToFolderWithBundledResources
 	        };
 
@@ -1280,12 +1312,12 @@ webpackJsonp_name_([1],[
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = __webpack_require__(138);
-	var validate = __webpack_require__(606);
-	var Anatomogram = __webpack_require__(612);
-	var getSvgsForSpecies = __webpack_require__(616).GetSvgsForSpecies;
+	var React = __webpack_require__(139);
+	var validate = __webpack_require__(612);
+	var Anatomogram = __webpack_require__(613);
+	var getSvgsForSpecies = __webpack_require__(617).GetSvgsForSpecies;
 	var EventEmitter = __webpack_require__(608);
-	__webpack_require__(672);
+	__webpack_require__(673);
 
 	//*------------------------------------------------------------------*
 
@@ -1425,15 +1457,50 @@ webpackJsonp_name_([1],[
 
 /***/ },
 /* 612 */
+/***/ function(module, exports) {
+
+	/**
+	 * @param {Object} object to be validated
+	 * @param {Object} propTypes object with defined prop types
+	 * @param {Boolean} _throw if set to true, invalid prop types will throw
+	 */
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports['default'] = check;
+
+	function check(object, propTypes, _throw) {
+	    var propName = undefined;
+
+	    for (propName in propTypes) {
+	        if (propTypes.hasOwnProperty(propName)) {
+	            var error = propTypes[propName](object, propName, JSON.stringify(object), 'prop');
+	            if (error) {
+	                if (_throw) {
+	                    throw error;
+	                } else {
+	                    console.error(error.message);
+	                }
+	            }
+	        }
+	    }
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 613 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = __webpack_require__(138);
-	var AnatomogramImage = __webpack_require__(613);
-	var SelectionIcon = __webpack_require__(615);
+	var React = __webpack_require__(139);
+	var AnatomogramImage = __webpack_require__(614);
+	var SelectionIcon = __webpack_require__(616);
 
 	var Anatomogram = React.createClass({
 	    displayName: "Anatomogram",
@@ -1511,16 +1578,16 @@ webpackJsonp_name_([1],[
 	module.exports = Anatomogram;
 
 /***/ },
-/* 613 */
+/* 614 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-	var React = __webpack_require__(138);
-	var ReactDOM = __webpack_require__(299);
-	var Snap = __webpack_require__(614);
+	var React = __webpack_require__(139);
+	var ReactDOM = __webpack_require__(300);
+	var Snap = __webpack_require__(615);
 
 	//http://stackoverflow.com/questions/3115982/how-to-check-if-two-arrays-are-equal-with-javascript
 	var ArraysEqual = function ArraysEqual(a, b) {
@@ -1796,7 +1863,7 @@ webpackJsonp_name_([1],[
 	module.exports = AnatomogramImage;
 
 /***/ },
-/* 614 */
+/* 615 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_LOCAL_MODULE_0__;var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*** IMPORTS FROM imports-loader ***/
@@ -9977,14 +10044,14 @@ webpackJsonp_name_([1],[
 	}.call(window));
 
 /***/ },
-/* 615 */
+/* 616 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var React = __webpack_require__(138);
-	var ResolvePathToIcon = __webpack_require__(616).ResolvePathToIcon;
-	__webpack_require__(668);
+	var React = __webpack_require__(139);
+	var ResolvePathToIcon = __webpack_require__(617).ResolvePathToIcon;
+	__webpack_require__(669);
 
 	var SelectionIcon = React.createClass({
 	    displayName: "SelectionIcon",
@@ -10008,22 +10075,22 @@ webpackJsonp_name_([1],[
 	module.exports = SelectionIcon;
 
 /***/ },
-/* 616 */
+/* 617 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var Url = __webpack_require__(617);
-	var Path = __webpack_require__(622);
-	var SvgsForSpecies = __webpack_require__(623);
-	var IdsForSvgs = __webpack_require__(624);
+	var Url = __webpack_require__(618);
+	var Path = __webpack_require__(623);
+	var SvgsForSpecies = __webpack_require__(624);
+	var IdsForSvgs = __webpack_require__(625);
 
 	var ResolvePathToIcon = function ResolvePathToIcon(pathToFolderWithBundledResources, type, selected) {
-	    return Url.resolve(pathToFolderWithBundledResources, Path.basename(__webpack_require__(625)("./" + type + "_" + (selected ? "" : "un") + "selected.png")));
+	    return Url.resolve(pathToFolderWithBundledResources, Path.basename(__webpack_require__(626)("./" + type + "_" + (selected ? "" : "un") + "selected.png")));
 	};
 
 	var ResolvePathToSvg = function ResolvePathToSvg(pathToFolderWithBundledResources, svg) {
-	    return Url.resolve(pathToFolderWithBundledResources, Path.basename(__webpack_require__(636)("./" + svg)));
+	    return Url.resolve(pathToFolderWithBundledResources, Path.basename(__webpack_require__(637)("./" + svg)));
 	};
 
 	var GetSvgsForSpecies = function GetSvgsForSpecies(pathToFolderWithBundledResources, species) {
@@ -10050,7 +10117,7 @@ webpackJsonp_name_([1],[
 	module.exports = { GetSvgsForSpecies: GetSvgsForSpecies, ResolvePathToIcon: ResolvePathToIcon };
 
 /***/ },
-/* 617 */
+/* 618 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -10074,7 +10141,7 @@ webpackJsonp_name_([1],[
 	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 	// USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-	var punycode = __webpack_require__(618);
+	var punycode = __webpack_require__(619);
 
 	exports.parse = urlParse;
 	exports.resolve = urlResolve;
@@ -10146,7 +10213,7 @@ webpackJsonp_name_([1],[
 	      'gopher:': true,
 	      'file:': true
 	    },
-	    querystring = __webpack_require__(619);
+	    querystring = __webpack_require__(620);
 
 	function urlParse(url, parseQueryString, slashesDenoteHost) {
 	  if (url && isObject(url) && url instanceof Url) return url;
@@ -10763,7 +10830,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 618 */
+/* 619 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! https://mths.be/punycode v1.3.2 by @mathias */
@@ -11295,20 +11362,20 @@ webpackJsonp_name_([1],[
 
 	}(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)(module), (function() { return this; }())))
 
 /***/ },
-/* 619 */
+/* 620 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	exports.decode = exports.parse = __webpack_require__(620);
-	exports.encode = exports.stringify = __webpack_require__(621);
+	exports.decode = exports.parse = __webpack_require__(621);
+	exports.encode = exports.stringify = __webpack_require__(622);
 
 
 /***/ },
-/* 620 */
+/* 621 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -11394,7 +11461,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 621 */
+/* 622 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -11464,7 +11531,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 622 */
+/* 623 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -11692,10 +11759,10 @@ webpackJsonp_name_([1],[
 	    }
 	;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(28)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(29)))
 
 /***/ },
-/* 623 */
+/* 624 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -11758,7 +11825,7 @@ webpackJsonp_name_([1],[
 	};
 
 /***/ },
-/* 624 */
+/* 625 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -12293,20 +12360,20 @@ webpackJsonp_name_([1],[
 	};
 
 /***/ },
-/* 625 */
+/* 626 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./brain_selected.png": 626,
-		"./brain_unselected.png": 627,
-		"./female_selected.png": 628,
-		"./female_unselected.png": 629,
-		"./flower_parts_selected.png": 630,
-		"./flower_parts_unselected.png": 631,
-		"./male_selected.png": 632,
-		"./male_unselected.png": 633,
-		"./whole_plant_selected.png": 634,
-		"./whole_plant_unselected.png": 635
+		"./brain_selected.png": 627,
+		"./brain_unselected.png": 628,
+		"./female_selected.png": 629,
+		"./female_unselected.png": 630,
+		"./flower_parts_selected.png": 631,
+		"./flower_parts_unselected.png": 632,
+		"./male_selected.png": 633,
+		"./male_unselected.png": 634,
+		"./whole_plant_selected.png": 635,
+		"./whole_plant_unselected.png": 636
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12319,105 +12386,105 @@ webpackJsonp_name_([1],[
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 625;
+	webpackContext.id = 626;
 
-
-/***/ },
-/* 626 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "cbe297d1ea7bf5aac3cfcd540c8be570.png";
 
 /***/ },
 /* 627 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "bc6cb140072af5b41e6dc150228f8735.png";
+	module.exports = __webpack_require__.p + "cbe297d1ea7bf5aac3cfcd540c8be570.png";
 
 /***/ },
 /* 628 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "3661376bad0ed63dd397d20227943739.png";
+	module.exports = __webpack_require__.p + "bc6cb140072af5b41e6dc150228f8735.png";
 
 /***/ },
 /* 629 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "f1a4ab676c0362ce2f16c8f25bd4f863.png";
+	module.exports = __webpack_require__.p + "3661376bad0ed63dd397d20227943739.png";
 
 /***/ },
 /* 630 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "0a8a46f3670c36c03bc15a90db754a19.png";
+	module.exports = __webpack_require__.p + "f1a4ab676c0362ce2f16c8f25bd4f863.png";
 
 /***/ },
 /* 631 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "ad3370345bfd3369763a3f106f57dcb5.png";
+	module.exports = __webpack_require__.p + "0a8a46f3670c36c03bc15a90db754a19.png";
 
 /***/ },
 /* 632 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "bc6d754760910043bb887ade6e598cd3.png";
+	module.exports = __webpack_require__.p + "ad3370345bfd3369763a3f106f57dcb5.png";
 
 /***/ },
 /* 633 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "8c0597cbe1b70b385479fc347d5b83fa.png";
+	module.exports = __webpack_require__.p + "bc6d754760910043bb887ade6e598cd3.png";
 
 /***/ },
 /* 634 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "130a3f15fc96a7fa5e9ac4db73d9aa37.png";
+	module.exports = __webpack_require__.p + "8c0597cbe1b70b385479fc347d5b83fa.png";
 
 /***/ },
 /* 635 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "568a8e809ccaac58b013552d275965f8.png";
+	module.exports = __webpack_require__.p + "130a3f15fc96a7fa5e9ac4db73d9aa37.png";
 
 /***/ },
 /* 636 */
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__.p + "568a8e809ccaac58b013552d275965f8.png";
+
+/***/ },
+/* 637 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var map = {
-		"./anolis_carolinensis.svg": 637,
-		"./arabidopsis_thaliana_whole_plant.svg": 638,
-		"./brachypodium_distachyon_flower_parts.svg": 639,
-		"./brachypodium_distachyon_whole_plant.svg": 640,
-		"./chicken.svg": 641,
-		"./cow.svg": 642,
-		"./hordeum_vulgare_flower_parts.svg": 643,
-		"./hordeum_vulgare_whole_plant.svg": 644,
-		"./human_brain.svg": 645,
-		"./human_female.svg": 646,
-		"./human_male.svg": 647,
-		"./macaca_mulatta.svg": 648,
-		"./monodelphis_domestica.svg": 649,
-		"./mouse_brain.svg": 650,
-		"./mouse_female.svg": 651,
-		"./mouse_male.svg": 652,
-		"./oryza_sativa_flower_parts.svg": 653,
-		"./oryza_sativa_whole_plant.svg": 654,
-		"./papio_anubis.svg": 655,
-		"./rat.svg": 656,
-		"./solanum_lycopersicum_flower_parts.svg": 657,
-		"./solanum_lycopersicum_whole_plant.svg": 658,
-		"./solanum_tuberosum_whole_plant.svg": 659,
-		"./sorghum_bicolor_flower_parts.svg": 660,
-		"./sorghum_bicolor_whole_plant.svg": 661,
-		"./tetraodon_nigroviridis.svg": 662,
-		"./triticum_aestivum_flower_parts.svg": 663,
-		"./triticum_aestivum_whole_plant.svg": 664,
-		"./xenopus_tropicalis.svg": 665,
-		"./zea_mays_flower_parts.svg": 666,
-		"./zea_mays_whole_plant.svg": 667
+		"./anolis_carolinensis.svg": 638,
+		"./arabidopsis_thaliana_whole_plant.svg": 639,
+		"./brachypodium_distachyon_flower_parts.svg": 640,
+		"./brachypodium_distachyon_whole_plant.svg": 641,
+		"./chicken.svg": 642,
+		"./cow.svg": 643,
+		"./hordeum_vulgare_flower_parts.svg": 644,
+		"./hordeum_vulgare_whole_plant.svg": 645,
+		"./human_brain.svg": 646,
+		"./human_female.svg": 647,
+		"./human_male.svg": 648,
+		"./macaca_mulatta.svg": 649,
+		"./monodelphis_domestica.svg": 650,
+		"./mouse_brain.svg": 651,
+		"./mouse_female.svg": 652,
+		"./mouse_male.svg": 653,
+		"./oryza_sativa_flower_parts.svg": 654,
+		"./oryza_sativa_whole_plant.svg": 655,
+		"./papio_anubis.svg": 656,
+		"./rat.svg": 657,
+		"./solanum_lycopersicum_flower_parts.svg": 658,
+		"./solanum_lycopersicum_whole_plant.svg": 659,
+		"./solanum_tuberosum_whole_plant.svg": 660,
+		"./sorghum_bicolor_flower_parts.svg": 661,
+		"./sorghum_bicolor_whole_plant.svg": 662,
+		"./tetraodon_nigroviridis.svg": 663,
+		"./triticum_aestivum_flower_parts.svg": 664,
+		"./triticum_aestivum_whole_plant.svg": 665,
+		"./xenopus_tropicalis.svg": 666,
+		"./zea_mays_flower_parts.svg": 667,
+		"./zea_mays_whole_plant.svg": 668
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -12430,206 +12497,206 @@ webpackJsonp_name_([1],[
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 636;
+	webpackContext.id = 637;
 
-
-/***/ },
-/* 637 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "15e3c69b67d92ca008087978d6b8448e.svg";
 
 /***/ },
 /* 638 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "98c06a5c7a59b3bab435902524ffe7d8.svg";
+	module.exports = __webpack_require__.p + "15e3c69b67d92ca008087978d6b8448e.svg";
 
 /***/ },
 /* 639 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "cb470d533c62706f829d5f4f38aa425e.svg";
+	module.exports = __webpack_require__.p + "98c06a5c7a59b3bab435902524ffe7d8.svg";
 
 /***/ },
 /* 640 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "8483707aa435eba64fda951ff49ccb11.svg";
+	module.exports = __webpack_require__.p + "cb470d533c62706f829d5f4f38aa425e.svg";
 
 /***/ },
 /* 641 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "2a49f7c1bbfd4ce9943dd967b6565d97.svg";
+	module.exports = __webpack_require__.p + "8483707aa435eba64fda951ff49ccb11.svg";
 
 /***/ },
 /* 642 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "6a792bb3d4f6b7ab4c4e13b2511b17f2.svg";
+	module.exports = __webpack_require__.p + "2a49f7c1bbfd4ce9943dd967b6565d97.svg";
 
 /***/ },
 /* 643 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "173fddfa0293be721333dd0488441bad.svg";
+	module.exports = __webpack_require__.p + "6a792bb3d4f6b7ab4c4e13b2511b17f2.svg";
 
 /***/ },
 /* 644 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "a5a63a356c3d5b0ebd4c72044eafa587.svg";
+	module.exports = __webpack_require__.p + "173fddfa0293be721333dd0488441bad.svg";
 
 /***/ },
 /* 645 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "b4d4749ed2f9a3523a77749d41159a59.svg";
+	module.exports = __webpack_require__.p + "a5a63a356c3d5b0ebd4c72044eafa587.svg";
 
 /***/ },
 /* 646 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "ab77c41fd83e3ac7b59824eedcc7c5a7.svg";
+	module.exports = __webpack_require__.p + "b4d4749ed2f9a3523a77749d41159a59.svg";
 
 /***/ },
 /* 647 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "f75018cb835783dfc8cba05679925db6.svg";
+	module.exports = __webpack_require__.p + "ab77c41fd83e3ac7b59824eedcc7c5a7.svg";
 
 /***/ },
 /* 648 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "66214fa72aa58ed3471cf5db8dcfb73c.svg";
+	module.exports = __webpack_require__.p + "f75018cb835783dfc8cba05679925db6.svg";
 
 /***/ },
 /* 649 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "6e931c35578a6f5cd2631a8035edc6c4.svg";
+	module.exports = __webpack_require__.p + "66214fa72aa58ed3471cf5db8dcfb73c.svg";
 
 /***/ },
 /* 650 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "ca7eed0e443dfbb1778393a05ff98533.svg";
+	module.exports = __webpack_require__.p + "6e931c35578a6f5cd2631a8035edc6c4.svg";
 
 /***/ },
 /* 651 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "b798241c027f3433267b5fd2c7e162f4.svg";
+	module.exports = __webpack_require__.p + "ca7eed0e443dfbb1778393a05ff98533.svg";
 
 /***/ },
 /* 652 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "7227aa2d41f33d2dda795451b732f606.svg";
+	module.exports = __webpack_require__.p + "b798241c027f3433267b5fd2c7e162f4.svg";
 
 /***/ },
 /* 653 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "731e1923bcc41297de5b17335c6a088b.svg";
+	module.exports = __webpack_require__.p + "7227aa2d41f33d2dda795451b732f606.svg";
 
 /***/ },
 /* 654 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "6fd77ccb71c445a69ecda1d7f2acf3be.svg";
+	module.exports = __webpack_require__.p + "731e1923bcc41297de5b17335c6a088b.svg";
 
 /***/ },
 /* 655 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "d0808ee85e6f2aa9923a2c02c855d3aa.svg";
+	module.exports = __webpack_require__.p + "6fd77ccb71c445a69ecda1d7f2acf3be.svg";
 
 /***/ },
 /* 656 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "e8a6d2add179be4126a5236f96b2af5b.svg";
+	module.exports = __webpack_require__.p + "d0808ee85e6f2aa9923a2c02c855d3aa.svg";
 
 /***/ },
 /* 657 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "65e77feca458643bf95b5c5e13148726.svg";
+	module.exports = __webpack_require__.p + "e8a6d2add179be4126a5236f96b2af5b.svg";
 
 /***/ },
 /* 658 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "2406acaef2f238d3504430eb7bcb9d95.svg";
+	module.exports = __webpack_require__.p + "65e77feca458643bf95b5c5e13148726.svg";
 
 /***/ },
 /* 659 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "8ab8f4f9840301eff71e1b84c08f1fda.svg";
+	module.exports = __webpack_require__.p + "2406acaef2f238d3504430eb7bcb9d95.svg";
 
 /***/ },
 /* 660 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "35cac077905e5c012fb5502a2acf0407.svg";
+	module.exports = __webpack_require__.p + "8ab8f4f9840301eff71e1b84c08f1fda.svg";
 
 /***/ },
 /* 661 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "6d7f6fa1372c8c9c27c2b2d6d0ecdb87.svg";
+	module.exports = __webpack_require__.p + "35cac077905e5c012fb5502a2acf0407.svg";
 
 /***/ },
 /* 662 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "99203386ec5edc719c3a8f3c790aedec.svg";
+	module.exports = __webpack_require__.p + "6d7f6fa1372c8c9c27c2b2d6d0ecdb87.svg";
 
 /***/ },
 /* 663 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "ccb6040d000ff031a35680692a0c6521.svg";
+	module.exports = __webpack_require__.p + "99203386ec5edc719c3a8f3c790aedec.svg";
 
 /***/ },
 /* 664 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "30d9d46ebd8ed96acef4182f0e5dea5d.svg";
+	module.exports = __webpack_require__.p + "ccb6040d000ff031a35680692a0c6521.svg";
 
 /***/ },
 /* 665 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "01aa50632e4ce254ff1abf10f815b2fa.svg";
+	module.exports = __webpack_require__.p + "30d9d46ebd8ed96acef4182f0e5dea5d.svg";
 
 /***/ },
 /* 666 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "514455ffe1d2fc47050b3448b6c47304.svg";
+	module.exports = __webpack_require__.p + "01aa50632e4ce254ff1abf10f815b2fa.svg";
 
 /***/ },
 /* 667 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "8d6532733a5ffa657ae1df67a81fda1a.svg";
+	module.exports = __webpack_require__.p + "514455ffe1d2fc47050b3448b6c47304.svg";
 
 /***/ },
 /* 668 */
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__.p + "8d6532733a5ffa657ae1df67a81fda1a.svg";
+
+/***/ },
+/* 669 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(669);
+	var content = __webpack_require__(670);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(671)(content, {});
+	var update = __webpack_require__(672)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12646,10 +12713,10 @@ webpackJsonp_name_([1],[
 	}
 
 /***/ },
-/* 669 */
+/* 670 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(670)();
+	exports = module.exports = __webpack_require__(671)();
 	// imports
 
 
@@ -12660,7 +12727,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 670 */
+/* 671 */
 /***/ function(module, exports) {
 
 	/*
@@ -12716,7 +12783,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 671 */
+/* 672 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -12968,16 +13035,16 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 672 */
+/* 673 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(673);
+	var content = __webpack_require__(674);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(671)(content, {});
+	var update = __webpack_require__(672)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -12994,10 +13061,10 @@ webpackJsonp_name_([1],[
 	}
 
 /***/ },
-/* 673 */
+/* 674 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(670)();
+	exports = module.exports = __webpack_require__(671)();
 	// imports
 
 
@@ -13008,17 +13075,17 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 674 */
+/* 675 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	//*------------------------------------------------------------------*
 
-	var Config = __webpack_require__(675);
+	var Config = __webpack_require__(676);
 	var Orderings = __webpack_require__(677);
 	var ColorAxis = __webpack_require__(678);
-	var Data = __webpack_require__(680);
+	var Data = __webpack_require__(679);
 	//*------------------------------------------------------------------*
 
 	var _allRows = function _allRows(data) {
@@ -13052,136 +13119,98 @@ webpackJsonp_name_([1],[
 	module.exports = get;
 
 /***/ },
-/* 675 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var genomeBrowserTemplate = __webpack_require__(676);
-	var capitalizeFirstLetter = function capitalizeFirstLetter(str) {
-	  return !str ? str : str.charAt(0).toUpperCase() + str.substr(1);
-	};
-
-	var _introductoryMessage = function _introductoryMessage(isMultiExperiment, profiles) {
-	  var shownRows = profiles.rows.length,
-	      totalRows = profiles.searchResultTotal;
-
-	  var what = (isMultiExperiment ? 'experiment' : 'gene') + (totalRows > 1 ? 's' : '');
-
-	  return 'Showing ' + shownRows + ' ' + (totalRows === shownRows ? what + ':' : 'of ' + totalRows + ' ' + what + ' found:');
-	};
-
-	var geneURL = function geneURL(config) {
-	  return "/query" + "?geneQuery=" + config.geneQuery + "&conditionQuery=" + config.conditionQuery + "&organism=" + config.species;
-	};
-
-	var _coexpressions = function _coexpressions(jsonCoexpressions) {
-	  /*
-	  The backend code and the feature in the old heatmap were written to support coexpressions of multiple genes.
-	  It doesn't seem necessary, so this assumes zero or one coexpressions.
-	  */
-	  return jsonCoexpressions[0] ? {
-	    coexpressedGene: jsonCoexpressions[0].geneName,
-	    numCoexpressionsAvailable: jsonCoexpressions[0].jsonProfiles ? jsonCoexpressions[0].jsonProfiles.rows.length : 0
-	  } : "";
-	};
-	var coexpressions = function coexpressions(setupConfig, data) {
-	  return setupConfig.isExperimentPage && data.jsonCoexpressions && Array.isArray(data.jsonCoexpressions) ? _coexpressions(data.jsonCoexpressions) : "";
-	};
-
-	var getConfig = function getConfig(setupConfig, data) {
-	  var config = {
-	    geneQuery: data.config.geneQuery,
-	    atlasBaseURL: setupConfig.atlasBaseURL,
-	    pathToFolderWithBundledResources: setupConfig.pathToFolderWithBundledResources,
-	    isExperimentPage: setupConfig.isExperimentPage,
-	    isMultiExperiment: setupConfig.isMultiExperiment,
-	    isReferenceExperiment: setupConfig.isReferenceExperiment,
-	    isDifferential: setupConfig.isDifferential,
-	    introductoryMessage: _introductoryMessage(setupConfig.isMultiExperiment, data.profiles),
-	    description: setupConfig.isExperimentPage && data.experiment && data.experiment.description ? data.experiment.description : "",
-	    xAxisLegendName: capitalizeFirstLetter(data.config.columnType) || "Experimental condition",
-	    yAxisLegendName: setupConfig.isExperimentPage ? "Gene name" : "Experiment",
-	    coexpressions: coexpressions(setupConfig, data)
-	  };
-	  //See in heatmap-data.jsp which thirteen properties this config is populated with.
-	  Object.assign(config, data.config);
-	  Object.assign(config, {
-	    geneURL: geneURL(config)
-	  });
-	  Object.assign(config, {
-	    genomeBrowserTemplate: setupConfig.isExperimentPage ? genomeBrowserTemplate(config) : ""
-	  });
-	  Object.assign(config, {
-	    description: data.jsonExperiment ? setupConfig.isExperimentPage && data.jsonExperiment.description ? data.jsonExperiment.description : setupConfig.isReferenceExperiment && data.jsonExperiment.URL ? "Reference experiment: " + setupConfig.atlasBaseURL + data.jsonExperiment.URL : "" : config.description ? config.description : setupConfig.isMultiExperiment ? "Query results for: " + decodeURIComponent(config.geneQuery) + (config.conditionQuery && decodeURIComponent(config.conditionQuery).length > 2 ? ", in conditions: " + decodeURIComponent(config.conditionQuery) : "") + ", in species: " + config.species : ""
-	  });
-	  Object.assign(config, {
-	    shortDescription: config.experimentAccession ? (setupConfig.isReferenceExperiment ? "ReferenceExp" : "") + config.experimentAccession : "expression-atlas-" + config.species.replace(/ +/, "-")
-	  });
-
-	  return Object.freeze(config);
-	};
-
-	module.exports = getConfig;
-
-/***/ },
 /* 676 */
 /***/ function(module, exports) {
 
 	"use strict";
-	//Taken from ensemblUtils.js and EnsemblLauncher.jsx in the old heatmap
-	//*------------------------------------------------------------------*
 
-	// ensemblSpecies is the first two words only, with underscores instead of spaces, and all lower case except for the first character
-	// used to launch the ensembl genome browser for tracks
-	/**
-	 * @param {string} species
-	 */
+	// const genomeBrowserTemplate = require('./genomeBrowserTemplate.js');
 
-	var toEnsemblSpecies = function toEnsemblSpecies(species) {
-	    /**
-	     * @param {string} str
-	     */
-	    function capitaliseFirstLetter(str) {
-	        return str.charAt(0).toUpperCase() + str.slice(1);
+	var capitalizeFirstLetter = function capitalizeFirstLetter(str) {
+	    return !str ? str : str.charAt(0).toUpperCase() + str.substr(1);
+	};
+
+	var _introductoryMessage = function _introductoryMessage(isMultiExperiment, profiles) {
+	    var shownRows = profiles.rows.length;
+	    var totalRows = profiles.searchResultTotal;
+
+	    var what = (isMultiExperiment ? "experiment" : "gene") + (totalRows > 1 ? "" : "");
+
+	    return "Showing " + shownRows + " " + (totalRows === shownRows ? what + ":" : "of " + totalRows + " " + what + " found:");
+	};
+
+	var geneURL = function geneURL(config) {
+	    return config.atlasBaseURL + "/query?geneQuery=" + (config.geneQuery || "") + "&conditionQuery=" + (config.conditionQuery || "") + "&organism=" + (config.species || "");
+	};
+
+	var _coexpressions = function _coexpressions(jsonCoexpressions) {
+	    return (
+	        /*
+	         The backend code and the feature in the old heatmap were written to support coexpressions of multiple genes.
+	         It doesn't seem necessary, so this assumes zero or one coexpressions.
+	         */
+	        jsonCoexpressions[0] ? {
+	            coexpressedGene: jsonCoexpressions[0].geneName,
+	            numCoexpressionsAvailable: jsonCoexpressions[0].jsonProfiles ? jsonCoexpressions[0].jsonProfiles.rows.length : 0
+	        } : ""
+	    );
+	};
+
+	var coexpressions = function coexpressions(setupConfig, data) {
+	    return setupConfig.isExperimentPage && data.jsonCoexpressions && Array.isArray(data.jsonCoexpressions) ? _coexpressions(data.jsonCoexpressions) : "";
+	};
+
+	var getConfig = function getConfig(setupConfig, data) {
+	    var config = {
+	        geneQuery: data.config.geneQuery,
+	        atlasBaseURL: setupConfig.atlasBaseURL,
+	        proxyPrefix: setupConfig.proxyPrefix,
+	        pathToFolderWithBundledResources: setupConfig.pathToFolderWithBundledResources,
+	        isExperimentPage: setupConfig.isExperimentPage,
+	        isMultiExperiment: setupConfig.isMultiExperiment,
+	        isReferenceExperiment: setupConfig.isReferenceExperiment,
+	        isDifferential: setupConfig.isDifferential,
+	        introductoryMessage: _introductoryMessage(setupConfig.isMultiExperiment, data.profiles),
+	        description: setupConfig.isExperimentPage && data.experiment && data.experiment.description ? data.experiment.description : "",
+	        xAxisLegendName: capitalizeFirstLetter(data.config.columnType) || "Experimental condition",
+	        yAxisLegendName: setupConfig.isExperimentPage ? "Gene name" : "Experiment",
+	        coexpressions: coexpressions(setupConfig, data)
+	    };
+
+	    var description = "";
+	    if (data.jsonExperiment) {
+	        if (data.jsonExperiment.description && setupConfig.isExperimentPage) {
+	            description = data.jsonExperiment.description;
+	        } else if (setupConfig.isReferenceExperiment && data.jsonExperiment.URL) {
+	            description = "Reference experiment: " + setupConfig.atlasBaseURL + data.jsonExperiment.URL;
+	        }
+	    } else if (config.description) {
+	        description = config.description;
+	    } else if (setupConfig.isMultiExperiment) {
+	        description = "Query results for: " + decodeURIComponent(config.geneQuery);
+	        if (config.conditionQuery && decodeURIComponent(config.conditionQuery).length > 2) {
+	            description = description + ", in conditions: " + decodeURIComponent(config.conditionQuery);
+	        }
+	        description = description + ", in species: " + config.species;
 	    }
 
-	    /**
-	     * @param {string} str
-	     */
-	    function firstTwoWords(str) {
-	        var words = str.split(" ");
-	        return words.length <= 2 ? str : words[0] + " " + words[1];
+	    var shortDescription = "";
+	    if (config.experimentAccession) {
+	        if (setupConfig.isReferenceExperiment) {
+	            shortDescription = "ReferenceExp";
+	        }
+	        shortDescription = "" + shortDescription + config.experimentAccession;
+	    } else {
+	        shortDescription = "expression-atlas-" + data.config.species.replace(/ +/, "-");
 	    }
 
-	    return capitaliseFirstLetter(firstTwoWords(species).replace(" ", "_").toLowerCase());
+	    Object.assign(config, data.config, { moreInformationLink: setupConfig.isMultiExperiment ? geneURL(config) : data.jsonExperiment ? data.jsonExperiment.URL : setupConfig.atlasBaseURL
+	    }, { genomeBrowserTemplate: setupConfig.isExperimentPage ? "" : "" }, { description: description }, { shortDescription: shortDescription });
+
+	    return Object.freeze(config);
 	};
 
-	var _ensemblTrackURL = function _ensemblTrackURL(isBaseline, experimentAccession, atlasBaseUrl, species, baseURL, selectedColumnId, selectedGeneId) {
-	    var ensemblSpecies = toEnsemblSpecies(species);
-	    var atlasTrackBaseURLWithTrackFileHeader = atlasBaseUrl + "/experiments/" + experimentAccession + "/tracks/" + experimentAccession + "." + selectedColumnId;
-	    var contigViewBottom = "contigviewbottom=url:" + atlasTrackBaseURLWithTrackFileHeader + (isBaseline ? ".genes.expressions.bedGraph" : ".genes.log2foldchange.bedGraph");
-	    var tiling = isBaseline ? "" : "=tiling,url:" + atlasTrackBaseURLWithTrackFileHeader + ".genes.pval.bedGraph=pvalue;";
-	    return baseURL + ensemblSpecies + "/Location/View?g=" + selectedGeneId + ";db=core;" + contigViewBottom + tiling + ";format=BEDGRAPH";
-	};
-
-	var getHost = function getHost(ensemblDB) {
-	    var ensemblHost = "";
-	    if (ensemblDB === "plants") {
-	        ensemblHost = "https://ensembl.gramene.org/";
-	    } else if (ensemblDB === "fungi") {
-	        ensemblHost = "https://fungi.ensembl.org/";
-	    } else if (ensemblDB === "metazoa") {
-	        ensemblHost = "https://metazoa.ensembl.org/";
-	    } else if (ensemblDB === "ensembl") {
-	        ensemblHost = "https://www.ensembl.org/";
-	    }
-	    return ensemblHost;
-	};
-
-	module.exports = function (config) {
-	    return _ensemblTrackURL(!config.isDifferential, config.experimentAccession, config.atlasBaseURL, config.species, getHost(config.ensemblDB), "__x__", "__y__");
-	};
+	module.exports = getConfig;
 
 /***/ },
 /* 677 */
@@ -13191,7 +13220,7 @@ webpackJsonp_name_([1],[
 
 	//*------------------------------------------------------------------*
 
-	var _ = __webpack_require__(18);
+	var _ = __webpack_require__(19);
 
 	//*------------------------------------------------------------------*
 
@@ -13337,22 +13366,18 @@ webpackJsonp_name_([1],[
 
 	"use strict";
 
-	//*------------------------------------------------------------------*
-
-	var React = __webpack_require__(138);
-	var validateDataSeries = __webpack_require__(679).validateDataSeries;
+	var React = __webpack_require__(139);
+	// var validateDataSeries = require('../PropTypes.js').validateDataSeries;
 	var Colour = __webpack_require__(1);
-
-	//*------------------------------------------------------------------*
-
-	//*------------------------------------------------------------------*
 
 	var highlightColour = function highlightColour(c) {
 	  return c.light() ? c.clone().lighten(0.5) : c.clone().saturate(0.3).darken(0.5);
 	};
 
 	var dataClassesFromSeries = function dataClassesFromSeries(dataSeries) {
-	  validateDataSeries(dataSeries);
+	  // PropTypes should only be used with proper React components
+	  // https://facebook.github.io/react/warnings/dont-call-proptypes.html
+	  // validateDataSeries(dataSeries);
 	  var xs = dataSeries.map(function (series) {
 	    return series.data.length === 0 && series.info.name === "Below cutoff" ? {
 	      data: [{ value: 0.0 }],
@@ -13440,160 +13465,11 @@ webpackJsonp_name_([1],[
 
 	"use strict";
 
-	var React = __webpack_require__(138);
-	var validate = __webpack_require__(606);
-
-	var PointPropType = React.PropTypes.shape({
-	    x: React.PropTypes.number.isRequired,
-	    y: React.PropTypes.number.isRequired,
-	    value: React.PropTypes.number.isRequired,
-	    info: React.PropTypes.object.isRequired
-	});
-
-	var PointsInDataSeriesPropType = React.PropTypes.arrayOf(React.PropTypes.arrayOf(PointPropType));
-
-	var DataSeriesProps = {
-	    info: React.PropTypes.shape({
-	        colour: React.PropTypes.string.isRequired,
-	        name: React.PropTypes.string.isRequired
-	    }),
-	    data: React.PropTypes.arrayOf(PointPropType).isRequired
-	};
-
-	var ValidateDataSeries = function ValidateDataSeries(dataSeries) {
-	    dataSeries.forEach(function (series) {
-	        validate(series, DataSeriesProps);
-	    });
-	};
-
-	var AxisCategoriesPropType = React.PropTypes.arrayOf(React.PropTypes.shape({
-	    id: React.PropTypes.string, // ontology ID can be missing for x axis
-	    label: React.PropTypes.string.isRequired,
-	    info: React.PropTypes.shape({
-	        trackId: React.PropTypes.string,
-	        tooltip: React.PropTypes.object
-	    }).isRequired
-	})).isRequired;
-
-	var OrderingsPropType = function OrderingsPropType(props, propName) {
-	    var orderings = props[propName];
-
-	    var isPermutation = function isPermutation(arr) {
-	        return [].concat(arr).sort(function (a, b) {
-	            return a - b;
-	        }).map(function (el, ix) {
-	            return el === ix;
-	        }).reduce(function (l, r) {
-	            return l && r;
-	        });
-	    };
-
-	    if (!orderings.hasOwnProperty("Default")) {
-	        return new Error("Default ordering missing");
-	    }
-
-	    Object.keys(orderings).forEach(function (orderingName) {
-	        var ordering = orderings[orderingName];
-
-	        if (!isPermutation(ordering.columns)) {
-	            return new Error("Column ordering invalid in " + orderingName);
-	        }
-	        if (!isPermutation(ordering.rows)) {
-	            return new Error("Row ordering invalid in " + orderingName);
-	        }
-	    });
-	};
-
-	var HeatmapDataPropType = function HeatmapDataPropType(props, propName) {
-	    var heatmapData = props[propName];
-	    var possiblyError = ValidateDataSeries(heatmapData.dataSeries);
-	    if (possiblyError !== undefined) {
-	        return possiblyError;
-	    }
-
-	    var width = heatmapData.xAxisCategories.length;
-	    var height = heatmapData.yAxisCategories.length;
-
-	    for (var i = 0; i < heatmapData.dataSeries.length; i++) {
-	        for (var j = 0; j < heatmapData.dataSeries[i].data.length; j++) {
-	            var point = heatmapData.dataSeries[i].data[j];
-	            var x = point.x;
-	            var y = point.y;
-	            if (x < 0 || y < 0 || x >= width || y >= height) {
-	                return new Error("Point with coordinates outside range: " + x + ", " + y);
-	            }
-	        }
-	    }
-	};
-
-	var LoadResultPropType = React.PropTypes.shape({
-	    heatmapConfig: React.PropTypes.object.isRequired,
-	    colorAxis: React.PropTypes.object,
-	    orderings: OrderingsPropType,
-	    heatmapData: HeatmapDataPropType
-	});
-
-	var FormatterPropType = function FormatterPropType(props, propName) {
-	    var f = props[propName];
-	    if (f === undefined) {
-	        return new Error(propName + " formatter missing");
-	    } else if (typeof f !== "function" || f.name !== "Formatter") {
-	        return new Error(propName + " formatter not correctly created. See the main method of TooltipFormatter.jsx.");
-	    }
-	};
-
-	var OrderingsPropTypes = React.PropTypes.shape({
-	    available: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    selected: React.PropTypes.string.isRequired,
-	    onSelect: React.PropTypes.func.isRequired
-	}).isRequired;
-
-	/*
-	selected should be a subset of values
-	valueGroupings should be two element arrays, one the name of the grouping and the second a subset of values
-	*/
-	var FilterProps = {
-	    name: React.PropTypes.string.isRequired,
-	    values: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    selected: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-	    valueGroupings: React.PropTypes.arrayOf(function (props, propName) {
-	        var prop = props[propName];
-	        if (prop === undefined) {
-	            return new Error(propName + " missing in " + props);
-	        } else if (!Array.isArray(prop) || prop.length !== 2) {
-	            return new Error(prop + " invalid: expected array of length two");
-	        } else if (typeof prop[0] !== "string") {
-	            return new Error(prop[0] + " should be a string representing name of the grouping");
-	        } else if (!Array.isArray(prop[1])) {
-	            return new Error(prop[1] + " should be an array with members of the grouping ");
-	        }
-	    })
-	};
-
-	module.exports = {
-	    validateDataSeries: ValidateDataSeries,
-	    PointsInDataSeries: PointsInDataSeriesPropType,
-	    Point: PointPropType,
-	    HeatmapData: HeatmapDataPropType,
-	    LoadResult: LoadResultPropType,
-	    AxisCategories: AxisCategoriesPropType,
-	    Formatter: FormatterPropType,
-	    Orderings: OrderingsPropTypes,
-	    Filter: React.PropTypes.shape(FilterProps).isRequired,
-	    FilterProps: FilterProps
-	};
-
-/***/ },
-/* 680 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
 	//*------------------------------------------------------------------*
 
-	var _ = __webpack_require__(18);
-	var Url = __webpack_require__(617);
-	var Path = __webpack_require__(622);
+	var _ = __webpack_require__(19);
+	var Url = __webpack_require__(618);
+	var Path = __webpack_require__(623);
 
 	//*------------------------------------------------------------------*
 
@@ -13628,7 +13504,7 @@ webpackJsonp_name_([1],[
 	            return {
 	              type: resource.type,
 	              uri: config.atlasBaseURL + resource.uri,
-	              icon: Url.resolve(config.pathToFolderWithBundledResources, Path.basename(__webpack_require__(681)("./" + resource.type + "-icon.png")))
+	              icon: Url.resolve(config.pathToFolderWithBundledResources, Path.basename(__webpack_require__(680)("./" + resource.type + "-icon.png")))
 	            };
 	          })
 	        }, columnHeader.contrastSummary),
@@ -13788,14 +13664,14 @@ webpackJsonp_name_([1],[
 	module.exports = getTheWholeDataObject;
 
 /***/ },
-/* 681 */
+/* 680 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./gsea_go-icon.png": 682,
-		"./gsea_interpro-icon.png": 683,
-		"./gsea_reactome-icon.png": 684,
-		"./ma-plot-icon.png": 685
+		"./gsea_go-icon.png": 681,
+		"./gsea_interpro-icon.png": 682,
+		"./gsea_reactome-icon.png": 683,
+		"./ma-plot-icon.png": 684
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -13808,46 +13684,45 @@ webpackJsonp_name_([1],[
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 681;
+	webpackContext.id = 680;
 
 
 /***/ },
-/* 682 */
+/* 681 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "5faee84bd1cf86bc62432d4065523c39.png";
 
 /***/ },
-/* 683 */
+/* 682 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "e5bd8b95955895136e36bc4722d71cf0.png";
 
 /***/ },
-/* 684 */
+/* 683 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "4d9b25a425f08c8f240a14045f694819.png";
 
 /***/ },
-/* 685 */
+/* 684 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "6b3ed826d015fcfafd268718f1d4d39c.png";
 
 /***/ },
-/* 686 */
+/* 685 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var React = __webpack_require__(138);
-	var Button = __webpack_require__(389);
-	var FormattersFactory = __webpack_require__(687);
+	var React = __webpack_require__(139);
+	var FormattersFactory = __webpack_require__(686);
 	var TooltipsFactory = __webpack_require__(691);
-	var PropTypes = __webpack_require__(679);
-	var Show = __webpack_require__(697);
-	var _ = __webpack_require__(18);
+	var PropTypes = __webpack_require__(697);
+	var Show = __webpack_require__(698);
+	var _ = __webpack_require__(19);
 
 	module.exports = React.createClass({
 	    displayName: "Heatmap with settings",
@@ -13878,7 +13753,7 @@ webpackJsonp_name_([1],[
 	    _heatmapDataToPresent: function _heatmapDataToPresent() {
 	        var _this = this;
 
-	        return __webpack_require__(847).manipulate({
+	        return __webpack_require__(816).manipulate({
 	            keepSeries: function keepSeries(series) {
 	                return _this._getFilterSelection(_this._expressionLevelInSelectedBucketFilter().name).includes(series.info.name);
 	            },
@@ -14025,61 +13900,70 @@ webpackJsonp_name_([1],[
 	});
 
 /***/ },
-/* 687 */
+/* 686 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-	//*------------------------------------------------------------------*
+	'use strict';
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = __webpack_require__(138);
-	var ReactDOMServer = __webpack_require__(688);
-	var PropTypes = __webpack_require__(679);
+	var _react = __webpack_require__(139);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _server = __webpack_require__(687);
+
+	var _server2 = _interopRequireDefault(_server);
+
+	var _expressionAtlasNumberFormat = __webpack_require__(688);
+
+	var _expressionAtlasNumberFormat2 = _interopRequireDefault(_expressionAtlasNumberFormat);
+
+	var _he = __webpack_require__(14);
+
+	var _he2 = _interopRequireDefault(_he);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var outwardLink = __webpack_require__(690);
+
 	var scientificNotation = function scientificNotation(value) {
-	  return React.createElement(
-	    'b',
-	    null,
-	    __webpack_require__(689).scientificNotation(value)
-	  );
+	  return _expressionAtlasNumberFormat2.default.scientificNotation(value, { fontWeight: 'bold' });
 	};
-	var escapedHtmlDecoder = __webpack_require__(13);
 
-	//*------------------------------------------------------------------*
-
-	var Tooltip = React.createClass({
+	var Tooltip = _react2.default.createClass({
 	  displayName: 'Tooltip',
 
 	  propTypes: {
-	    config: React.PropTypes.shape({
-	      isDifferential: React.PropTypes.bool.isRequired,
-	      xAxisLegendName: React.PropTypes.string.isRequired,
-	      yAxisLegendName: React.PropTypes.string.isRequired,
-	      genomeBrowserTemplate: React.PropTypes.string.isRequired
+	    config: _react2.default.PropTypes.shape({
+	      isDifferential: _react2.default.PropTypes.bool.isRequired,
+	      xAxisLegendName: _react2.default.PropTypes.string.isRequired,
+	      yAxisLegendName: _react2.default.PropTypes.string.isRequired,
+	      genomeBrowserTemplate: _react2.default.PropTypes.string.isRequired
 	    }).isRequired,
-	    colour: React.PropTypes.string.isRequired,
-	    xLabel: React.PropTypes.string.isRequired,
-	    yLabel: React.PropTypes.string.isRequired,
-	    value: React.PropTypes.number.isRequired,
-	    unit: React.PropTypes.string,
-	    foldChange: React.PropTypes.number,
-	    pValue: React.PropTypes.string,
-	    tStat: React.PropTypes.string,
-	    xAxisLegendName: React.PropTypes.string
+	    colour: _react2.default.PropTypes.string.isRequired,
+	    xLabel: _react2.default.PropTypes.string.isRequired,
+	    yLabel: _react2.default.PropTypes.string.isRequired,
+	    value: _react2.default.PropTypes.number.isRequired,
+	    unit: _react2.default.PropTypes.string,
+	    foldChange: _react2.default.PropTypes.number,
+	    pValue: _react2.default.PropTypes.string,
+	    tStat: _react2.default.PropTypes.string,
+	    xAxisLegendName: _react2.default.PropTypes.string
 	  }, //TODO extend this prop checker.Props for this component are created dynamically so it's important. If differential, expect p-values and fold changes, etc.
 
 	  render: function render() {
-	    return React.createElement(
+	    return _react2.default.createElement(
 	      'div',
 	      { style: { whiteSpace: "pre" } },
 	      this._div(this.props.config.yAxisLegendName, this.props.yLabel),
 	      this._div(this.props.xAxisLegendName || this.props.config.xAxisLegendName, this.props.xLabel),
-	      this.props.config.isDifferential ? [React.createElement(
+	      this.props.config.isDifferential ? [_react2.default.createElement(
 	        'div',
 	        { key: "" },
 	        this._tinySquare(),
 	        this._span("Fold change", this.props.foldChange)
-	      ), this._div("P-value", this.props.pValue, scientificNotation), this._div("T-statistic", this.props.tStat)] : React.createElement(
+	      ), this._div("P-value", this.props.pValue, scientificNotation), this._div("T-statistic", this.props.tStat)] : _react2.default.createElement(
 	        'div',
 	        null,
 	        [this._tinySquare(), this._span("Expression level", this.props.value ? this.props.value + " " + (this.props.unit || "") : "Below cutoff")]
@@ -14088,7 +13972,7 @@ webpackJsonp_name_([1],[
 	    );
 	  },
 	  _tinySquare: function _tinySquare() {
-	    return React.createElement('span', { key: "Tiny " + this.props.colour + " square",
+	    return _react2.default.createElement('span', { key: "Tiny " + this.props.colour + " square",
 	      style: {
 	        border: "1px rgb(192, 192, 192) solid",
 	        marginRight: "2px",
@@ -14099,10 +13983,10 @@ webpackJsonp_name_([1],[
 	      } });
 	  },
 	  _info: function _info(text) {
-	    return React.createElement(
+	    return _react2.default.createElement(
 	      'div',
 	      null,
-	      React.createElement(
+	      _react2.default.createElement(
 	        'i',
 	        null,
 	        text
@@ -14110,25 +13994,25 @@ webpackJsonp_name_([1],[
 	    );
 	  },
 	  _div: function _div(name, value, format) {
-	    return name && value ? React.createElement(
+	    return name && value ? _react2.default.createElement(
 	      'div',
 	      { key: name + " " + value },
 	      name + ": ",
-	      value.length > 50 ? React.createElement('br', null) : null,
+	      value.length > 50 ? _react2.default.createElement('br', null) : null,
 	      (format || this._bold)(value)
 	    ) : null;
 	  },
 	  _span: function _span(name, value) {
-	    return React.createElement(
+	    return _react2.default.createElement(
 	      'span',
 	      { key: name + " " + value },
 	      name + ": ",
-	      value.length > 50 ? React.createElement('br', null) : null,
+	      value.length > 50 ? _react2.default.createElement('br', null) : null,
 	      this._bold(value)
 	    );
 	  },
 	  _bold: function _bold(value) {
-	    return React.createElement(
+	    return _react2.default.createElement(
 	      'b',
 	      null,
 	      value
@@ -14136,30 +14020,31 @@ webpackJsonp_name_([1],[
 	  }
 	});
 
-	var YAxisLabel = React.createClass({
+	var YAxisLabel = _react2.default.createClass({
 	  displayName: 'YAxisLabel',
 
 	  propTypes: {
-	    config: React.PropTypes.shape({
-	      atlasBaseURL: React.PropTypes.string.isRequired,
-	      isMultiExperiment: React.PropTypes.bool.isRequired
+	    config: _react2.default.PropTypes.shape({
+	      atlasBaseURL: _react2.default.PropTypes.string.isRequired,
+	      proxyPrefix: _react2.default.PropTypes.string.isRequired,
+	      isMultiExperiment: _react2.default.PropTypes.bool.isRequired
 	    }).isRequired,
-	    labelText: React.PropTypes.string.isRequired,
-	    resourceId: React.PropTypes.string.isRequired,
-	    extra: React.PropTypes.string
+	    labelText: _react2.default.PropTypes.string.isRequired,
+	    resourceId: _react2.default.PropTypes.string.isRequired,
+	    extra: _react2.default.PropTypes.string
 	  },
 	  //TODO: remove the "otherwise" branch when production Atlas supplies URIs for labels (expected: early 2017)
 	  render: function render() {
-	    var geneNameWithLink = React.createElement(
+	    var geneNameWithLink = _react2.default.createElement(
 	      'a',
-	      { href: this.props.resourceId.startsWith("http") ? this.props.resourceId : this.props.config.atlasBaseURL + (this.props.config.isMultiExperiment ? "/experiments/" : "/genes/") + this.props.resourceId },
+	      { href: outwardLink(this.props.config.proxyPrefix, this.props.resourceId.startsWith("http") ? this.props.resourceId : this.props.config.atlasBaseURL + (this.props.config.isMultiExperiment ? "/experiments/" : "/genes/") + this.props.resourceId) },
 	      this.props.labelText
 	    );
-	    return this.props.extra ? React.createElement(
+	    return this.props.extra ? _react2.default.createElement(
 	      'span',
 	      null,
 	      geneNameWithLink,
-	      React.createElement(
+	      _react2.default.createElement(
 	        'i',
 	        { style: { color: "black" } },
 	        "\t" + this.props.extra
@@ -14169,7 +14054,7 @@ webpackJsonp_name_([1],[
 	});
 
 	var reactToHtml = function reactToHtml(component) {
-	  return escapedHtmlDecoder.decode(ReactDOMServer.renderToStaticMarkup(component));
+	  return _he2.default.decode(_server2.default.renderToStaticMarkup(component));
 	};
 
 	var makeFormatter = function makeFormatter(config) {
@@ -14183,7 +14068,7 @@ webpackJsonp_name_([1],[
 	      textOverflow: config.isExperimentPage ? 'none' : 'ellipsis'
 	    },
 	    yAxis: function Formatter(value) {
-	      return reactToHtml(React.createElement(YAxisLabel, {
+	      return reactToHtml(_react2.default.createElement(YAxisLabel, {
 	        config: config,
 	        labelText: value.label,
 	        resourceId: value.id,
@@ -14205,22 +14090,31 @@ webpackJsonp_name_([1],[
 	          o[key] = point.options.info[key];
 	        }
 	      }
-	      return reactToHtml(React.createElement(Tooltip, _extends({}, o, { config: config })));
+	      return reactToHtml(_react2.default.createElement(Tooltip, _extends({}, o, { config: config })));
 	    }
 	  };
 	};
-	//*------------------------------------------------------------------*
 
 	module.exports = makeFormatter;
+
+/***/ },
+/* 687 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(285);
+
 
 /***/ },
 /* 688 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
-	module.exports = __webpack_require__(284);
+	//*------------------------------------------------------------------*
 
+	module.exports = __webpack_require__(689);
 
 /***/ },
 /* 689 */
@@ -14228,17 +14122,7 @@ webpackJsonp_name_([1],[
 
 	"use strict";
 
-	//*------------------------------------------------------------------*
-
-	module.exports = __webpack_require__(690);
-
-/***/ },
-/* 690 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var React = __webpack_require__(138); // React is called in the transpiled JS files in the return statements
+	var React = __webpack_require__(139); // React is called in the transpiled JS files in the return statements
 
 	//*------------------------------------------------------------------*
 
@@ -14291,6 +14175,16 @@ webpackJsonp_name_([1],[
 	exports.scientificNotation = formatScientificNotation;
 
 /***/ },
+/* 690 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	module.exports = function (proxyPrefix, url) {
+	    return proxyPrefix.endsWith("http://") || proxyPrefix.endsWith("https://") ? proxyPrefix + url.replace(/^https?:\/\//, "") : proxyPrefix + url;
+	};
+
+/***/ },
 /* 691 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -14303,7 +14197,7 @@ webpackJsonp_name_([1],[
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = __webpack_require__(138);
+	var React = __webpack_require__(139);
 
 	var GeneTooltip = __webpack_require__(692);
 	__webpack_require__(693);
@@ -14374,7 +14268,7 @@ webpackJsonp_name_([1],[
 
 	//*------------------------------------------------------------------*
 
-	var React = __webpack_require__(138);
+	var React = __webpack_require__(139);
 
 	//*------------------------------------------------------------------*
 
@@ -14498,7 +14392,7 @@ webpackJsonp_name_([1],[
 	var content = __webpack_require__(694);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(671)(content, {});
+	var update = __webpack_require__(672)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -14518,7 +14412,7 @@ webpackJsonp_name_([1],[
 /* 694 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(670)();
+	exports = module.exports = __webpack_require__(671)();
 	// imports
 
 
@@ -14536,7 +14430,7 @@ webpackJsonp_name_([1],[
 
 	//*------------------------------------------------------------------*
 
-	var React = __webpack_require__(138);
+	var React = __webpack_require__(139);
 
 	//*------------------------------------------------------------------*
 
@@ -14717,7 +14611,7 @@ webpackJsonp_name_([1],[
 
 	//*------------------------------------------------------------------*
 
-	var React = __webpack_require__(138);
+	var React = __webpack_require__(139);
 
 	//*------------------------------------------------------------------*
 
@@ -14826,19 +14720,172 @@ webpackJsonp_name_([1],[
 
 	"use strict";
 
+	var React = __webpack_require__(139);
+	// const validate = require(`react-prop-types-check`);
+
+
+	var PointPropType = React.PropTypes.shape({
+	    x: React.PropTypes.number.isRequired,
+	    y: React.PropTypes.number.isRequired,
+	    value: React.PropTypes.number.isRequired,
+	    info: React.PropTypes.object.isRequired
+	});
+
+	var PointsInDataSeriesPropType = React.PropTypes.arrayOf(React.PropTypes.arrayOf(PointPropType));
+
+	var DataSeriesProps = {
+	    info: React.PropTypes.shape({
+	        colour: React.PropTypes.string.isRequired,
+	        name: React.PropTypes.string.isRequired
+	    }),
+	    data: React.PropTypes.arrayOf(PointPropType).isRequired
+	};
+
+	// PropTypes should only be used with proper React components
+	// https://facebook.github.io/react/warnings/dont-call-proptypes.html
+	// const ValidateDataSeries = dataSeries => {
+	//     dataSeries.forEach(series => {
+	//         validate(series, DataSeriesProps);
+	//     });
+	// };
+
+
+	var AxisCategoriesPropType = React.PropTypes.arrayOf(React.PropTypes.shape({
+	    id: React.PropTypes.string, // ontology ID can be missing for x axis
+	    label: React.PropTypes.string.isRequired,
+	    info: React.PropTypes.shape({
+	        trackId: React.PropTypes.string,
+	        tooltip: React.PropTypes.object
+	    }).isRequired
+	})).isRequired;
+
+	var OrderingsPropType = function OrderingsPropType(props, propName) {
+	    var orderings = props[propName];
+
+	    var isPermutation = function isPermutation(arr) {
+	        return [].concat(arr).sort(function (a, b) {
+	            return a - b;
+	        }).map(function (el, ix) {
+	            return el === ix;
+	        }).reduce(function (l, r) {
+	            return l && r;
+	        });
+	    };
+
+	    if (!orderings.hasOwnProperty("Default")) {
+	        return new Error("Default ordering missing");
+	    }
+
+	    Object.keys(orderings).forEach(function (orderingName) {
+	        var ordering = orderings[orderingName];
+
+	        if (!isPermutation(ordering.columns)) {
+	            return new Error("Column ordering invalid in " + orderingName);
+	        }
+	        if (!isPermutation(ordering.rows)) {
+	            return new Error("Row ordering invalid in " + orderingName);
+	        }
+	    });
+	};
+
+	var HeatmapDataPropType = function HeatmapDataPropType(props, propName) {
+	    var heatmapData = props[propName];
+	    // const possiblyError = ValidateDataSeries(heatmapData.dataSeries);
+	    // if (possiblyError !== undefined) {
+	    //     return possiblyError;
+	    // }
+
+	    var width = heatmapData.xAxisCategories.length;
+	    var height = heatmapData.yAxisCategories.length;
+
+	    for (var i = 0; i < heatmapData.dataSeries.length; i++) {
+	        for (var j = 0; j < heatmapData.dataSeries[i].data.length; j++) {
+	            var point = heatmapData.dataSeries[i].data[j];
+	            var x = point.x;
+	            var y = point.y;
+	            if (x < 0 || y < 0 || x >= width || y >= height) {
+	                return new Error("Point with coordinates outside range: " + x + ", " + y);
+	            }
+	        }
+	    }
+	};
+
+	var LoadResultPropType = React.PropTypes.shape({
+	    heatmapConfig: React.PropTypes.object.isRequired,
+	    colorAxis: React.PropTypes.object,
+	    orderings: OrderingsPropType,
+	    heatmapData: HeatmapDataPropType
+	});
+
+	var FormatterPropType = function FormatterPropType(props, propName) {
+	    var f = props[propName];
+	    if (f === undefined) {
+	        return new Error(propName + " formatter missing");
+	    } else if (typeof f !== "function" || f.name !== "Formatter") {
+	        return new Error(propName + " formatter not correctly created. See the main method of TooltipFormatter.jsx.");
+	    }
+	};
+
+	var OrderingsPropTypes = React.PropTypes.shape({
+	    available: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    selected: React.PropTypes.string.isRequired,
+	    onSelect: React.PropTypes.func.isRequired
+	}).isRequired;
+
+	/*
+	selected should be a subset of values
+	valueGroupings should be two element arrays, one the name of the grouping and the second a subset of values
+	*/
+	var FilterProps = {
+	    name: React.PropTypes.string.isRequired,
+	    values: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    selected: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+	    valueGroupings: React.PropTypes.arrayOf(function (props, propName) {
+	        var prop = props[propName];
+
+	        if (prop === undefined) {
+	            return new Error(propName + " missing in " + props);
+	        } else if (!Array.isArray(prop) || prop.length !== 2) {
+	            return new Error(prop + " invalid: expected array of length two");
+	        } else if (typeof prop[0] !== "string") {
+	            return new Error(prop[0] + " should be a string representing name of the grouping");
+	        } else if (!Array.isArray(prop[1])) {
+	            return new Error(prop[1] + " should be an array with members of the grouping ");
+	        }
+	    })
+	};
+
+	module.exports = {
+	    // validateDataSeries : ValidateDataSeries,
+	    PointsInDataSeries: PointsInDataSeriesPropType,
+	    Point: PointPropType,
+	    HeatmapData: HeatmapDataPropType,
+	    LoadResult: LoadResultPropType,
+	    AxisCategories: AxisCategoriesPropType,
+	    Formatter: FormatterPropType,
+	    Orderings: OrderingsPropTypes,
+	    Filter: React.PropTypes.shape(FilterProps).isRequired,
+	    FilterProps: FilterProps
+	};
+
+/***/ },
+/* 698 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = __webpack_require__(138);
-	var PropTypes = __webpack_require__(679);
-	var Button = __webpack_require__(389);
-	var DownloadProfilesButton = __webpack_require__(698);
+	var React = __webpack_require__(139);
+	var PropTypes = __webpack_require__(697);
+	var DownloadProfilesButton = __webpack_require__(699);
 	var HeatmapCanvas = __webpack_require__(722);
 	var OrderingsDropdown = __webpack_require__(723);
 	var SettingsModal = __webpack_require__(724);
-	var TooltipStateManager = __webpack_require__(826);
-	var CoexpressionOption = __webpack_require__(840);
+	var TooltipStateManager = __webpack_require__(795);
+	var CoexpressionOption = __webpack_require__(809);
 
-	__webpack_require__(845);
+	__webpack_require__(814);
 
 	var HeatmapLegendBox = React.createClass({
 	    displayName: "HeatmapLegendBox",
@@ -15063,21 +15110,21 @@ webpackJsonp_name_([1],[
 	module.exports = show;
 
 /***/ },
-/* 698 */
+/* 699 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
-	var React = __webpack_require__(138);
-	var Modal = __webpack_require__(536);
-	var Button = __webpack_require__(389);
-	var Glyphicon = __webpack_require__(395);
-	var Disclaimers = __webpack_require__(699);
-	var PropTypes = __webpack_require__(679);
+	var React = __webpack_require__(139);
+	var Modal = __webpack_require__(537);
+	var Button = __webpack_require__(390);
+	var Glyphicon = __webpack_require__(396);
+	var Disclaimers = __webpack_require__(700);
+	var PropTypes = __webpack_require__(697);
 
-	var Download = __webpack_require__(700).commenceDownload;
+	var Download = __webpack_require__(701).CommenceDownload;
 	var DownloadProfilesButton = React.createClass({
-	    displayName: "DownloadProfilesButton",
+	    displayName: 'DownloadProfilesButton',
 
 	    propTypes: {
 	        download: React.PropTypes.shape({
@@ -15115,13 +15162,14 @@ webpackJsonp_name_([1],[
 	    },
 	    render: function render() {
 	        return React.createElement(
-	            "a",
+	            'a',
 	            { onClick: this._afterDownloadButtonClicked },
 	            React.createElement(
 	                Button,
-	                { bsSize: "small" },
-	                React.createElement(Glyphicon, { glyph: "download-alt" }),
-	                " Download table content"
+	                { bsSize: 'small',
+	                    style: { textTransform: 'unset', letterSpacing: 'unset', height: 'unset' } },
+	                React.createElement(Glyphicon, { glyph: 'download-alt' }),
+	                ' Download table content'
 	            ),
 	            React.createElement(
 	                Modal,
@@ -15146,12 +15194,12 @@ webpackJsonp_name_([1],[
 	                    React.createElement(
 	                        Button,
 	                        { onClick: this._closeModal },
-	                        "Close"
+	                        'Close'
 	                    ),
 	                    React.createElement(
 	                        Button,
-	                        { bsStyle: "primary", onClick: this._commenceDownloadAndCloseModal },
-	                        "Continue downloading"
+	                        { bsStyle: 'primary', onClick: this._commenceDownloadAndCloseModal },
+	                        'Continue downloading'
 	                    )
 	                )
 	            )
@@ -15162,12 +15210,12 @@ webpackJsonp_name_([1],[
 	module.exports = DownloadProfilesButton;
 
 /***/ },
-/* 699 */
+/* 700 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var React = __webpack_require__(138);
+	var React = __webpack_require__(139);
 
 	var BlueprintText = {
 	    title: "The Blueprint project Data Reuse statement",
@@ -15291,31 +15339,45 @@ webpackJsonp_name_([1],[
 	module.exports = { "fortLauderdale": BlueprintText, "zebrafish": ZebrafishText };
 
 /***/ },
-/* 700 */
+/* 701 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
-	var _range = __webpack_require__(701);
-	var CommenceDownload = __webpack_require__(721);
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.CommenceDownload = undefined;
 
-	/*
-	TODO Units? there can be both FPKMs and sometimes TPMs
-	*/
+	var _range2 = __webpack_require__(702);
+
+	var _range3 = _interopRequireDefault(_range2);
+
+	var _downloadjs = __webpack_require__(13);
+
+	var _downloadjs2 = _interopRequireDefault(_downloadjs);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	// TODO Units? there can be both FPKMs and sometimes TPMs
 
 	var heatmapDataIntoLinesOfData = function heatmapDataIntoLinesOfData(heatmapData) {
 
-	  var heatmapDataAsMatrix = _range(heatmapData.yAxisCategories.length).map(function (y) {
-	    return _range(heatmapData.xAxisCategories.length).map(function (x) {
-	      return "NA";
+	  var heatmapDataAsMatrix = (0, _range3.default)(heatmapData.yAxisCategories.length).map(function (y) {
+	    return (0, _range3.default)(heatmapData.xAxisCategories.length).map(function (x) {
+	      return 'NA';
 	    });
 	  });
+
 	  heatmapData.dataSeries.forEach(function (series) {
 	    series.data.forEach(function (point) {
 	      heatmapDataAsMatrix[point.y][point.x] = point.value;
 	    });
 	  });
-	  return [[""].concat(heatmapData.xAxisCategories.map(function (header) {
+
+	  return [[''].concat(heatmapData.xAxisCategories.map(function (header) {
 	    return header.label;
 	  }))].concat(heatmapData.yAxisCategories.map(function (rowLabel, ix) {
 	    return [].concat.apply([rowLabel.label], heatmapDataAsMatrix[ix]);
@@ -15324,23 +15386,21 @@ webpackJsonp_name_([1],[
 	  });
 	};
 
-	var buildUrl = function buildUrl(lines) {
-	  return 'data:text/tsv;charset=utf-8,' + encodeURI(lines.join('\n'));
+	var CommenceDownload = function CommenceDownload(args) {
+	  (0, _downloadjs2.default)(new Blob(['# Downloaded from: ' + window.location.href, '# Timestamp: ' + new Date().toISOString()].concat(_toConsumableArray(args.descriptionLines.map(function (line) {
+	    return '# ' + line;
+	  })), _toConsumableArray(heatmapDataIntoLinesOfData(args.heatmapData))).map(function (line) {
+	    return line + '\n';
+	  })), args.name.replace(/ +/, '_') + '.tsv', 'text/tsv');
 	};
 
-	exports.buildUrl = buildUrl;
-
-	exports.commenceDownload = function (args) {
-	  CommenceDownload(buildUrl(["# Downloaded from: " + window.location.href, "# Timestamp: " + new Date().toISOString()].concat(args.descriptionLines.map(function (line) {
-	    return "# " + line;
-	  }), heatmapDataIntoLinesOfData(args.heatmapData))), args.name.replace(/" +"/, "_") + ".tsv", "text/tsv");
-	};
+	exports.CommenceDownload = CommenceDownload;
 
 /***/ },
-/* 701 */
+/* 702 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var createRange = __webpack_require__(702);
+	var createRange = __webpack_require__(703);
 
 	/**
 	 * Creates an array of numbers (positive and/or negative) progressing from
@@ -15389,12 +15449,12 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 702 */
+/* 703 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseRange = __webpack_require__(703),
-	    isIterateeCall = __webpack_require__(704),
-	    toFinite = __webpack_require__(717);
+	var baseRange = __webpack_require__(704),
+	    isIterateeCall = __webpack_require__(705),
+	    toFinite = __webpack_require__(718);
 
 	/**
 	 * Creates a `_.range` or `_.rangeRight` function.
@@ -15425,7 +15485,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 703 */
+/* 704 */
 /***/ function(module, exports) {
 
 	/* Built-in method references for those with the same name as other `lodash` methods. */
@@ -15459,13 +15519,13 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 704 */
+/* 705 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var eq = __webpack_require__(705),
-	    isArrayLike = __webpack_require__(706),
-	    isIndex = __webpack_require__(716),
-	    isObject = __webpack_require__(714);
+	var eq = __webpack_require__(706),
+	    isArrayLike = __webpack_require__(707),
+	    isIndex = __webpack_require__(717),
+	    isObject = __webpack_require__(715);
 
 	/**
 	 * Checks if the given arguments are from an iteratee call.
@@ -15495,7 +15555,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 705 */
+/* 706 */
 /***/ function(module, exports) {
 
 	/**
@@ -15538,11 +15598,11 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 706 */
+/* 707 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(707),
-	    isLength = __webpack_require__(715);
+	var isFunction = __webpack_require__(708),
+	    isLength = __webpack_require__(716);
 
 	/**
 	 * Checks if `value` is array-like. A value is considered array-like if it's
@@ -15577,11 +15637,11 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 707 */
+/* 708 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetTag = __webpack_require__(708),
-	    isObject = __webpack_require__(714);
+	var baseGetTag = __webpack_require__(709),
+	    isObject = __webpack_require__(715);
 
 	/** `Object#toString` result references. */
 	var asyncTag = '[object AsyncFunction]',
@@ -15620,12 +15680,12 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 708 */
+/* 709 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(709),
-	    getRawTag = __webpack_require__(712),
-	    objectToString = __webpack_require__(713);
+	var Symbol = __webpack_require__(710),
+	    getRawTag = __webpack_require__(713),
+	    objectToString = __webpack_require__(714);
 
 	/** `Object#toString` result references. */
 	var nullTag = '[object Null]',
@@ -15655,10 +15715,10 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 709 */
+/* 710 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var root = __webpack_require__(710);
+	var root = __webpack_require__(711);
 
 	/** Built-in value references. */
 	var Symbol = root.Symbol;
@@ -15667,10 +15727,10 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 710 */
+/* 711 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var freeGlobal = __webpack_require__(711);
+	var freeGlobal = __webpack_require__(712);
 
 	/** Detect free variable `self`. */
 	var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -15682,7 +15742,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 711 */
+/* 712 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -15693,10 +15753,10 @@ webpackJsonp_name_([1],[
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 712 */
+/* 713 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(709);
+	var Symbol = __webpack_require__(710);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -15745,7 +15805,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 713 */
+/* 714 */
 /***/ function(module, exports) {
 
 	/** Used for built-in method references. */
@@ -15773,7 +15833,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 714 */
+/* 715 */
 /***/ function(module, exports) {
 
 	/**
@@ -15810,7 +15870,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 715 */
+/* 716 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -15851,7 +15911,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 716 */
+/* 717 */
 /***/ function(module, exports) {
 
 	/** Used as references for various `Number` constants. */
@@ -15879,10 +15939,10 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 717 */
+/* 718 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var toNumber = __webpack_require__(718);
+	var toNumber = __webpack_require__(719);
 
 	/** Used as references for various `Number` constants. */
 	var INFINITY = 1 / 0,
@@ -15927,11 +15987,11 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 718 */
+/* 719 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(714),
-	    isSymbol = __webpack_require__(719);
+	var isObject = __webpack_require__(715),
+	    isSymbol = __webpack_require__(720);
 
 	/** Used as references for various `Number` constants. */
 	var NAN = 0 / 0;
@@ -15999,11 +16059,11 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 719 */
+/* 720 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetTag = __webpack_require__(708),
-	    isObjectLike = __webpack_require__(720);
+	var baseGetTag = __webpack_require__(709),
+	    isObjectLike = __webpack_require__(721);
 
 	/** `Object#toString` result references. */
 	var symbolTag = '[object Symbol]';
@@ -16034,7 +16094,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 720 */
+/* 721 */
 /***/ function(module, exports) {
 
 	/**
@@ -16069,200 +16129,25 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 721 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//download.js v4.2, by dandavis; 2008-2016. [MIT] see http://danml.com/download.html for tests/usage
-	// v1 landed a FF+Chrome compat way of downloading strings to local un-named files, upgraded to use a hidden frame and optional mime
-	// v2 added named files via a[download], msSaveBlob, IE (10+) support, and window.URL support for larger+faster saves than dataURLs
-	// v3 added dataURL and Blob Input, bind-toggle arity, and legacy dataURL fallback was improved with force-download mime and base64 support. 3.1 improved safari handling.
-	// v4 adds AMD/UMD, commonJS, and plain browser support
-	// v4.1 adds url download capability via solo URL argument (same domain/CORS only)
-	// v4.2 adds semantic variable names, long (over 2MB) dataURL support, and hidden by default temp anchors
-	// https://github.com/rndme/download
-
-	(function (root, factory) {
-		if (true) {
-			// AMD. Register as an anonymous module.
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else if (typeof exports === 'object') {
-			// Node. Does not work with strict CommonJS, but
-			// only CommonJS-like environments that support module.exports,
-			// like Node.
-			module.exports = factory();
-		} else {
-			// Browser globals (root is window)
-			root.download = factory();
-	  }
-	}(this, function () {
-
-		return function download(data, strFileName, strMimeType) {
-
-			var self = window, // this script is only for browsers anyway...
-				defaultMime = "application/octet-stream", // this default mime also triggers iframe downloads
-				mimeType = strMimeType || defaultMime,
-				payload = data,
-				url = !strFileName && !strMimeType && payload,
-				anchor = document.createElement("a"),
-				toString = function(a){return String(a);},
-				myBlob = (self.Blob || self.MozBlob || self.WebKitBlob || toString),
-				fileName = strFileName || "download",
-				blob,
-				reader;
-				myBlob= myBlob.call ? myBlob.bind(self) : Blob ;
-		  
-			if(String(this)==="true"){ //reverse arguments, allowing download.bind(true, "text/xml", "export.xml") to act as a callback
-				payload=[payload, mimeType];
-				mimeType=payload[0];
-				payload=payload[1];
-			}
-
-
-			if(url && url.length< 2048){ // if no filename and no mime, assume a url was passed as the only argument
-				fileName = url.split("/").pop().split("?")[0];
-				anchor.href = url; // assign href prop to temp anchor
-			  	if(anchor.href.indexOf(url) !== -1){ // if the browser determines that it's a potentially valid url path:
-	        		var ajax=new XMLHttpRequest();
-	        		ajax.open( "GET", url, true);
-	        		ajax.responseType = 'blob';
-	        		ajax.onload= function(e){ 
-					  download(e.target.response, fileName, defaultMime);
-					};
-	        		setTimeout(function(){ ajax.send();}, 0); // allows setting custom ajax headers using the return:
-				    return ajax;
-				} // end if valid url?
-			} // end if url?
-
-
-			//go ahead and download dataURLs right away
-			if(/^data\:[\w+\-]+\/[\w+\-\.]+[,;]/.test(payload)){
-			
-				if(payload.length > (1024*1024*1.999) && myBlob !== toString ){
-					payload=dataUrlToBlob(payload);
-					mimeType=payload.type || defaultMime;
-				}else{			
-					return navigator.msSaveBlob ?  // IE10 can't do a[download], only Blobs:
-						navigator.msSaveBlob(dataUrlToBlob(payload), fileName) :
-						saver(payload) ; // everyone else can save dataURLs un-processed
-				}
-				
-			}else{//not data url, is it a string with special needs?
-				if(/([\x80-\xff])/.test(payload)){			  
-					var i=0, tempUiArr= new Uint8Array(payload.length), mx=tempUiArr.length;
-					for(i;i<mx;++i) tempUiArr[i]= payload.charCodeAt(i);
-				 	payload=new myBlob([tempUiArr], {type: mimeType});
-				}		  
-			}
-			blob = payload instanceof myBlob ?
-				payload :
-				new myBlob([payload], {type: mimeType}) ;
-
-
-			function dataUrlToBlob(strUrl) {
-				var parts= strUrl.split(/[:;,]/),
-				type= parts[1],
-				decoder= parts[2] == "base64" ? atob : decodeURIComponent,
-				binData= decoder( parts.pop() ),
-				mx= binData.length,
-				i= 0,
-				uiArr= new Uint8Array(mx);
-
-				for(i;i<mx;++i) uiArr[i]= binData.charCodeAt(i);
-
-				return new myBlob([uiArr], {type: type});
-			 }
-
-			function saver(url, winMode){
-
-				if ('download' in anchor) { //html5 A[download]
-					anchor.href = url;
-					anchor.setAttribute("download", fileName);
-					anchor.className = "download-js-link";
-					anchor.innerHTML = "downloading...";
-					anchor.style.display = "none";
-					document.body.appendChild(anchor);
-					setTimeout(function() {
-						anchor.click();
-						document.body.removeChild(anchor);
-						if(winMode===true){setTimeout(function(){ self.URL.revokeObjectURL(anchor.href);}, 250 );}
-					}, 66);
-					return true;
-				}
-
-				// handle non-a[download] safari as best we can:
-				if(/(Version)\/(\d+)\.(\d+)(?:\.(\d+))?.*Safari\//.test(navigator.userAgent)) {
-					if(/^data:/.test(url))	url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
-					if(!window.open(url)){ // popup blocked, offer direct download:
-						if(confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.")){ location.href=url; }
-					}
-					return true;
-				}
-
-				//do iframe dataURL download (old ch+FF):
-				var f = document.createElement("iframe");
-				document.body.appendChild(f);
-
-				if(!winMode && /^data:/.test(url)){ // force a mime that will download:
-					url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
-				}
-				f.src=url;
-				setTimeout(function(){ document.body.removeChild(f); }, 333);
-
-			}//end saver
-
-
-
-
-			if (navigator.msSaveBlob) { // IE10+ : (has Blob, but not a[download] or URL)
-				return navigator.msSaveBlob(blob, fileName);
-			}
-
-			if(self.URL){ // simple fast and modern way using Blob and URL:
-				saver(self.URL.createObjectURL(blob), true);
-			}else{
-				// handle non-Blob()+non-URL browsers:
-				if(typeof blob === "string" || blob.constructor===toString ){
-					try{
-						return saver( "data:" +  mimeType   + ";base64,"  +  self.btoa(blob)  );
-					}catch(y){
-						return saver( "data:" +  mimeType   + "," + encodeURIComponent(blob)  );
-					}
-				}
-
-				// Blob but not URL support:
-				reader=new FileReader();
-				reader.onload=function(e){
-					saver(this.result);
-				};
-				reader.readAsDataURL(blob);
-			}
-			return true;
-		}; /* end download() */
-	}));
-
-
-/***/ },
 /* 722 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
-	//*------------------------------------------------------------------*
-
-	var React = __webpack_require__(138);
-	var ReactHighcharts = __webpack_require__(604);
+	var React = __webpack_require__(139);
+	var ReactHighcharts = __webpack_require__(605);
 	var Highcharts = ReactHighcharts.Highcharts;
-	__webpack_require__(16)(Highcharts);
+	__webpack_require__(17)(Highcharts);
 
-	__webpack_require__(15)(Highcharts);
+	__webpack_require__(16)(Highcharts);
 	// Overrides default Custom Events behaviour
 	window.oncontextmenu = function () {
 	    return true;
 	};
 
-	var hash = __webpack_require__(19);
+	var hash = __webpack_require__(20);
 
-	var PropTypes = __webpack_require__(679);
+	var PropTypes = __webpack_require__(697);
 
 	//*------------------------------------------------------------------*
 
@@ -16545,11 +16430,11 @@ webpackJsonp_name_([1],[
 
 	"use strict";
 
-	var React = __webpack_require__(138);
-	var Dropdown = __webpack_require__(422);
-	var MenuItem = __webpack_require__(535);
-	var Glyphicon = __webpack_require__(395);
-	var PropTypes = __webpack_require__(679);
+	var React = __webpack_require__(139);
+	var Dropdown = __webpack_require__(423);
+	var MenuItem = __webpack_require__(536);
+	var Glyphicon = __webpack_require__(396);
+	var PropTypes = __webpack_require__(697);
 
 	var OrderingsDropdown = React.createClass({
 	    displayName: "OrderingsDropdown",
@@ -16584,7 +16469,8 @@ webpackJsonp_name_([1],[
 	                { id: "orderings-dropdown", onSelect: this.handleChange, title: this.props.disabled ? "Reset zoom to enable sorting options" : "" },
 	                React.createElement(
 	                    Dropdown.Toggle,
-	                    { bsSize: "small", disabled: this.props.disabled },
+	                    { bsSize: "small", disabled: this.props.disabled,
+	                        style: { textTransform: "unset", letterSpacing: "unset", height: "unset" } },
 	                    React.createElement(Glyphicon, { glyph: this._orderingIcon(this.props.orderings.selected) }),
 	                    " ",
 	                    this.props.orderings.selected
@@ -16595,7 +16481,7 @@ webpackJsonp_name_([1],[
 	                    this.props.orderings.available.map(function (orderingName) {
 	                        return React.createElement(
 	                            MenuItem,
-	                            { style: { textDecoration: "none" }, key: orderingName, href: "#" },
+	                            { style: { listStyleImage: "none" }, key: orderingName, href: "#" },
 	                            orderingName
 	                        );
 	                    })
@@ -16615,15 +16501,14 @@ webpackJsonp_name_([1],[
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = __webpack_require__(138);
-	var Modal = __webpack_require__(536);
-	var Button = __webpack_require__(389);
-	var Glyphicon = __webpack_require__(395);
+	var React = __webpack_require__(139);
+	var Modal = __webpack_require__(537);
+	var Button = __webpack_require__(390);
+	var Glyphicon = __webpack_require__(396);
 
-	var PropTypes = __webpack_require__(679);
+	var PropTypes = __webpack_require__(697);
 	var FlatFilter = __webpack_require__(725);
 	var GroupedFilter = __webpack_require__(794);
-	var deepEquals = __webpack_require__(795);
 
 	var SettingsModal = React.createClass({
 	    displayName: "SettingsModal",
@@ -16696,7 +16581,8 @@ webpackJsonp_name_([1],[
 	            null,
 	            React.createElement(
 	                Button,
-	                { bsSize: "small", onClick: this._open, disabled: this.props.disabled, title: this.props.disabled ? "Reset zoom to enable filters" : "" },
+	                { bsSize: "small", onClick: this._open, disabled: this.props.disabled, title: this.props.disabled ? "Reset zoom to enable filters" : "",
+	                    style: { textTransform: "unset", letterSpacing: "unset", height: "unset" } },
 	                React.createElement(Glyphicon, { glyph: "equalizer" }),
 	                React.createElement(
 	                    "span",
@@ -16726,12 +16612,14 @@ webpackJsonp_name_([1],[
 	                    null,
 	                    React.createElement(
 	                        Button,
-	                        { bsStyle: "primary", onClick: this._apply },
+	                        { bsStyle: "primary", onClick: this._apply,
+	                            style: { textTransform: "unset", letterSpacing: "unset", height: "unset" } },
 	                        "Apply"
 	                    ),
 	                    React.createElement(
 	                        Button,
-	                        { onClick: this._close },
+	                        { onClick: this._close,
+	                            style: { textTransform: "unset", letterSpacing: "unset", height: "unset" } },
 	                        "Close"
 	                    )
 	                )
@@ -16748,8 +16636,8 @@ webpackJsonp_name_([1],[
 
 	"use strict";
 
-	var React = __webpack_require__(138);
-	var PropTypes = __webpack_require__(679);
+	var React = __webpack_require__(139);
+	var PropTypes = __webpack_require__(697);
 	var xor = __webpack_require__(726);
 
 	__webpack_require__(792);
@@ -17111,9 +16999,9 @@ webpackJsonp_name_([1],[
 /* 737 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(707),
+	var isFunction = __webpack_require__(708),
 	    isMasked = __webpack_require__(738),
-	    isObject = __webpack_require__(714),
+	    isObject = __webpack_require__(715),
 	    toSource = __webpack_require__(740);
 
 	/**
@@ -17190,7 +17078,7 @@ webpackJsonp_name_([1],[
 /* 739 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var root = __webpack_require__(710);
+	var root = __webpack_require__(711);
 
 	/** Used to detect overreaching core-js shims. */
 	var coreJsData = root['__core-js_shared__'];
@@ -17795,7 +17683,7 @@ webpackJsonp_name_([1],[
 /* 758 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var eq = __webpack_require__(705);
+	var eq = __webpack_require__(706);
 
 	/**
 	 * Gets the index at which the `key` is found in `array` of key-value pairs.
@@ -17902,7 +17790,7 @@ webpackJsonp_name_([1],[
 /***/ function(module, exports, __webpack_require__) {
 
 	var getNative = __webpack_require__(736),
-	    root = __webpack_require__(710);
+	    root = __webpack_require__(711);
 
 	/* Built-in method references that are verified to be native. */
 	var Map = getNative(root, 'Map');
@@ -18390,7 +18278,7 @@ webpackJsonp_name_([1],[
 /* 782 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Symbol = __webpack_require__(709),
+	var Symbol = __webpack_require__(710),
 	    isArguments = __webpack_require__(783),
 	    isArray = __webpack_require__(785);
 
@@ -18417,7 +18305,7 @@ webpackJsonp_name_([1],[
 /***/ function(module, exports, __webpack_require__) {
 
 	var baseIsArguments = __webpack_require__(784),
-	    isObjectLike = __webpack_require__(720);
+	    isObjectLike = __webpack_require__(721);
 
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
@@ -18458,8 +18346,8 @@ webpackJsonp_name_([1],[
 /* 784 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseGetTag = __webpack_require__(708),
-	    isObjectLike = __webpack_require__(720);
+	var baseGetTag = __webpack_require__(709),
+	    isObjectLike = __webpack_require__(721);
 
 	/** `Object#toString` result references. */
 	var argsTag = '[object Arguments]';
@@ -18618,7 +18506,7 @@ webpackJsonp_name_([1],[
 /***/ function(module, exports, __webpack_require__) {
 
 	var getNative = __webpack_require__(736),
-	    root = __webpack_require__(710);
+	    root = __webpack_require__(711);
 
 	/* Built-in method references that are verified to be native. */
 	var Set = getNative(root, 'Set');
@@ -18677,8 +18565,8 @@ webpackJsonp_name_([1],[
 /* 791 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArrayLike = __webpack_require__(706),
-	    isObjectLike = __webpack_require__(720);
+	var isArrayLike = __webpack_require__(707),
+	    isObjectLike = __webpack_require__(721);
 
 	/**
 	 * This method is like `_.isArrayLike` except that it also checks if `value`
@@ -18722,7 +18610,7 @@ webpackJsonp_name_([1],[
 	var content = __webpack_require__(793);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(671)(content, {});
+	var update = __webpack_require__(672)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -18742,7 +18630,7 @@ webpackJsonp_name_([1],[
 /* 793 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(670)();
+	exports = module.exports = __webpack_require__(671)();
 	// imports
 
 
@@ -18758,10 +18646,10 @@ webpackJsonp_name_([1],[
 
 	"use strict";
 
-	var React = __webpack_require__(138);
-	var Button = __webpack_require__(389);
-	var Glyphicon = __webpack_require__(395);
-	var PropTypes = __webpack_require__(679);
+	var React = __webpack_require__(139);
+	var Button = __webpack_require__(390);
+	var Glyphicon = __webpack_require__(396);
+	var PropTypes = __webpack_require__(697);
 	var xor = __webpack_require__(726);
 	__webpack_require__(792);
 
@@ -18893,7 +18781,8 @@ webpackJsonp_name_([1],[
 	        Button,
 	        { bsSize: "xsmall", onClick: function onClick() {
 	            _this3.props.propagateFilterSelection(_this3.props.values);
-	          } },
+	          },
+	          style: { textTransform: "unset", letterSpacing: "unset", height: "unset" } },
 	        React.createElement(Glyphicon, { glyph: "plus" }),
 	        React.createElement(
 	          "span",
@@ -18905,7 +18794,8 @@ webpackJsonp_name_([1],[
 	        Button,
 	        { bsSize: "xsmall", onClick: function onClick() {
 	            _this3.props.propagateFilterSelection([]);
-	          } },
+	          },
+	          style: { textTransform: "unset", letterSpacing: "unset", height: "unset" } },
 	        React.createElement(Glyphicon, { glyph: "minus" }),
 	        React.createElement(
 	          "span",
@@ -18925,1223 +18815,6 @@ webpackJsonp_name_([1],[
 /* 795 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsEqual = __webpack_require__(796);
-
-	/**
-	 * Performs a deep comparison between two values to determine if they are
-	 * equivalent.
-	 *
-	 * **Note:** This method supports comparing arrays, array buffers, booleans,
-	 * date objects, error objects, maps, numbers, `Object` objects, regexes,
-	 * sets, strings, symbols, and typed arrays. `Object` objects are compared
-	 * by their own, not inherited, enumerable properties. Functions and DOM
-	 * nodes are **not** supported.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to compare.
-	 * @param {*} other The other value to compare.
-	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-	 * @example
-	 *
-	 * var object = { 'a': 1 };
-	 * var other = { 'a': 1 };
-	 *
-	 * _.isEqual(object, other);
-	 * // => true
-	 *
-	 * object === other;
-	 * // => false
-	 */
-	function isEqual(value, other) {
-	  return baseIsEqual(value, other);
-	}
-
-	module.exports = isEqual;
-
-
-/***/ },
-/* 796 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsEqualDeep = __webpack_require__(797),
-	    isObject = __webpack_require__(714),
-	    isObjectLike = __webpack_require__(720);
-
-	/**
-	 * The base implementation of `_.isEqual` which supports partial comparisons
-	 * and tracks traversed objects.
-	 *
-	 * @private
-	 * @param {*} value The value to compare.
-	 * @param {*} other The other value to compare.
-	 * @param {Function} [customizer] The function to customize comparisons.
-	 * @param {boolean} [bitmask] The bitmask of comparison flags.
-	 *  The bitmask may be composed of the following flags:
-	 *     1 - Unordered comparison
-	 *     2 - Partial comparison
-	 * @param {Object} [stack] Tracks traversed `value` and `other` objects.
-	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-	 */
-	function baseIsEqual(value, other, customizer, bitmask, stack) {
-	  if (value === other) {
-	    return true;
-	  }
-	  if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
-	    return value !== value && other !== other;
-	  }
-	  return baseIsEqualDeep(value, other, baseIsEqual, customizer, bitmask, stack);
-	}
-
-	module.exports = baseIsEqual;
-
-
-/***/ },
-/* 797 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Stack = __webpack_require__(798),
-	    equalArrays = __webpack_require__(804),
-	    equalByTag = __webpack_require__(806),
-	    equalObjects = __webpack_require__(809),
-	    getTag = __webpack_require__(822),
-	    isArray = __webpack_require__(785),
-	    isBuffer = __webpack_require__(813),
-	    isTypedArray = __webpack_require__(815);
-
-	/** Used to compose bitmasks for comparison styles. */
-	var PARTIAL_COMPARE_FLAG = 2;
-
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]',
-	    arrayTag = '[object Array]',
-	    objectTag = '[object Object]';
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * A specialized version of `baseIsEqual` for arrays and objects which performs
-	 * deep comparisons and tracks traversed objects enabling objects with circular
-	 * references to be compared.
-	 *
-	 * @private
-	 * @param {Object} object The object to compare.
-	 * @param {Object} other The other object to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} [customizer] The function to customize comparisons.
-	 * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual`
-	 *  for more details.
-	 * @param {Object} [stack] Tracks traversed `object` and `other` objects.
-	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
-	 */
-	function baseIsEqualDeep(object, other, equalFunc, customizer, bitmask, stack) {
-	  var objIsArr = isArray(object),
-	      othIsArr = isArray(other),
-	      objTag = arrayTag,
-	      othTag = arrayTag;
-
-	  if (!objIsArr) {
-	    objTag = getTag(object);
-	    objTag = objTag == argsTag ? objectTag : objTag;
-	  }
-	  if (!othIsArr) {
-	    othTag = getTag(other);
-	    othTag = othTag == argsTag ? objectTag : othTag;
-	  }
-	  var objIsObj = objTag == objectTag,
-	      othIsObj = othTag == objectTag,
-	      isSameTag = objTag == othTag;
-
-	  if (isSameTag && isBuffer(object)) {
-	    if (!isBuffer(other)) {
-	      return false;
-	    }
-	    objIsArr = true;
-	    objIsObj = false;
-	  }
-	  if (isSameTag && !objIsObj) {
-	    stack || (stack = new Stack);
-	    return (objIsArr || isTypedArray(object))
-	      ? equalArrays(object, other, equalFunc, customizer, bitmask, stack)
-	      : equalByTag(object, other, objTag, equalFunc, customizer, bitmask, stack);
-	  }
-	  if (!(bitmask & PARTIAL_COMPARE_FLAG)) {
-	    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
-	        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
-
-	    if (objIsWrapped || othIsWrapped) {
-	      var objUnwrapped = objIsWrapped ? object.value() : object,
-	          othUnwrapped = othIsWrapped ? other.value() : other;
-
-	      stack || (stack = new Stack);
-	      return equalFunc(objUnwrapped, othUnwrapped, customizer, bitmask, stack);
-	    }
-	  }
-	  if (!isSameTag) {
-	    return false;
-	  }
-	  stack || (stack = new Stack);
-	  return equalObjects(object, other, equalFunc, customizer, bitmask, stack);
-	}
-
-	module.exports = baseIsEqualDeep;
-
-
-/***/ },
-/* 798 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListCache = __webpack_require__(755),
-	    stackClear = __webpack_require__(799),
-	    stackDelete = __webpack_require__(800),
-	    stackGet = __webpack_require__(801),
-	    stackHas = __webpack_require__(802),
-	    stackSet = __webpack_require__(803);
-
-	/**
-	 * Creates a stack cache object to store key-value pairs.
-	 *
-	 * @private
-	 * @constructor
-	 * @param {Array} [entries] The key-value pairs to cache.
-	 */
-	function Stack(entries) {
-	  var data = this.__data__ = new ListCache(entries);
-	  this.size = data.size;
-	}
-
-	// Add methods to `Stack`.
-	Stack.prototype.clear = stackClear;
-	Stack.prototype['delete'] = stackDelete;
-	Stack.prototype.get = stackGet;
-	Stack.prototype.has = stackHas;
-	Stack.prototype.set = stackSet;
-
-	module.exports = Stack;
-
-
-/***/ },
-/* 799 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListCache = __webpack_require__(755);
-
-	/**
-	 * Removes all key-value entries from the stack.
-	 *
-	 * @private
-	 * @name clear
-	 * @memberOf Stack
-	 */
-	function stackClear() {
-	  this.__data__ = new ListCache;
-	  this.size = 0;
-	}
-
-	module.exports = stackClear;
-
-
-/***/ },
-/* 800 */
-/***/ function(module, exports) {
-
-	/**
-	 * Removes `key` and its value from the stack.
-	 *
-	 * @private
-	 * @name delete
-	 * @memberOf Stack
-	 * @param {string} key The key of the value to remove.
-	 * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-	 */
-	function stackDelete(key) {
-	  var data = this.__data__,
-	      result = data['delete'](key);
-
-	  this.size = data.size;
-	  return result;
-	}
-
-	module.exports = stackDelete;
-
-
-/***/ },
-/* 801 */
-/***/ function(module, exports) {
-
-	/**
-	 * Gets the stack value for `key`.
-	 *
-	 * @private
-	 * @name get
-	 * @memberOf Stack
-	 * @param {string} key The key of the value to get.
-	 * @returns {*} Returns the entry value.
-	 */
-	function stackGet(key) {
-	  return this.__data__.get(key);
-	}
-
-	module.exports = stackGet;
-
-
-/***/ },
-/* 802 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if a stack value for `key` exists.
-	 *
-	 * @private
-	 * @name has
-	 * @memberOf Stack
-	 * @param {string} key The key of the entry to check.
-	 * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
-	 */
-	function stackHas(key) {
-	  return this.__data__.has(key);
-	}
-
-	module.exports = stackHas;
-
-
-/***/ },
-/* 803 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListCache = __webpack_require__(755),
-	    Map = __webpack_require__(762),
-	    MapCache = __webpack_require__(746);
-
-	/** Used as the size to enable large array optimizations. */
-	var LARGE_ARRAY_SIZE = 200;
-
-	/**
-	 * Sets the stack `key` to `value`.
-	 *
-	 * @private
-	 * @name set
-	 * @memberOf Stack
-	 * @param {string} key The key of the value to set.
-	 * @param {*} value The value to set.
-	 * @returns {Object} Returns the stack cache instance.
-	 */
-	function stackSet(key, value) {
-	  var data = this.__data__;
-	  if (data instanceof ListCache) {
-	    var pairs = data.__data__;
-	    if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
-	      pairs.push([key, value]);
-	      this.size = ++data.size;
-	      return this;
-	    }
-	    data = this.__data__ = new MapCache(pairs);
-	  }
-	  data.set(key, value);
-	  this.size = data.size;
-	  return this;
-	}
-
-	module.exports = stackSet;
-
-
-/***/ },
-/* 804 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SetCache = __webpack_require__(745),
-	    arraySome = __webpack_require__(805),
-	    cacheHas = __webpack_require__(779);
-
-	/** Used to compose bitmasks for comparison styles. */
-	var UNORDERED_COMPARE_FLAG = 1,
-	    PARTIAL_COMPARE_FLAG = 2;
-
-	/**
-	 * A specialized version of `baseIsEqualDeep` for arrays with support for
-	 * partial deep comparisons.
-	 *
-	 * @private
-	 * @param {Array} array The array to compare.
-	 * @param {Array} other The other array to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} customizer The function to customize comparisons.
-	 * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
-	 *  for more details.
-	 * @param {Object} stack Tracks traversed `array` and `other` objects.
-	 * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
-	 */
-	function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
-	  var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
-	      arrLength = array.length,
-	      othLength = other.length;
-
-	  if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
-	    return false;
-	  }
-	  // Assume cyclic values are equal.
-	  var stacked = stack.get(array);
-	  if (stacked && stack.get(other)) {
-	    return stacked == other;
-	  }
-	  var index = -1,
-	      result = true,
-	      seen = (bitmask & UNORDERED_COMPARE_FLAG) ? new SetCache : undefined;
-
-	  stack.set(array, other);
-	  stack.set(other, array);
-
-	  // Ignore non-index properties.
-	  while (++index < arrLength) {
-	    var arrValue = array[index],
-	        othValue = other[index];
-
-	    if (customizer) {
-	      var compared = isPartial
-	        ? customizer(othValue, arrValue, index, other, array, stack)
-	        : customizer(arrValue, othValue, index, array, other, stack);
-	    }
-	    if (compared !== undefined) {
-	      if (compared) {
-	        continue;
-	      }
-	      result = false;
-	      break;
-	    }
-	    // Recursively compare arrays (susceptible to call stack limits).
-	    if (seen) {
-	      if (!arraySome(other, function(othValue, othIndex) {
-	            if (!cacheHas(seen, othIndex) &&
-	                (arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack))) {
-	              return seen.push(othIndex);
-	            }
-	          })) {
-	        result = false;
-	        break;
-	      }
-	    } else if (!(
-	          arrValue === othValue ||
-	            equalFunc(arrValue, othValue, customizer, bitmask, stack)
-	        )) {
-	      result = false;
-	      break;
-	    }
-	  }
-	  stack['delete'](array);
-	  stack['delete'](other);
-	  return result;
-	}
-
-	module.exports = equalArrays;
-
-
-/***/ },
-/* 805 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.some` for arrays without support for iteratee
-	 * shorthands.
-	 *
-	 * @private
-	 * @param {Array} [array] The array to iterate over.
-	 * @param {Function} predicate The function invoked per iteration.
-	 * @returns {boolean} Returns `true` if any element passes the predicate check,
-	 *  else `false`.
-	 */
-	function arraySome(array, predicate) {
-	  var index = -1,
-	      length = array == null ? 0 : array.length;
-
-	  while (++index < length) {
-	    if (predicate(array[index], index, array)) {
-	      return true;
-	    }
-	  }
-	  return false;
-	}
-
-	module.exports = arraySome;
-
-
-/***/ },
-/* 806 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Symbol = __webpack_require__(709),
-	    Uint8Array = __webpack_require__(807),
-	    eq = __webpack_require__(705),
-	    equalArrays = __webpack_require__(804),
-	    mapToArray = __webpack_require__(808),
-	    setToArray = __webpack_require__(790);
-
-	/** Used to compose bitmasks for comparison styles. */
-	var UNORDERED_COMPARE_FLAG = 1,
-	    PARTIAL_COMPARE_FLAG = 2;
-
-	/** `Object#toString` result references. */
-	var boolTag = '[object Boolean]',
-	    dateTag = '[object Date]',
-	    errorTag = '[object Error]',
-	    mapTag = '[object Map]',
-	    numberTag = '[object Number]',
-	    regexpTag = '[object RegExp]',
-	    setTag = '[object Set]',
-	    stringTag = '[object String]',
-	    symbolTag = '[object Symbol]';
-
-	var arrayBufferTag = '[object ArrayBuffer]',
-	    dataViewTag = '[object DataView]';
-
-	/** Used to convert symbols to primitives and strings. */
-	var symbolProto = Symbol ? Symbol.prototype : undefined,
-	    symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
-
-	/**
-	 * A specialized version of `baseIsEqualDeep` for comparing objects of
-	 * the same `toStringTag`.
-	 *
-	 * **Note:** This function only supports comparing values with tags of
-	 * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
-	 *
-	 * @private
-	 * @param {Object} object The object to compare.
-	 * @param {Object} other The other object to compare.
-	 * @param {string} tag The `toStringTag` of the objects to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} customizer The function to customize comparisons.
-	 * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
-	 *  for more details.
-	 * @param {Object} stack Tracks traversed `object` and `other` objects.
-	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
-	 */
-	function equalByTag(object, other, tag, equalFunc, customizer, bitmask, stack) {
-	  switch (tag) {
-	    case dataViewTag:
-	      if ((object.byteLength != other.byteLength) ||
-	          (object.byteOffset != other.byteOffset)) {
-	        return false;
-	      }
-	      object = object.buffer;
-	      other = other.buffer;
-
-	    case arrayBufferTag:
-	      if ((object.byteLength != other.byteLength) ||
-	          !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
-	        return false;
-	      }
-	      return true;
-
-	    case boolTag:
-	    case dateTag:
-	    case numberTag:
-	      // Coerce booleans to `1` or `0` and dates to milliseconds.
-	      // Invalid dates are coerced to `NaN`.
-	      return eq(+object, +other);
-
-	    case errorTag:
-	      return object.name == other.name && object.message == other.message;
-
-	    case regexpTag:
-	    case stringTag:
-	      // Coerce regexes to strings and treat strings, primitives and objects,
-	      // as equal. See http://www.ecma-international.org/ecma-262/7.0/#sec-regexp.prototype.tostring
-	      // for more details.
-	      return object == (other + '');
-
-	    case mapTag:
-	      var convert = mapToArray;
-
-	    case setTag:
-	      var isPartial = bitmask & PARTIAL_COMPARE_FLAG;
-	      convert || (convert = setToArray);
-
-	      if (object.size != other.size && !isPartial) {
-	        return false;
-	      }
-	      // Assume cyclic values are equal.
-	      var stacked = stack.get(object);
-	      if (stacked) {
-	        return stacked == other;
-	      }
-	      bitmask |= UNORDERED_COMPARE_FLAG;
-
-	      // Recursively compare objects (susceptible to call stack limits).
-	      stack.set(object, other);
-	      var result = equalArrays(convert(object), convert(other), equalFunc, customizer, bitmask, stack);
-	      stack['delete'](object);
-	      return result;
-
-	    case symbolTag:
-	      if (symbolValueOf) {
-	        return symbolValueOf.call(object) == symbolValueOf.call(other);
-	      }
-	  }
-	  return false;
-	}
-
-	module.exports = equalByTag;
-
-
-/***/ },
-/* 807 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var root = __webpack_require__(710);
-
-	/** Built-in value references. */
-	var Uint8Array = root.Uint8Array;
-
-	module.exports = Uint8Array;
-
-
-/***/ },
-/* 808 */
-/***/ function(module, exports) {
-
-	/**
-	 * Converts `map` to its key-value pairs.
-	 *
-	 * @private
-	 * @param {Object} map The map to convert.
-	 * @returns {Array} Returns the key-value pairs.
-	 */
-	function mapToArray(map) {
-	  var index = -1,
-	      result = Array(map.size);
-
-	  map.forEach(function(value, key) {
-	    result[++index] = [key, value];
-	  });
-	  return result;
-	}
-
-	module.exports = mapToArray;
-
-
-/***/ },
-/* 809 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var keys = __webpack_require__(810);
-
-	/** Used to compose bitmasks for comparison styles. */
-	var PARTIAL_COMPARE_FLAG = 2;
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * A specialized version of `baseIsEqualDeep` for objects with support for
-	 * partial deep comparisons.
-	 *
-	 * @private
-	 * @param {Object} object The object to compare.
-	 * @param {Object} other The other object to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} customizer The function to customize comparisons.
-	 * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
-	 *  for more details.
-	 * @param {Object} stack Tracks traversed `object` and `other` objects.
-	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
-	 */
-	function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
-	  var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
-	      objProps = keys(object),
-	      objLength = objProps.length,
-	      othProps = keys(other),
-	      othLength = othProps.length;
-
-	  if (objLength != othLength && !isPartial) {
-	    return false;
-	  }
-	  var index = objLength;
-	  while (index--) {
-	    var key = objProps[index];
-	    if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
-	      return false;
-	    }
-	  }
-	  // Assume cyclic values are equal.
-	  var stacked = stack.get(object);
-	  if (stacked && stack.get(other)) {
-	    return stacked == other;
-	  }
-	  var result = true;
-	  stack.set(object, other);
-	  stack.set(other, object);
-
-	  var skipCtor = isPartial;
-	  while (++index < objLength) {
-	    key = objProps[index];
-	    var objValue = object[key],
-	        othValue = other[key];
-
-	    if (customizer) {
-	      var compared = isPartial
-	        ? customizer(othValue, objValue, key, other, object, stack)
-	        : customizer(objValue, othValue, key, object, other, stack);
-	    }
-	    // Recursively compare objects (susceptible to call stack limits).
-	    if (!(compared === undefined
-	          ? (objValue === othValue || equalFunc(objValue, othValue, customizer, bitmask, stack))
-	          : compared
-	        )) {
-	      result = false;
-	      break;
-	    }
-	    skipCtor || (skipCtor = key == 'constructor');
-	  }
-	  if (result && !skipCtor) {
-	    var objCtor = object.constructor,
-	        othCtor = other.constructor;
-
-	    // Non `Object` object instances with different constructors are not equal.
-	    if (objCtor != othCtor &&
-	        ('constructor' in object && 'constructor' in other) &&
-	        !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
-	          typeof othCtor == 'function' && othCtor instanceof othCtor)) {
-	      result = false;
-	    }
-	  }
-	  stack['delete'](object);
-	  stack['delete'](other);
-	  return result;
-	}
-
-	module.exports = equalObjects;
-
-
-/***/ },
-/* 810 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var arrayLikeKeys = __webpack_require__(811),
-	    baseKeys = __webpack_require__(818),
-	    isArrayLike = __webpack_require__(706);
-
-	/**
-	 * Creates an array of the own enumerable property names of `object`.
-	 *
-	 * **Note:** Non-object values are coerced to objects. See the
-	 * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
-	 * for more details.
-	 *
-	 * @static
-	 * @since 0.1.0
-	 * @memberOf _
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.keys(new Foo);
-	 * // => ['a', 'b'] (iteration order is not guaranteed)
-	 *
-	 * _.keys('hi');
-	 * // => ['0', '1']
-	 */
-	function keys(object) {
-	  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
-	}
-
-	module.exports = keys;
-
-
-/***/ },
-/* 811 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseTimes = __webpack_require__(812),
-	    isArguments = __webpack_require__(783),
-	    isArray = __webpack_require__(785),
-	    isBuffer = __webpack_require__(813),
-	    isIndex = __webpack_require__(716),
-	    isTypedArray = __webpack_require__(815);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Creates an array of the enumerable property names of the array-like `value`.
-	 *
-	 * @private
-	 * @param {*} value The value to query.
-	 * @param {boolean} inherited Specify returning inherited property names.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function arrayLikeKeys(value, inherited) {
-	  var isArr = isArray(value),
-	      isArg = !isArr && isArguments(value),
-	      isBuff = !isArr && !isArg && isBuffer(value),
-	      isType = !isArr && !isArg && !isBuff && isTypedArray(value),
-	      skipIndexes = isArr || isArg || isBuff || isType,
-	      result = skipIndexes ? baseTimes(value.length, String) : [],
-	      length = result.length;
-
-	  for (var key in value) {
-	    if ((inherited || hasOwnProperty.call(value, key)) &&
-	        !(skipIndexes && (
-	           // Safari 9 has enumerable `arguments.length` in strict mode.
-	           key == 'length' ||
-	           // Node.js 0.10 has enumerable non-index properties on buffers.
-	           (isBuff && (key == 'offset' || key == 'parent')) ||
-	           // PhantomJS 2 has enumerable non-index properties on typed arrays.
-	           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||
-	           // Skip index properties.
-	           isIndex(key, length)
-	        ))) {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = arrayLikeKeys;
-
-
-/***/ },
-/* 812 */
-/***/ function(module, exports) {
-
-	/**
-	 * The base implementation of `_.times` without support for iteratee shorthands
-	 * or max array length checks.
-	 *
-	 * @private
-	 * @param {number} n The number of times to invoke `iteratee`.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array} Returns the array of results.
-	 */
-	function baseTimes(n, iteratee) {
-	  var index = -1,
-	      result = Array(n);
-
-	  while (++index < n) {
-	    result[index] = iteratee(index);
-	  }
-	  return result;
-	}
-
-	module.exports = baseTimes;
-
-
-/***/ },
-/* 813 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(710),
-	    stubFalse = __webpack_require__(814);
-
-	/** Detect free variable `exports`. */
-	var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
-
-	/** Detect free variable `module`. */
-	var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
-
-	/** Detect the popular CommonJS extension `module.exports`. */
-	var moduleExports = freeModule && freeModule.exports === freeExports;
-
-	/** Built-in value references. */
-	var Buffer = moduleExports ? root.Buffer : undefined;
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
-
-	/**
-	 * Checks if `value` is a buffer.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.3.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
-	 * @example
-	 *
-	 * _.isBuffer(new Buffer(2));
-	 * // => true
-	 *
-	 * _.isBuffer(new Uint8Array(2));
-	 * // => false
-	 */
-	var isBuffer = nativeIsBuffer || stubFalse;
-
-	module.exports = isBuffer;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module)))
-
-/***/ },
-/* 814 */
-/***/ function(module, exports) {
-
-	/**
-	 * This method returns `false`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 4.13.0
-	 * @category Util
-	 * @returns {boolean} Returns `false`.
-	 * @example
-	 *
-	 * _.times(2, _.stubFalse);
-	 * // => [false, false]
-	 */
-	function stubFalse() {
-	  return false;
-	}
-
-	module.exports = stubFalse;
-
-
-/***/ },
-/* 815 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsTypedArray = __webpack_require__(816),
-	    baseUnary = __webpack_require__(778),
-	    nodeUtil = __webpack_require__(817);
-
-	/* Node.js helper references. */
-	var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
-
-	/**
-	 * Checks if `value` is classified as a typed array.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.0.0
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
-	 * @example
-	 *
-	 * _.isTypedArray(new Uint8Array);
-	 * // => true
-	 *
-	 * _.isTypedArray([]);
-	 * // => false
-	 */
-	var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
-
-	module.exports = isTypedArray;
-
-
-/***/ },
-/* 816 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseGetTag = __webpack_require__(708),
-	    isLength = __webpack_require__(715),
-	    isObjectLike = __webpack_require__(720);
-
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]',
-	    arrayTag = '[object Array]',
-	    boolTag = '[object Boolean]',
-	    dateTag = '[object Date]',
-	    errorTag = '[object Error]',
-	    funcTag = '[object Function]',
-	    mapTag = '[object Map]',
-	    numberTag = '[object Number]',
-	    objectTag = '[object Object]',
-	    regexpTag = '[object RegExp]',
-	    setTag = '[object Set]',
-	    stringTag = '[object String]',
-	    weakMapTag = '[object WeakMap]';
-
-	var arrayBufferTag = '[object ArrayBuffer]',
-	    dataViewTag = '[object DataView]',
-	    float32Tag = '[object Float32Array]',
-	    float64Tag = '[object Float64Array]',
-	    int8Tag = '[object Int8Array]',
-	    int16Tag = '[object Int16Array]',
-	    int32Tag = '[object Int32Array]',
-	    uint8Tag = '[object Uint8Array]',
-	    uint8ClampedTag = '[object Uint8ClampedArray]',
-	    uint16Tag = '[object Uint16Array]',
-	    uint32Tag = '[object Uint32Array]';
-
-	/** Used to identify `toStringTag` values of typed arrays. */
-	var typedArrayTags = {};
-	typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
-	typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
-	typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
-	typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
-	typedArrayTags[uint32Tag] = true;
-	typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
-	typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
-	typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
-	typedArrayTags[errorTag] = typedArrayTags[funcTag] =
-	typedArrayTags[mapTag] = typedArrayTags[numberTag] =
-	typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
-	typedArrayTags[setTag] = typedArrayTags[stringTag] =
-	typedArrayTags[weakMapTag] = false;
-
-	/**
-	 * The base implementation of `_.isTypedArray` without Node.js optimizations.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
-	 */
-	function baseIsTypedArray(value) {
-	  return isObjectLike(value) &&
-	    isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
-	}
-
-	module.exports = baseIsTypedArray;
-
-
-/***/ },
-/* 817 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(711);
-
-	/** Detect free variable `exports`. */
-	var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
-
-	/** Detect free variable `module`. */
-	var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
-
-	/** Detect the popular CommonJS extension `module.exports`. */
-	var moduleExports = freeModule && freeModule.exports === freeExports;
-
-	/** Detect free variable `process` from Node.js. */
-	var freeProcess = moduleExports && freeGlobal.process;
-
-	/** Used to access faster Node.js helpers. */
-	var nodeUtil = (function() {
-	  try {
-	    return freeProcess && freeProcess.binding('util');
-	  } catch (e) {}
-	}());
-
-	module.exports = nodeUtil;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)(module)))
-
-/***/ },
-/* 818 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isPrototype = __webpack_require__(819),
-	    nativeKeys = __webpack_require__(820);
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * The base implementation of `_.keys` which doesn't treat sparse arrays as dense.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function baseKeys(object) {
-	  if (!isPrototype(object)) {
-	    return nativeKeys(object);
-	  }
-	  var result = [];
-	  for (var key in Object(object)) {
-	    if (hasOwnProperty.call(object, key) && key != 'constructor') {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = baseKeys;
-
-
-/***/ },
-/* 819 */
-/***/ function(module, exports) {
-
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-
-	/**
-	 * Checks if `value` is likely a prototype object.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
-	 */
-	function isPrototype(value) {
-	  var Ctor = value && value.constructor,
-	      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
-
-	  return value === proto;
-	}
-
-	module.exports = isPrototype;
-
-
-/***/ },
-/* 820 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var overArg = __webpack_require__(821);
-
-	/* Built-in method references for those with the same name as other `lodash` methods. */
-	var nativeKeys = overArg(Object.keys, Object);
-
-	module.exports = nativeKeys;
-
-
-/***/ },
-/* 821 */
-/***/ function(module, exports) {
-
-	/**
-	 * Creates a unary function that invokes `func` with its argument transformed.
-	 *
-	 * @private
-	 * @param {Function} func The function to wrap.
-	 * @param {Function} transform The argument transform.
-	 * @returns {Function} Returns the new function.
-	 */
-	function overArg(func, transform) {
-	  return function(arg) {
-	    return func(transform(arg));
-	  };
-	}
-
-	module.exports = overArg;
-
-
-/***/ },
-/* 822 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var DataView = __webpack_require__(823),
-	    Map = __webpack_require__(762),
-	    Promise = __webpack_require__(824),
-	    Set = __webpack_require__(788),
-	    WeakMap = __webpack_require__(825),
-	    baseGetTag = __webpack_require__(708),
-	    toSource = __webpack_require__(740);
-
-	/** `Object#toString` result references. */
-	var mapTag = '[object Map]',
-	    objectTag = '[object Object]',
-	    promiseTag = '[object Promise]',
-	    setTag = '[object Set]',
-	    weakMapTag = '[object WeakMap]';
-
-	var dataViewTag = '[object DataView]';
-
-	/** Used to detect maps, sets, and weakmaps. */
-	var dataViewCtorString = toSource(DataView),
-	    mapCtorString = toSource(Map),
-	    promiseCtorString = toSource(Promise),
-	    setCtorString = toSource(Set),
-	    weakMapCtorString = toSource(WeakMap);
-
-	/**
-	 * Gets the `toStringTag` of `value`.
-	 *
-	 * @private
-	 * @param {*} value The value to query.
-	 * @returns {string} Returns the `toStringTag`.
-	 */
-	var getTag = baseGetTag;
-
-	// Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
-	if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
-	    (Map && getTag(new Map) != mapTag) ||
-	    (Promise && getTag(Promise.resolve()) != promiseTag) ||
-	    (Set && getTag(new Set) != setTag) ||
-	    (WeakMap && getTag(new WeakMap) != weakMapTag)) {
-	  getTag = function(value) {
-	    var result = baseGetTag(value),
-	        Ctor = result == objectTag ? value.constructor : undefined,
-	        ctorString = Ctor ? toSource(Ctor) : '';
-
-	    if (ctorString) {
-	      switch (ctorString) {
-	        case dataViewCtorString: return dataViewTag;
-	        case mapCtorString: return mapTag;
-	        case promiseCtorString: return promiseTag;
-	        case setCtorString: return setTag;
-	        case weakMapCtorString: return weakMapTag;
-	      }
-	    }
-	    return result;
-	  };
-	}
-
-	module.exports = getTag;
-
-
-/***/ },
-/* 823 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(736),
-	    root = __webpack_require__(710);
-
-	/* Built-in method references that are verified to be native. */
-	var DataView = getNative(root, 'DataView');
-
-	module.exports = DataView;
-
-
-/***/ },
-/* 824 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(736),
-	    root = __webpack_require__(710);
-
-	/* Built-in method references that are verified to be native. */
-	var Promise = getNative(root, 'Promise');
-
-	module.exports = Promise;
-
-
-/***/ },
-/* 825 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(736),
-	    root = __webpack_require__(710);
-
-	/* Built-in method references that are verified to be native. */
-	var WeakMap = getNative(root, 'WeakMap');
-
-	module.exports = WeakMap;
-
-
-/***/ },
-/* 826 */
-/***/ function(module, exports, __webpack_require__) {
-
 	"use strict";
 	/*
 	This class is a wrapper around react-tooltip that lets us have one big tooltip.
@@ -20157,9 +18830,9 @@ webpackJsonp_name_([1],[
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var React = __webpack_require__(138);
-	var ReactTooltip = __webpack_require__(827);
-	__webpack_require__(838);
+	var React = __webpack_require__(139);
+	var ReactTooltip = __webpack_require__(796);
+	__webpack_require__(807);
 	//*------------------------------------------------------------------*
 
 	var TooltipStateManager = React.createClass({
@@ -20270,7 +18943,7 @@ webpackJsonp_name_([1],[
 	module.exports = TooltipStateManager;
 
 /***/ },
-/* 827 */
+/* 796 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20290,45 +18963,45 @@ webpackJsonp_name_([1],[
 	/* CSS */
 
 
-	var _react = __webpack_require__(138);
+	var _react = __webpack_require__(139);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(299);
+	var _reactDom = __webpack_require__(300);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _classnames = __webpack_require__(828);
+	var _classnames = __webpack_require__(797);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _staticMethods = __webpack_require__(829);
+	var _staticMethods = __webpack_require__(798);
 
 	var _staticMethods2 = _interopRequireDefault(_staticMethods);
 
-	var _windowListener = __webpack_require__(831);
+	var _windowListener = __webpack_require__(800);
 
 	var _windowListener2 = _interopRequireDefault(_windowListener);
 
-	var _customEvent = __webpack_require__(832);
+	var _customEvent = __webpack_require__(801);
 
 	var _customEvent2 = _interopRequireDefault(_customEvent);
 
-	var _isCapture = __webpack_require__(833);
+	var _isCapture = __webpack_require__(802);
 
 	var _isCapture2 = _interopRequireDefault(_isCapture);
 
-	var _getPosition = __webpack_require__(834);
+	var _getPosition = __webpack_require__(803);
 
 	var _getPosition2 = _interopRequireDefault(_getPosition);
 
-	var _getTipContent = __webpack_require__(835);
+	var _getTipContent = __webpack_require__(804);
 
 	var _getTipContent2 = _interopRequireDefault(_getTipContent);
 
-	var _aria = __webpack_require__(836);
+	var _aria = __webpack_require__(805);
 
-	var _style = __webpack_require__(837);
+	var _style = __webpack_require__(806);
 
 	var _style2 = _interopRequireDefault(_style);
 
@@ -20867,7 +19540,7 @@ webpackJsonp_name_([1],[
 	module.exports = ReactTooltip;
 
 /***/ },
-/* 828 */
+/* 797 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -20921,7 +19594,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 829 */
+/* 798 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20979,7 +19652,7 @@ webpackJsonp_name_([1],[
 	  };
 	};
 
-	var _constant = __webpack_require__(830);
+	var _constant = __webpack_require__(799);
 
 	var _constant2 = _interopRequireDefault(_constant);
 
@@ -21003,7 +19676,7 @@ webpackJsonp_name_([1],[
 	    */
 
 /***/ },
-/* 830 */
+/* 799 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21021,7 +19694,7 @@ webpackJsonp_name_([1],[
 	};
 
 /***/ },
-/* 831 */
+/* 800 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21067,14 +19740,14 @@ webpackJsonp_name_([1],[
 	  };
 	};
 
-	var _constant = __webpack_require__(830);
+	var _constant = __webpack_require__(799);
 
 	var _constant2 = _interopRequireDefault(_constant);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ },
-/* 832 */
+/* 801 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21167,7 +19840,7 @@ webpackJsonp_name_([1],[
 	var customListener = void 0;
 
 /***/ },
-/* 833 */
+/* 802 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21184,7 +19857,7 @@ webpackJsonp_name_([1],[
 	};
 
 /***/ },
-/* 834 */
+/* 803 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21502,7 +20175,7 @@ webpackJsonp_name_([1],[
 	};
 
 /***/ },
-/* 835 */
+/* 804 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21532,14 +20205,14 @@ webpackJsonp_name_([1],[
 	  });
 	};
 
-	var _react = __webpack_require__(138);
+	var _react = __webpack_require__(139);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ },
-/* 836 */
+/* 805 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21568,7 +20241,7 @@ webpackJsonp_name_([1],[
 	}
 
 /***/ },
-/* 837 */
+/* 806 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21579,16 +20252,16 @@ webpackJsonp_name_([1],[
 	exports.default = '.__react_component_tooltip{border-radius:3px;display:inline-block;font-size:13px;left:-999em;opacity:0;padding:8px 21px;position:fixed;pointer-events:none;transition:opacity 0.3s ease-out;top:-999em;visibility:hidden;z-index:999}.__react_component_tooltip:before,.__react_component_tooltip:after{content:"";width:0;height:0;position:absolute}.__react_component_tooltip.show{opacity:0.9;margin-top:0px;margin-left:0px;visibility:visible}.__react_component_tooltip.frozen{pointer-events:auto}.__react_component_tooltip.type-dark{color:#fff;background-color:#222}.__react_component_tooltip.type-dark.place-top:after{border-top-color:#222;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-dark.place-bottom:after{border-bottom-color:#222;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-dark.place-left:after{border-left-color:#222;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-dark.place-right:after{border-right-color:#222;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-dark.border{border:1px solid #fff}.__react_component_tooltip.type-dark.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-dark.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-dark.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-dark.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-success{color:#fff;background-color:#8DC572}.__react_component_tooltip.type-success.place-top:after{border-top-color:#8DC572;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-success.place-bottom:after{border-bottom-color:#8DC572;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-success.place-left:after{border-left-color:#8DC572;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-success.place-right:after{border-right-color:#8DC572;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-success.border{border:1px solid #fff}.__react_component_tooltip.type-success.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-success.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-success.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-success.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-warning{color:#fff;background-color:#F0AD4E}.__react_component_tooltip.type-warning.place-top:after{border-top-color:#F0AD4E;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-warning.place-bottom:after{border-bottom-color:#F0AD4E;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-warning.place-left:after{border-left-color:#F0AD4E;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-warning.place-right:after{border-right-color:#F0AD4E;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-warning.border{border:1px solid #fff}.__react_component_tooltip.type-warning.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-warning.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-warning.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-warning.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-error{color:#fff;background-color:#BE6464}.__react_component_tooltip.type-error.place-top:after{border-top-color:#BE6464;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-error.place-bottom:after{border-bottom-color:#BE6464;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-error.place-left:after{border-left-color:#BE6464;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-error.place-right:after{border-right-color:#BE6464;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-error.border{border:1px solid #fff}.__react_component_tooltip.type-error.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-error.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-error.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-error.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-info{color:#fff;background-color:#337AB7}.__react_component_tooltip.type-info.place-top:after{border-top-color:#337AB7;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-info.place-bottom:after{border-bottom-color:#337AB7;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-info.place-left:after{border-left-color:#337AB7;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-info.place-right:after{border-right-color:#337AB7;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-info.border{border:1px solid #fff}.__react_component_tooltip.type-info.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-info.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-info.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-info.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-light{color:#222;background-color:#fff}.__react_component_tooltip.type-light.place-top:after{border-top-color:#fff;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-light.place-bottom:after{border-bottom-color:#fff;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-light.place-left:after{border-left-color:#fff;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-light.place-right:after{border-right-color:#fff;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-light.border{border:1px solid #222}.__react_component_tooltip.type-light.border.place-top:before{border-top:8px solid #222}.__react_component_tooltip.type-light.border.place-bottom:before{border-bottom:8px solid #222}.__react_component_tooltip.type-light.border.place-left:before{border-left:8px solid #222}.__react_component_tooltip.type-light.border.place-right:before{border-right:8px solid #222}.__react_component_tooltip.place-top{margin-top:-10px}.__react_component_tooltip.place-top:before{border-left:10px solid transparent;border-right:10px solid transparent;bottom:-8px;left:50%;margin-left:-10px}.__react_component_tooltip.place-top:after{border-left:8px solid transparent;border-right:8px solid transparent;bottom:-6px;left:50%;margin-left:-8px}.__react_component_tooltip.place-bottom{margin-top:10px}.__react_component_tooltip.place-bottom:before{border-left:10px solid transparent;border-right:10px solid transparent;top:-8px;left:50%;margin-left:-10px}.__react_component_tooltip.place-bottom:after{border-left:8px solid transparent;border-right:8px solid transparent;top:-6px;left:50%;margin-left:-8px}.__react_component_tooltip.place-left{margin-left:-10px}.__react_component_tooltip.place-left:before{border-top:6px solid transparent;border-bottom:6px solid transparent;right:-8px;top:50%;margin-top:-5px}.__react_component_tooltip.place-left:after{border-top:5px solid transparent;border-bottom:5px solid transparent;right:-6px;top:50%;margin-top:-4px}.__react_component_tooltip.place-right{margin-left:10px}.__react_component_tooltip.place-right:before{border-top:6px solid transparent;border-bottom:6px solid transparent;left:-8px;top:50%;margin-top:-5px}.__react_component_tooltip.place-right:after{border-top:5px solid transparent;border-bottom:5px solid transparent;left:-6px;top:50%;margin-top:-4px}.__react_component_tooltip .multi-line{display:block;padding:2px 0px;text-align:center}';
 
 /***/ },
-/* 838 */
+/* 807 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(839);
+	var content = __webpack_require__(808);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(671)(content, {});
+	var update = __webpack_require__(672)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -21605,10 +20278,10 @@ webpackJsonp_name_([1],[
 	}
 
 /***/ },
-/* 839 */
+/* 808 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(670)();
+	exports = module.exports = __webpack_require__(671)();
 	// imports
 
 
@@ -21619,17 +20292,17 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 840 */
+/* 809 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var React = __webpack_require__(138);
-	var Slider = __webpack_require__(39);
-	__webpack_require__(841);
-	__webpack_require__(843);
-	var Button = __webpack_require__(389);
-	var Glyphicon = __webpack_require__(395);
+	var React = __webpack_require__(139);
+	var Slider = __webpack_require__(40);
+	__webpack_require__(810);
+	__webpack_require__(812);
+	var Button = __webpack_require__(390);
+	var Glyphicon = __webpack_require__(396);
 
 	var CoexpressionOption = React.createClass({
 	    displayName: "CoexpressionOption",
@@ -21703,16 +20376,16 @@ webpackJsonp_name_([1],[
 	module.exports = CoexpressionOption;
 
 /***/ },
-/* 841 */
+/* 810 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(842);
+	var content = __webpack_require__(811);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(671)(content, {});
+	var update = __webpack_require__(672)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -21729,10 +20402,10 @@ webpackJsonp_name_([1],[
 	}
 
 /***/ },
-/* 842 */
+/* 811 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(670)();
+	exports = module.exports = __webpack_require__(671)();
 	// imports
 
 
@@ -21743,16 +20416,16 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 843 */
+/* 812 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(844);
+	var content = __webpack_require__(813);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(671)(content, {});
+	var update = __webpack_require__(672)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -21769,10 +20442,10 @@ webpackJsonp_name_([1],[
 	}
 
 /***/ },
-/* 844 */
+/* 813 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(670)();
+	exports = module.exports = __webpack_require__(671)();
 	// imports
 
 
@@ -21783,16 +20456,16 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 845 */
+/* 814 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(846);
+	var content = __webpack_require__(815);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(671)(content, {});
+	var update = __webpack_require__(672)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -21809,10 +20482,10 @@ webpackJsonp_name_([1],[
 	}
 
 /***/ },
-/* 846 */
+/* 815 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(670)();
+	exports = module.exports = __webpack_require__(671)();
 	// imports
 
 
@@ -21823,7 +20496,7 @@ webpackJsonp_name_([1],[
 
 
 /***/ },
-/* 847 */
+/* 816 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21999,16 +20672,16 @@ webpackJsonp_name_([1],[
 	};
 
 /***/ },
-/* 848 */
+/* 817 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(849);
+	var content = __webpack_require__(818);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(671)(content, {});
+	var update = __webpack_require__(672)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -22025,10 +20698,10 @@ webpackJsonp_name_([1],[
 	}
 
 /***/ },
-/* 849 */
+/* 818 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(670)();
+	exports = module.exports = __webpack_require__(671)();
 	// imports
 
 
