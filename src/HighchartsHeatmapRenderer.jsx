@@ -54,45 +54,56 @@ You could select this option and add yourself an integration test that checks wh
 @param {string}          options.pathToFolderWithBundledResources - use if you're serving the /svg's from an unusual location. Development only.
 **/
 
-exports.render = function(options) {
-    const atlasHost = options.atlasHost === undefined ? "https://www.ebi.ac.uk" : options.atlasHost
-    const atlasPath = "/gxa"
-    const proxyPrefix = options.proxyPrefix || "https://"
+const ExpressionAtlasHeatmapHighcharts = ({
+  options
+}) => {
+  const atlasHost = options.atlasHost === undefined ? "https://www.ebi.ac.uk" : options.atlasHost
+  const atlasPath = "/gxa"
+  const proxyPrefix = options.proxyPrefix || "https://"
 
-    const atlasBaseURL =
-        (atlasHost.indexOf("http://") === 0 || atlasHost.indexOf("https://") === 0
-          ? ""
-          : proxyPrefix)
-        + atlasHost
-        + atlasPath;
+  const atlasBaseURL =
+      (atlasHost.indexOf("http://") === 0 || atlasHost.indexOf("https://") === 0
+        ? ""
+        : proxyPrefix)
+      + atlasHost
+      + atlasPath;
 
-    //If using this renderer for a standalone widget, see uk.ac.ebi.atlas.widget.HeatmapWidgetController.java for the source URL/params required
-    const sourceURL = options.sourceURL ||
-                      atlasBaseURL + "/widgets/heatmap"
-                      + (options.isMultiExperiment? "/baselineAnalytics" : "/referenceExperiment")
-                      + "?" + options.params;
+  //If using this renderer for a standalone widget, see uk.ac.ebi.atlas.widget.HeatmapWidgetController.java for the source URL/params required
+  const sourceURL = options.sourceURL ||
+                    atlasBaseURL + "/widgets/heatmap"
+                    + (options.isMultiExperiment? "/baselineAnalytics" : "/referenceExperiment")
+                    + "?" + options.params;
 
-    const anatomogramEventEmitter = new EventEmitter();
-    anatomogramEventEmitter.setMaxListeners(0);
+  const anatomogramEventEmitter = new EventEmitter();
+  anatomogramEventEmitter.setMaxListeners(0);
+  return (
+    <HighchartsHeatmapContainer
+    sourceURL={ sourceURL}
+    atlasBaseURL={ atlasBaseURL}
+    proxyPrefix={ proxyPrefix}
+    pathToFolderWithBundledResources={ options.pathToFolderWithBundledResources || atlasBaseURL + "/resources/js-bundles/"}
+    showAnatomogram={ options.showAnatomogram === undefined || options.showAnatomogram}
+    isDifferential={ !!options.isDifferential}
+    isMultiExperiment={ options.isMultiExperiment === undefined || !!options.isMultiExperiment}
+    isWidget={ options.isWidget === undefined || options.isWidget}
+    disableGoogleAnalytics={ !!options.disableGoogleAnalytics}
+    fail={options.fail}
+    anatomogramEventEmitter={anatomogramEventEmitter}
+    anatomogramDataEventEmitter={options.anatomogramDataEventEmitter}
+    />
+  )
+}
+ExpressionAtlasHeatmapHighcharts.propTypes = {
+  options: React.PropTypes.object.isRequired
+}
 
+const render = function(options) {
     ReactDOM.render(
         React.createElement(
-            HighchartsHeatmapContainer,
-            {
-                sourceURL: sourceURL,
-                atlasBaseURL: atlasBaseURL,
-                proxyPrefix: proxyPrefix,
-                pathToFolderWithBundledResources: options.pathToFolderWithBundledResources || atlasBaseURL + "/resources/js-bundles/",
-                showAnatomogram: options.showAnatomogram === undefined || options.showAnatomogram,
-                isDifferential: !!options.isDifferential,
-                isMultiExperiment: options.isMultiExperiment === undefined || !!options.isMultiExperiment,
-                isWidget: options.isWidget === undefined || options.isWidget,
-                disableGoogleAnalytics: !!options.disableGoogleAnalytics,
-                fail: options.fail,
-                anatomogramEventEmitter:anatomogramEventEmitter,
-                anatomogramDataEventEmitter: options.anatomogramDataEventEmitter
-            }
+            ExpressionAtlasHeatmapHighcharts, options
         ),
         (typeof options.target === "string") ? document.getElementById(options.target) : options.target
     );
 };
+
+export {ExpressionAtlasHeatmapHighcharts, render}
