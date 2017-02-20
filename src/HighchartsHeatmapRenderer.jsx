@@ -100,7 +100,7 @@ ExpressionAtlasHeatmapHighcharts.propTypes = {
 const render = function(options) {
     ReactDOM.render(
         React.createElement(
-            ExpressionAtlasHeatmapHighcharts, options
+            ExpressionAtlasHeatmapHighcharts, {options}
         ),
         (typeof options.target === "string") ? document.getElementById(options.target) : options.target
     );
