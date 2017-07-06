@@ -1,0 +1,892 @@
+{
+    "actual": {
+        "config": {
+            "atlasHost": "https://www.ebi.ac.uk",
+            "contextRoot": "/gxa",
+            "experimentAccession": "E-GEOD-54705",
+            "geneQuery": "%5B%5D",
+            "conditionQuery": "",
+            "accessKey": "",
+            "species": "Sorghum bicolor",
+            "ensemblDB": "plants",
+            "columnType": "comparison",
+            "enableEnsemblLauncher": true,
+            "showMaPlotButton": true,
+            "gseaPlots": {
+                "g5_g2": {
+                    "go": false,
+                    "interpro": false,
+                    "reactome": false
+                },
+                "g3_g2": {
+                    "go": true,
+                    "interpro": true,
+                    "reactome": false
+                },
+                "g4_g2": {
+                    "go": false,
+                    "interpro": true,
+                    "reactome": false
+                },
+                "g6_g2": {
+                    "go": true,
+                    "interpro": true,
+                    "reactome": true
+                },
+                "g5_g1": {
+                    "go": false,
+                    "interpro": true,
+                    "reactome": false
+                },
+                "g3_g1": {
+                    "go": true,
+                    "interpro": true,
+                    "reactome": false
+                },
+                "g4_g1": {
+                    "go": true,
+                    "interpro": true,
+                    "reactome": false
+                },
+                "g6_g1": {
+                    "go": true,
+                    "interpro": true,
+                    "reactome": true
+                },
+                "g5_g7": {
+                    "go": true,
+                    "interpro": true,
+                    "reactome": false
+                },
+                "g3_g7": {
+                    "go": true,
+                    "interpro": true,
+                    "reactome": false
+                },
+                "g4_g7": {
+                    "go": true,
+                    "interpro": true,
+                    "reactome": false
+                },
+                "g6_g7": {
+                    "go": true,
+                    "interpro": true,
+                    "reactome": false
+                }
+            },
+            "downloadProfilesURL": "/experiments/E-GEOD-54705.tsv?heatmapMatrixSize=5",
+            "disclaimer": ""
+        },
+        "columnHeaders": [
+            {
+                "id": "g5_g2",
+                "referenceAssayGroup": {
+                    "id": "g5",
+                    "assayAccessions": [
+                        "SRR1161670",
+                        "SRR1161669",
+                        "SRR1161668",
+                        "SRR1161671"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g2",
+                    "assayAccessions": [
+                        "SRR1161663",
+                        "SRR1161662",
+                        "SRR1161661",
+                        "SRR1161660"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'CK60; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g3_g2",
+                "referenceAssayGroup": {
+                    "id": "g3",
+                    "assayAccessions": [
+                        "SRR1161674",
+                        "SRR1161673",
+                        "SRR1161675",
+                        "SRR1161672"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g2",
+                    "assayAccessions": [
+                        "SRR1161663",
+                        "SRR1161662",
+                        "SRR1161661",
+                        "SRR1161660"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'CK60; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g4_g2",
+                "referenceAssayGroup": {
+                    "id": "g4",
+                    "assayAccessions": [
+                        "SRR1161676",
+                        "SRR1161678",
+                        "SRR1161677",
+                        "SRR1161679"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g2",
+                    "assayAccessions": [
+                        "SRR1161663",
+                        "SRR1161662",
+                        "SRR1161661",
+                        "SRR1161660"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'CK60; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g6_g2",
+                "referenceAssayGroup": {
+                    "id": "g6",
+                    "assayAccessions": [
+                        "SRR1161683",
+                        "SRR1161682",
+                        "SRR1161681",
+                        "SRR1161680"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g2",
+                    "assayAccessions": [
+                        "SRR1161663",
+                        "SRR1161662",
+                        "SRR1161661",
+                        "SRR1161660"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'CK60; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g5_g1",
+                "referenceAssayGroup": {
+                    "id": "g5",
+                    "assayAccessions": [
+                        "SRR1161670",
+                        "SRR1161669",
+                        "SRR1161668",
+                        "SRR1161671"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g1",
+                    "assayAccessions": [
+                        "SRR1161665",
+                        "SRR1161664",
+                        "SRR1161667",
+                        "SRR1161666"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'BTx623; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g3_g1",
+                "referenceAssayGroup": {
+                    "id": "g3",
+                    "assayAccessions": [
+                        "SRR1161674",
+                        "SRR1161673",
+                        "SRR1161675",
+                        "SRR1161672"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g1",
+                    "assayAccessions": [
+                        "SRR1161665",
+                        "SRR1161664",
+                        "SRR1161667",
+                        "SRR1161666"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'BTx623; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g4_g1",
+                "referenceAssayGroup": {
+                    "id": "g4",
+                    "assayAccessions": [
+                        "SRR1161676",
+                        "SRR1161678",
+                        "SRR1161677",
+                        "SRR1161679"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g1",
+                    "assayAccessions": [
+                        "SRR1161665",
+                        "SRR1161664",
+                        "SRR1161667",
+                        "SRR1161666"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'BTx623; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g6_g1",
+                "referenceAssayGroup": {
+                    "id": "g6",
+                    "assayAccessions": [
+                        "SRR1161683",
+                        "SRR1161682",
+                        "SRR1161681",
+                        "SRR1161680"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g1",
+                    "assayAccessions": [
+                        "SRR1161665",
+                        "SRR1161664",
+                        "SRR1161667",
+                        "SRR1161666"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'BTx623; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g5_g7",
+                "referenceAssayGroup": {
+                    "id": "g5",
+                    "assayAccessions": [
+                        "SRR1161670",
+                        "SRR1161669",
+                        "SRR1161668",
+                        "SRR1161671"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g7",
+                    "assayAccessions": [
+                        "SRR1161687",
+                        "SRR1161686",
+                        "SRR1161685",
+                        "SRR1161684"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'low-NUE bulk; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g3_g7",
+                "referenceAssayGroup": {
+                    "id": "g3",
+                    "assayAccessions": [
+                        "SRR1161674",
+                        "SRR1161673",
+                        "SRR1161675",
+                        "SRR1161672"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g7",
+                    "assayAccessions": [
+                        "SRR1161687",
+                        "SRR1161686",
+                        "SRR1161685",
+                        "SRR1161684"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'low-NUE bulk; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g4_g7",
+                "referenceAssayGroup": {
+                    "id": "g4",
+                    "assayAccessions": [
+                        "SRR1161676",
+                        "SRR1161678",
+                        "SRR1161677",
+                        "SRR1161679"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g7",
+                    "assayAccessions": [
+                        "SRR1161687",
+                        "SRR1161686",
+                        "SRR1161685",
+                        "SRR1161684"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'low-NUE bulk; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+            },
+            {
+                "id": "g6_g7",
+                "referenceAssayGroup": {
+                    "id": "g6",
+                    "assayAccessions": [
+                        "SRR1161683",
+                        "SRR1161682",
+                        "SRR1161681",
+                        "SRR1161680"
+                    ],
+                    "replicates": 4
+                },
+                "testAssayGroup": {
+                    "id": "g7",
+                    "assayAccessions": [
+                        "SRR1161687",
+                        "SRR1161686",
+                        "SRR1161685",
+                        "SRR1161684"
+                    ],
+                    "replicates": 4
+                },
+                "displayName": "'low-NUE bulk; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+            }
+        ],
+        "profiles": {
+            "maxDownLevel": -3.1,
+            "maxUpLevel": 3.6,
+            "minDownLevel": -3.1,
+            "minUpLevel": 3,
+            "rows": [
+                {
+                    "id": "Sb08g003110",
+                    "name": "Sb08g003110",
+                    "designElement": "",
+                    "expressions": [
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'",
+                            "color": "#FF0000",
+                            "foldChange": 3.6,
+                            "pValue": "<1E-10"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+                        }
+                    ]
+                },
+                {
+                    "id": "Sb10g011510",
+                    "name": "Sb10g011510",
+                    "designElement": "",
+                    "expressions": [
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'",
+                            "color": "#FF3A3B",
+                            "foldChange": 3.4,
+                            "pValue": "2.94E-6"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+                        }
+                    ]
+                },
+                {
+                    "id": "Sb07g005130",
+                    "name": "Sb07g005130",
+                    "designElement": "",
+                    "expressions": [
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'",
+                            "color": "#FF9292",
+                            "foldChange": 3.1,
+                            "pValue": "1.42E-5"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+                        }
+                    ]
+                },
+                {
+                    "id": "Sb08g022750",
+                    "name": "Sb08g022750",
+                    "designElement": "",
+                    "expressions": [
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'",
+                            "color": "#0000FF",
+                            "foldChange": -3.1,
+                            "pValue": "1.19E-4"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+                        }
+                    ]
+                },
+                {
+                    "id": "Sb09g024950",
+                    "name": "Sb09g024950",
+                    "designElement": "",
+                    "expressions": [
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'CK60; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'BTx623; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'",
+                            "color": "#FFAFAF",
+                            "foldChange": 3,
+                            "pValue": "5.72E-8"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'"
+                        },
+                        {
+                            "contrastName": "'low-NUE bulk; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'"
+                        }
+                    ]
+                }
+            ],
+            "searchResultTotal": 6068
+        },
+        "geneSetProfiles": null,
+        "jsonCoexpressions": [],
+        "anatomogram": null,
+        "experiment": null
+    },
+    "expected": {
+        "xAxisCategories": [
+            {
+                "label": "'CK60; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'",
+                "id": "g5_g2",
+                "info": {
+                    "trackId": "g5_g2",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'CK60; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'",
+                "id": "g3_g2",
+                "info": {
+                    "trackId": "g3_g2",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'CK60; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'",
+                "id": "g4_g2",
+                "info": {
+                    "trackId": "g4_g2",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'CK60; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'",
+                "id": "g6_g2",
+                "info": {
+                    "trackId": "g6_g2",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'BTx623; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'",
+                "id": "g5_g1",
+                "info": {
+                    "trackId": "g5_g1",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'BTx623; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'",
+                "id": "g3_g1",
+                "info": {
+                    "trackId": "g3_g1",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'BTx623; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'",
+                "id": "g4_g1",
+                "info": {
+                    "trackId": "g4_g1",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'BTx623; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'",
+                "id": "g6_g1",
+                "info": {
+                    "trackId": "g6_g1",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'low-NUE bulk; low-nitrogen sensitive' vs 'San Chi San; low-nitrogen tolerant'",
+                "id": "g5_g7",
+                "info": {
+                    "trackId": "g5_g7",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'low-NUE bulk; low-nitrogen sensitive' vs 'China17; low-nitrogen tolerant'",
+                "id": "g3_g7",
+                "info": {
+                    "trackId": "g3_g7",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'low-NUE bulk; low-nitrogen sensitive' vs 'KS78; low-nitrogen tolerant'",
+                "id": "g4_g7",
+                "info": {
+                    "trackId": "g4_g7",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            },
+            {
+                "label": "'low-NUE bulk; low-nitrogen sensitive' vs 'high-NUE bulk; low-nitrogen tolerant'",
+                "id": "g6_g7",
+                "info": {
+                    "trackId": "g6_g7",
+                    "tooltip": {
+                        "resources": []
+                    },
+                    "groupings": []
+                }
+            }
+        ],
+        "yAxisCategories": [
+            {
+                "label": "Sb08g003110",
+                "id": "Sb08g003110",
+                "info": {
+                    "trackId": "Sb08g003110",
+                    "designElement": ""
+                }
+            },
+            {
+                "label": "Sb10g011510",
+                "id": "Sb10g011510",
+                "info": {
+                    "trackId": "Sb10g011510",
+                    "designElement": ""
+                }
+            },
+            {
+                "label": "Sb07g005130",
+                "id": "Sb07g005130",
+                "info": {
+                    "trackId": "Sb07g005130",
+                    "designElement": ""
+                }
+            },
+            {
+                "label": "Sb08g022750",
+                "id": "Sb08g022750",
+                "info": {
+                    "trackId": "Sb08g022750",
+                    "designElement": ""
+                }
+            },
+            {
+                "label": "Sb09g024950",
+                "id": "Sb09g024950",
+                "info": {
+                    "trackId": "Sb09g024950",
+                    "designElement": ""
+                }
+            }
+        ],
+        "dataSeries": [
+            {
+                "info": {
+                    "name": "High down",
+                    "colour": "#0000ff"
+                },
+                "data": [
+                    {
+                        "x": 7,
+                        "y": 3,
+                        "value": -3.1,
+                        "info": {
+                            "pValue": "1.19E-4",
+                            "foldChange": -3.1,
+                            "tStat": "",
+                            "unit": "Log2Fold change",
+                            "index": 0
+                        }
+                    }
+                ]
+            },
+            {
+                "info": {
+                    "name": "Down",
+                    "colour": "#8cc6ff"
+                },
+                "data": []
+            },
+            {
+                "info": {
+                    "name": "Below cutoff",
+                    "colour": "gainsboro"
+                },
+                "data": []
+            },
+            {
+                "info": {
+                    "name": "Up",
+                    "colour": "#e9967a"
+                },
+                "data": [
+                    {
+                        "x": 7,
+                        "y": 2,
+                        "value": 3.1,
+                        "info": {
+                            "pValue": "1.42E-5",
+                            "foldChange": 3.1,
+                            "tStat": "",
+                            "unit": "Log2Fold change",
+                            "index": 0
+                        }
+                    },
+                    {
+                        "x": 7,
+                        "y": 4,
+                        "value": 3,
+                        "info": {
+                            "pValue": "5.72E-8",
+                            "foldChange": 3,
+                            "tStat": "",
+                            "unit": "Log2Fold change",
+                            "index": 0
+                        }
+                    }
+                ]
+            },
+            {
+                "info": {
+                    "name": "High up",
+                    "colour": "#b22222"
+                },
+                "data": [
+                    {
+                        "x": 7,
+                        "y": 0,
+                        "value": 3.6,
+                        "info": {
+                            "pValue": "<1E-10",
+                            "foldChange": 3.6,
+                            "tStat": "",
+                            "unit": "Log2Fold change",
+                            "index": 0
+                        }
+                    },
+                    {
+                        "x": 3,
+                        "y": 1,
+                        "value": 3.4,
+                        "info": {
+                            "pValue": "2.94E-6",
+                            "foldChange": 3.4,
+                            "tStat": "",
+                            "unit": "Log2Fold change",
+                            "index": 0
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

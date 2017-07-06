@@ -1,0 +1,162 @@
+{
+    "actual": {
+        "config": {
+            "atlasHost": "https://www.ebi.ac.uk",
+            "contextRoot": "/gxa",
+            "experimentAccession": "E-MTAB-3028",
+            "geneQuery": "%5B%7B%22value%22%3A%22TUBA3%22%7D%5D",
+            "conditionQuery": "",
+            "accessKey": "",
+            "species": "Zea mays",
+            "ensemblDB": "plants",
+            "columnType": "cultivar",
+            "enableEnsemblLauncher": true,
+            "showMaPlotButton": true,
+            "gseaPlots": null,
+            "downloadProfilesURL": "/experiments/E-MTAB-3028.tsv?geneQuery=%5B%7B%22value%22%3A%22TUBA3%22%7D%5D",
+            "disclaimer": ""
+        },
+        "columnHeaders": [
+            {
+                "assayGroupId": "g2",
+                "factorValue": "B73 inbred line",
+                "factorValueOntologyTermId": "EFO_0007022"
+            },
+            {
+                "assayGroupId": "g1",
+                "factorValue": "Mo17 inbred line",
+                "factorValueOntologyTermId": "EFO_0007590"
+            }
+        ],
+        "profiles": {
+            "searchResultTotal": 1,
+            "rows": [
+                {
+                    "id": "AC195340.3_FG001",
+                    "name": "TUBA3",
+                    "expressions": [
+                        {
+                            "factorName": "B73 inbred line",
+                            "color": "#C0C0C0",
+                            "value": 184,
+                            "svgPathId": "EFO_0007022",
+                            "quartiles": {
+                                "min": 177,
+                                "lower": 181,
+                                "median": 184,
+                                "upper": 189,
+                                "max": 194
+                            }
+                        },
+                        {
+                            "factorName": "Mo17 inbred line",
+                            "color": "#0000FF",
+                            "value": 267,
+                            "svgPathId": "EFO_0007590",
+                            "quartiles": {
+                                "min": 250,
+                                "lower": 259,
+                                "median": 267,
+                                "upper": 288,
+                                "max": 308
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "geneSetProfiles": null,
+        "jsonCoexpressions": [
+            {
+                "geneName": "TUBA3",
+                "geneId": "AC195340.3_FG001"
+            }
+        ],
+        "anatomogram": null,
+        "experiment": {
+            "URL": "/experiments/E-MTAB-3028?geneQuery=%5B%7B%22value%22%3A%22TUBA3%22%7D%5D&serializedFilterFactors=",
+            "description": "RNA-seq of coding RNA from two inbred lines of maize, B73 and Mo17",
+            "species": "Zea mays"
+        }
+    },
+    "expected": {
+        "xAxisCategories": [
+            {
+                "label": "B73 inbred line",
+                "id": "EFO_0007022",
+                "info": {
+                    "trackId": "g2",
+                    "groupings": []
+                }
+            },
+            {
+                "label": "Mo17 inbred line",
+                "id": "EFO_0007590",
+                "info": {
+                    "trackId": "g1",
+                    "groupings": []
+                }
+            }
+        ],
+        "yAxisCategories": [
+            {
+                "label": "TUBA3",
+                "id": "AC195340.3_FG001",
+                "info": {
+                    "trackId": "AC195340.3_FG001",
+                    "designElement": ""
+                }
+            }
+        ],
+        "dataSeries": [
+            {
+                "info": {
+                    "name": "Below cutoff",
+                    "colour": "gainsboro"
+                },
+                "data": []
+            },
+            {
+                "info": {
+                    "name": "Low",
+                    "colour": "#8cc6ff"
+                },
+                "data": [
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "value": 184,
+                        "info": {
+                            "unit": "FPKM",
+                            "index": 0
+                        }
+                    }
+                ]
+            },
+            {
+                "info": {
+                    "name": "Medium",
+                    "colour": "#0000ff"
+                },
+                "data": [
+                    {
+                        "x": 1,
+                        "y": 0,
+                        "value": 267,
+                        "info": {
+                            "unit": "FPKM",
+                            "index": 0
+                        }
+                    }
+                ]
+            },
+            {
+                "info": {
+                    "name": "High",
+                    "colour": "#0000b3"
+                },
+                "data": []
+            }
+        ]
+    }
+}
